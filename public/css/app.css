@@ -25,13 +25,13 @@
     --gray-50:       #F9FAFB;
     --surface:       #FFFFFF;
     --bg:            #F5F7FA;
-    --radius-sm:     8px;
-    --radius-md:     12px;
-    --radius-lg:     16px;
-    --radius-xl:     20px;
-    --shadow-sm:     0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-    --shadow-md:     0 4px 16px rgba(0,0,0,.08);
-    --shadow-lg:     0 8px 32px rgba(0,0,0,.10);
+    --radius-sm:     4px;
+    --radius-md:     8px;
+    --radius-lg:     8px;
+    --radius-xl:     8px;
+    --shadow-sm:     0 2px 4px rgba(0,0,0,.04);
+    --shadow-md:     0 10px 25px -5px rgba(0,0,0,0.06), 0 8px 10px -6px rgba(0,0,0,0.06);
+    --shadow-lg:     0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
 }
 
 /* ─── Slim Scrollbar ────────────────────────── */
@@ -82,15 +82,36 @@ a { text-decoration: none; }
 /* ─── Cards ─────────────────────────────────── */
 .card {
     background: var(--surface);
-    border-radius: var(--radius-lg);
-    border: 1px solid rgba(0,0,0,.05);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
     padding: 20px;
     transition: box-shadow .2s ease, transform .2s ease;
 }
 .card-hover:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+/* Theme Awareness Utility */
+[data-theme-card] {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme-card]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    box-shadow: inset 0 0 1px rgba(255,255,255,0.1);
+    opacity: 0;
+}
+
+html.dark [data-theme-card]::after {
+    opacity: 1;
 }
 
 /* ─── Badges ─────────────────────────────────── */
@@ -98,10 +119,9 @@ a { text-decoration: none; }
     display: inline-flex;
     align-items: center;
     padding: 3px 8px;
-    border-radius: 6px;
+    border-radius: 4px;
     font-size: .7rem;
-    font-weight: 700;
-    letter-spacing: .01em;
+    font-weight: 600;
 }
 .badge-success { background: #ECFDF5; color: #059669; }
 .badge-danger  { background: #FEF2F2; color: #DC2626; }
@@ -143,7 +163,7 @@ a { text-decoration: none; }
 .form-label {
     display: block;
     font-size: .8rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--gray-700);
     margin-bottom: 6px;
 }
@@ -173,9 +193,7 @@ select.form-input { appearance: auto; }
     background: var(--gray-50);
     color: var(--gray-500);
     font-size: .72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .04em;
+    font-weight: 600;
     text-align: left;
     border-bottom: 1px solid var(--gray-100);
 }
@@ -278,7 +296,7 @@ select.form-input { appearance: auto; }
     display: flex;
     align-items: center;
     gap: 12px;
-    border: 1px solid rgba(0,0,0,.05);
+    border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
 }
 .stat-pill-icon {
@@ -300,7 +318,7 @@ select.form-input { appearance: auto; }
     display: flex;
     flex-direction: column;
     gap: 10px;
-    border: 1px solid rgba(0,0,0,.05);
+    border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
     transition: all .2s ease;
     text-decoration: none;
@@ -331,7 +349,7 @@ select.form-input { appearance: auto; }
 }
 .menu-card-label {
     font-size: .8rem;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.3;
     transition: color .2s ease;
 }
@@ -345,7 +363,7 @@ select.form-input { appearance: auto; }
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    border: 1px solid rgba(0,0,0,.05);
+    border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
     transition: border-color .2s;
 }
@@ -402,9 +420,7 @@ select.form-input { appearance: auto; }
 /* ─── Section Labels ─────────────────────────── */
 .section-label {
     font-size: .68rem;
-    font-weight: 800;
-    letter-spacing: .1em;
-    text-transform: uppercase;
+    font-weight: 700;
     color: var(--gray-500);
 }
 

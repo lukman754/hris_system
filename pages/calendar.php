@@ -60,16 +60,16 @@ foreach ($events as $ev) { $event_map[$ev['date']][] = $ev; }
     <section class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                    <span class="material-symbols-outlined font-black">event_available</span>
+                <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined font-bold">event_available</span>
                 </div>
-                <h1 data-theme-text class="text-3xl font-black tracking-tighter leading-none">Event Ledger</h1>
+                <h1 data-theme-text class="text-3xl font-bold  leading-none">Event Ledger</h1>
             </div>
-            <p data-theme-muted class="text-[10px] font-black uppercase tracking-[0.3em] ml-1">Corporate Schedule & Highlights</p>
+            <p data-theme-muted class="text-[10px] font-bold   ml-1">Corporate Schedule & Highlights</p>
         </div>
         
         <?php if (auth_is_hrd()): ?>
-        <button onclick="openModal('addEventModal')" class="group relative px-6 py-3.5 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20">
+        <button onclick="openModal('addEventModal')" class="group relative px-6 py-3.5 bg-primary text-white rounded-lg font-bold text-xs   flex items-center gap-3 overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary/20">
             <span class="material-symbols-outlined text-lg">add_circle</span>
             <span>Tambah Event</span>
             <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
@@ -82,24 +82,24 @@ foreach ($events as $ev) { $event_map[$ev['date']][] = $ev; }
         
         <!-- Left: Calendar (Column 8) -->
         <div class="lg:col-span-8 flex flex-col gap-5">
-            <div data-theme-card class="p-5 rounded-2xl border border-border shadow-2xl relative overflow-hidden transition-all duration-500" id="calendar-container">
+            <div data-theme-card class="p-5 rounded-lg border border-border shadow-2xl relative overflow-hidden transition-all duration-500" id="calendar-container">
                 <!-- Background Decoration -->
                 <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
                 
                 <!-- Month Navigation -->
                 <div class="flex items-center justify-between mb-10">
                     <div class="relative min-w-[200px]">
-                        <h2 id="calendar-title" data-theme-text class="text-2xl font-black tracking-tighter capitalize transition-all duration-300">
+                        <h2 id="calendar-title" data-theme-text class="text-2xl font-bold  capitalize transition-all duration-300">
                             <?= date('F Y', mktime(0,0,0,$month,1,$year)) ?>
                         </h2>
                         <div id="nav-loader" class="absolute -bottom-2 left-0 w-0 h-1 bg-primary rounded-full transition-all duration-500 opacity-50"></div>
                     </div>
                     
                     <div class="flex items-center gap-3">
-                        <button onclick="navigateDebounced(-1)" data-theme-surface2 class="w-12 h-12 rounded-2xl flex items-center justify-center hover:bg-primary hover:text-white transition-all active:scale-90 border border-border group">
+                        <button onclick="navigateDebounced(-1)" data-theme-surface2 class="w-12 h-12 rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-all active:scale-90 border border-border group">
                             <span class="material-symbols-outlined text-lg group-hover:scale-110">chevron_left</span>
                         </button>
-                        <button onclick="navigateDebounced(1)" data-theme-surface2 class="w-12 h-12 rounded-2xl flex items-center justify-center hover:bg-primary hover:text-white transition-all active:scale-90 border border-border group">
+                        <button onclick="navigateDebounced(1)" data-theme-surface2 class="w-12 h-12 rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-all active:scale-90 border border-border group">
                             <span class="material-symbols-outlined text-lg group-hover:scale-110">chevron_right</span>
                         </button>
                     </div>
@@ -110,7 +110,7 @@ foreach ($events as $ev) { $event_map[$ev['date']][] = $ev; }
                     <!-- Weekdays -->
                     <div class="grid grid-cols-7 gap-3 mb-6">
                         <?php foreach (['Sen','Sel','Rab','Kam','Jum','Sab','Min'] as $d): ?>
-                        <div data-theme-muted class="text-center text-[10px] font-black uppercase tracking-widest opacity-40"><?= $d ?></div>
+                        <div data-theme-muted class="text-center text-[10px] font-bold   opacity-40"><?= $d ?></div>
                         <?php endforeach; ?>
                     </div>
 
@@ -131,11 +131,11 @@ foreach ($events as $ev) { $event_map[$ev['date']][] = $ev; }
                         ?>
                         <div class="aspect-square flex flex-col items-center justify-center relative cursor-pointer group active:scale-90 transition-all">
                             <!-- Background Circle on Hover -->
-                            <div class="absolute inset-1 rounded-3xl bg-primary/5 scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+                            <div class="absolute inset-1 rounded-lg bg-primary/5 scale-0 group-hover:scale-100 transition-transform duration-300"></div>
                             
                             <!-- Day Number -->
-                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center relative z-10 transition-all
-                                <?= $isToday ? 'bg-primary text-white font-black shadow-lg shadow-primary/30 ring-4 ring-primary/10' : 'data-theme-text font-bold' ?>">
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center relative z-10 transition-all
+                                <?= $isToday ? 'bg-primary text-white font-bold shadow-lg shadow-primary/30 ring-4 ring-primary/10' : 'data-theme-text font-bold' ?>">
                                 <span class="text-sm"><?= $d ?></span>
                             </div>
 
@@ -161,7 +161,7 @@ foreach ($events as $ev) { $event_map[$ev['date']][] = $ev; }
                     ?>
                     <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-all hover:bg-surface2" style="background:var(--surface2);">
                         <div class="w-1.5 h-1.5 rounded-full <?= $st['dot'] ?> ring-2 ring-<?= $key === 'birthday' ? 'amber' : ($key === 'holiday' ? 'rose' : ($key === 'meeting' ? 'blue' : 'emerald')) ?>-500/10"></div>
-                        <span data-theme-text class="text-[8.5px] font-black uppercase tracking-wider"><?= $label ?></span>
+                        <span data-theme-text class="text-[8.5px] font-bold  "><?= $label ?></span>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -170,13 +170,13 @@ foreach ($events as $ev) { $event_map[$ev['date']][] = $ev; }
 
         <!-- Right: Upcoming List (Column 4) -->
         <div class="lg:col-span-4 space-y-5">
-            <div data-theme-card class="p-5 rounded-2xl border border-border shadow-xl min-h-full">
+            <div data-theme-card class="p-5 rounded-lg border border-border shadow-xl min-h-full">
                 <div class="flex items-center justify-between mb-5">
                     <div class="flex items-center gap-3">
-                        <span class="material-symbols-outlined text-primary font-black">bolt</span>
-                        <h3 data-theme-text class="text-sm font-black uppercase tracking-widest">Upcoming</h3>
+                        <span class="material-symbols-outlined text-primary font-bold">bolt</span>
+                        <h3 data-theme-text class="text-sm font-bold  ">Upcoming</h3>
                     </div>
-                    <span data-theme-muted class="text-[9px] font-black uppercase bg-surface2 px-3 py-1 rounded-full border border-border">Agenda</span>
+                    <span data-theme-muted class="text-[9px] font-bold  bg-surface2 px-3 py-1 rounded-full border border-border">Agenda</span>
                 </div>
                 
                 <div class="space-y-4">
@@ -194,18 +194,18 @@ foreach ($events as $ev) { $event_map[$ev['date']][] = $ev; }
                         foreach (array_slice($upcoming, 0, 8) as $ev):
                             $st = $cat_styles[$ev['category']] ?? ['bg'=>'bg-surface-container-high', 'text'=>'text-on-surface', 'dot'=>'bg-secondary'];
                     ?>
-                    <div class="p-3.5 rounded-xl transition-all hover:bg-surface2 border border-transparent hover:border-border group flex items-start gap-4" style="background:var(--surface2);">
-                        <div class="w-10 h-10 rounded-xl <?= $st['bg'] ?> flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                            <span class="material-symbols-outlined <?= $st['text'] ?> text-lg font-black">
+                    <div class="p-3.5 rounded-lg transition-all hover:bg-surface2 border border-transparent hover:border-border group flex items-start gap-4" style="background:var(--surface2);">
+                        <div class="w-10 h-10 rounded-lg <?= $st['bg'] ?> flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined <?= $st['text'] ?> text-lg font-bold">
                                 <?= $ev['category'] === 'birthday' ? 'cake' : ($ev['category'] === 'holiday' ? 'beach_access' : ($ev['category'] === 'meeting' ? 'forum' : 'celebration')) ?>
                             </span>
                         </div>
                         <div class="min-w-0 flex-1 pt-1">
-                            <div data-theme-text class="font-black text-sm leading-tight truncate group-hover:text-primary transition-colors"><?= h($ev['title']) ?></div>
+                            <div data-theme-text class="font-bold text-sm leading-tight truncate group-hover:text-primary transition-colors"><?= h($ev['title']) ?></div>
                             <div class="flex items-center gap-2 mt-1">
-                                <span data-theme-muted class="text-[10px] font-bold uppercase tracking-tight"><?= date('D, d M Y', strtotime($ev['date'])) ?></span>
+                                <span data-theme-muted class="text-[10px] font-bold  "><?= date('D, d M Y', strtotime($ev['date'])) ?></span>
                                 <span class="w-1 h-1 rounded-full bg-border"></span>
-                                <span class="<?= $st['text'] ?> text-[9px] font-black uppercase italic"><?= $ev['category'] ?></span>
+                                <span class="<?= $st['text'] ?> text-[9px] font-bold  italic"><?= $ev['category'] ?></span>
                             </div>
                         </div>
                     </div>
@@ -221,20 +221,20 @@ foreach ($events as $ev) { $event_map[$ev['date']][] = $ev; }
 <div id="addEventModal" class="hidden fixed inset-0 z-[100] p-4 md:p-6" style="display: none;">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity"></div>
     <div class="relative w-full max-w-lg mx-auto mt-20">
-        <div data-theme-card class="bg-surface rounded-2xl border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div data-theme-card class="bg-surface rounded-lg border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
             <!-- Modal Header -->
             <div class="p-5 pb-1 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                        <span class="material-symbols-outlined font-black">add_circle</span>
+                    <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined font-bold">add_circle</span>
                     </div>
                     <div>
-                        <h3 data-theme-text class="text-lg font-black tracking-tighter">Tambah Event Baru</h3>
-                        <p data-theme-muted class="text-[9px] font-black uppercase tracking-widest opacity-50">Corporate Schedule</p>
+                        <h3 data-theme-text class="text-lg font-bold ">Tambah Event Baru</h3>
+                        <p data-theme-muted class="text-[9px] font-bold   opacity-50">Corporate Schedule</p>
                     </div>
                 </div>
                 <button onclick="closeModal('addEventModal')" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/40 hover:bg-surface2 transition-colors">
-                    <span class="material-symbols-outlined font-black">close</span>
+                    <span class="material-symbols-outlined font-bold">close</span>
                 </button>
             </div>
 
@@ -242,19 +242,19 @@ foreach ($events as $ev) { $event_map[$ev['date']][] = $ev; }
             <form method="POST" action="?page=calendar&action=add" class="p-5 pt-1 space-y-3">
                 <!-- Title -->
                 <div class="space-y-1.5">
-                    <label data-theme-muted class="text-[9px] font-black uppercase tracking-widest opacity-50 block">Nama Event / Judul</label>
-                    <input data-theme-text name="title" type="text" class="w-full border border-border rounded-xl px-4 py-2.5 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" style="background:var(--surface2)!important; color:var(--text-primary)!important;" placeholder="e.g. Rapat Tahunan Q1" required>
+                    <label data-theme-muted class="text-[9px] font-bold   opacity-50 block">Nama Event / Judul</label>
+                    <input data-theme-text name="title" type="text" class="w-full border border-border rounded-lg px-4 py-2.5 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" style="background:var(--surface2)!important; color:var(--text-primary)!important;" placeholder="e.g. Rapat Tahunan Q1" required>
                 </div>
 
                 <!-- Date & Category Grid -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="space-y-1.5">
-                        <label data-theme-muted class="text-[9px] font-black uppercase tracking-widest opacity-50 block">Tanggal</label>
-                        <input data-theme-text name="date" type="date" class="w-full border border-border rounded-xl px-4 py-2.5 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" style="background:var(--surface2)!important; color:var(--text-primary)!important;" required>
+                        <label data-theme-muted class="text-[9px] font-bold   opacity-50 block">Tanggal</label>
+                        <input data-theme-text name="date" type="date" class="w-full border border-border rounded-lg px-4 py-2.5 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" style="background:var(--surface2)!important; color:var(--text-primary)!important;" required>
                     </div>
                     <div class="space-y-1.5">
-                        <label data-theme-muted class="text-[9px] font-black uppercase tracking-widest opacity-50 block">Kategori</label>
-                        <select name="category" class="w-full border border-border rounded-xl px-4 py-2.5 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none" style="background:var(--surface2)!important; color:var(--text-primary)!important;">
+                        <label data-theme-muted class="text-[9px] font-bold   opacity-50 block">Kategori</label>
+                        <select name="category" class="w-full border border-border rounded-lg px-4 py-2.5 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none" style="background:var(--surface2)!important; color:var(--text-primary)!important;">
                             <?php foreach ($cat_labels as $val=>$lbl): ?>
                             <option value="<?=$val?>"><?=$lbl?></option>
                             <?php endforeach; ?>
@@ -264,19 +264,19 @@ foreach ($events as $ev) { $event_map[$ev['date']][] = $ev; }
 
                 <!-- Description -->
                 <div class="space-y-1.5">
-                    <label data-theme-muted class="text-[9px] font-black uppercase tracking-widest opacity-50 block">Catatan Tambahan (Opsional)</label>
-                    <textarea data-theme-text name="desc" rows="2" class="w-full border border-border rounded-xl px-4 py-2.5 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none" style="background:var(--surface2)!important; color:var(--text-primary)!important;" placeholder="Tuliskan keterangan detail event ini..."></textarea>
+                    <label data-theme-muted class="text-[9px] font-bold   opacity-50 block">Catatan Tambahan (Opsional)</label>
+                    <textarea data-theme-text name="desc" rows="2" class="w-full border border-border rounded-lg px-4 py-2.5 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none" style="background:var(--surface2)!important; color:var(--text-primary)!important;" placeholder="Tuliskan keterangan detail event ini..."></textarea>
                 </div>
 
 
 
                 <!-- Actions -->
                 <div class="pt-4 flex flex-col gap-3">
-                    <button type="submit" class="w-full py-5 bg-primary text-white rounded-full text-sm font-black uppercase shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-3">
-                        <span class="material-symbols-outlined font-black">publish</span>
+                    <button type="submit" class="w-full py-5 bg-primary text-white rounded-full text-sm font-bold  shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-3">
+                        <span class="material-symbols-outlined font-bold">publish</span>
                         Publikasikan Event
                     </button>
-                    <button type="button" onclick="closeModal('addEventModal')" data-theme-muted class="w-full py-3 text-xs font-bold uppercase tracking-widest hover:bg-surface2 rounded-full transition-all text-center">
+                    <button type="button" onclick="closeModal('addEventModal')" data-theme-muted class="w-full py-3 text-xs font-bold   hover:bg-surface2 rounded-full transition-all text-center">
                         Batal
                     </button>
                 </div>

@@ -19,6 +19,7 @@ try {
             email VARCHAR(100) UNIQUE NOT NULL,
             password VARCHAR(255) NOT NULL,
             role ENUM('hrd', 'employee') DEFAULT 'employee',
+            can_attendance TINYINT(1) DEFAULT 1,
             position VARCHAR(100),
             department VARCHAR(100),
             birth_date DATE,
@@ -89,13 +90,13 @@ try {
     echo "Inserting demo data...\n";
 
     $demo_users = [
-        ['hrd001', 'Admin HRD', 'hrd@company.com', 'admin123', 'hrd', 'HR Manager', 'Human Resources', '1985-03-15', '2020-01-15', 12000000],
-        ['emp001', 'Ayu Lestari', 'ayu@company.com', 'emp123', 'employee', 'Software Developer', 'IT', '1992-07-22', '2021-06-01', 8500000],
-        ['emp002', 'Budi Santoso', 'budi@company.com', 'emp123', 'employee', 'Marketing Manager', 'Marketing', '1988-11-10', '2019-03-15', 9000000],
-        ['emp003', 'Citra Dewi', 'citra@company.com', 'emp123', 'employee', 'Accountant', 'Finance', '1990-12-25', '2020-08-01', 7500000]
+        ['hrd001', 'Admin HRD', 'hrd@company.com', 'admin123', 'hrd', 1, 'HR Manager', 'Human Resources', '1985-03-15', '2020-01-15', 12000000],
+        ['emp001', 'Ayu Lestari', 'ayu@company.com', 'emp123', 'employee', 1, 'Software Developer', 'IT', '1992-07-22', '2021-06-01', 8500000],
+        ['emp002', 'Budi Santoso', 'budi@company.com', 'emp123', 'employee', 1, 'Marketing Manager', 'Marketing', '1988-11-10', '2019-03-15', 9000000],
+        ['emp003', 'Citra Dewi', 'citra@company.com', 'emp123', 'employee', 1, 'Accountant', 'Finance', '1990-12-25', '2020-08-01', 7500000]
     ];
 
-    $stmt = $pdo->prepare("INSERT IGNORE INTO users (id, name, email, password, role, position, department, birth_date, join_date, salary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT IGNORE INTO users (id, name, email, password, role, can_attendance, position, department, birth_date, join_date, salary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     foreach ($demo_users as $u) {
         $stmt->execute($u);
     }

@@ -1,5 +1,5 @@
 <?php
-// pages/leaves.php – Pengajuan & Approval Izin
+// pages/leaves.php – Leave & Absence Control (Unified Modern Style)
 $leaves  = get_leaves();
 $is_hrd  = auth_is_hrd();
 $my_uid  = $user['id'];
@@ -7,371 +7,256 @@ $my_uid  = $user['id'];
 if ($is_hrd):
     $pending  = array_filter($leaves, fn($l) => $l['approval_status'] === 'pending');
     $approved = array_filter($leaves, fn($l) => $l['approval_status'] === 'approved');
-    $rejected = array_filter($leaves, fn($l) => $l['approval_status'] === 'rejected');
 ?>
 
-<!-- ─── HRD: Approval Izin ─────────────────────── -->
-<div class="space-y-6">
-
-    <!-- Stats -->
-    <div class="stat-grid">
-        <div data-theme-card class="stat-card">
-            <div class="ib ib-orange st-icon">
-                <span class="material-symbols-outlined icon-size">pending_actions</span>
-            </div>
-            <div>
-                <p data-theme-muted class="st-label">Pending</p>
-                <p data-theme-text class="st-val"><?= count($pending) ?></p>
-            </div>
-        </div>
-        <div data-theme-card class="stat-card">
-            <div class="ib ib-green st-icon">
-                <span class="material-symbols-outlined icon-size">check_circle</span>
-            </div>
-            <div>
-                <p data-theme-muted class="st-label">Approved</p>
-                <p data-theme-text class="st-val"><?= count($approved) ?></p>
-            </div>
-        </div>
-        <div data-theme-card class="stat-card">
-            <div class="ib ib-red st-icon">
-                <span class="material-symbols-outlined icon-size">cancel</span>
-            </div>
-            <div>
-                <p data-theme-muted class="st-label">Rejected</p>
-                <p data-theme-text class="st-val"><?= count($rejected) ?></p>
-            </div>
-        </div>
-    </div>
-
-    <div data-theme-card style="background:var(--surface);border-radius:12px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;">
-        <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to right, rgba(var(--primary-rgb),.02), transparent);">
-            <div style="display:flex;align-items:center;gap:10px;">
-                <div class="ib ib-blue" style="width:32px;height:32px;border-radius:8px;">
-                    <span class="material-symbols-outlined" style="font-size:18px;">list_alt</span>
+<div class="space-y-8 performance-page-container">
+       <!-- ══ Header Section ══ -->
+    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-2xl font-bold">event_note</span>
                 </div>
-                <h3 data-theme-text style="font-size:14px;font-weight:900;color:var(--text-primary);margin:0;">Antrean Persetujuan</h3>
+                <h1 data-theme-text class="text-3xl font-bold  leading-none">Duty Control</h1>
             </div>
-            <span class="badge badge-blue"><?= count($leaves) ?> Total</span>
+            <p data-theme-muted class="text-[10px] font-bold   ml-1 opacity-50">Operational Availability Registry</p>
         </div>
-        <div style="overflow-x:auto;">
-            <table style="width:100%;border-collapse:collapse;min-width:600px;">
-                <thead>
-                    <tr style="background:var(--surface2);">
-                        <th style="padding:12px 20px;text-align:left;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);">Karyawan</th>
-                        <th style="padding:12px 20px;text-align:left;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);">Tipe</th>
-                        <th style="padding:12px 20px;text-align:left;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);">Tanggal</th>
-                        <th style="padding:12px 20px;text-align:left;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);">Keterangan</th>
-                        <th style="padding:12px 20px;text-align:left;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);">Status</th>
-                        <th style="padding:12px 20px;text-align:center;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if(empty($leaves)): ?>
-                        <tr><td colspan="6" style="padding:40px;text-align:center;color:var(--text-muted);font-size:13px;font-weight:600;">Belum ada pengajuan izin antar karyawan.</td></tr>
-                    <?php endif; ?>
-                    <?php foreach ($leaves as $leave): 
-                        $st = $leave['approval_status'];
-                        $st_cls = $st==='approved'?'badge-green':($st==='pending'?'badge-orange':'badge-red');
-                    ?>
-                    <tr style="border-bottom:1px solid var(--border);transition:all .2s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
-                        <td style="padding:14px 20px;">
-                            <div style="font-size:13px;font-weight:800;color:var(--text-primary);"><?= h($leave['employee_name']) ?></div>
-                            <div style="font-size:10px;font-weight:600;color:var(--text-muted);"><?= h($leave['department']) ?></div>
-                        </td>
-                        <td style="padding:14px 20px;">
-                            <span class="badge badge-blue" style="font-size:9px;"><?= leave_type_label($leave['leave_type']) ?></span>
-                        </td>
-                        <td style="padding:14px 20px;font-size:12px;font-weight:700;color:var(--text-primary);">
-                            <?= date('d M', strtotime($leave['leave_start'])) ?>
-                            <?php if ($leave['leave_start'] !== $leave['leave_end']): ?>
-                                – <?= date('d M', strtotime($leave['leave_end'])) ?>
-                            <?php endif; ?>
-                            <div style="font-size:9px;color:var(--text-muted);font-weight:600;"><?= date('Y', strtotime($leave['leave_start'])) ?></div>
-                        </td>
-                        <td style="padding:14px 20px;">
-                            <p style="font-size:12px;color:var(--text-muted);margin:0;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="<?= h($leave['leave_reason']) ?>">
-                                <?= h($leave['leave_reason']) ?>
-                            </p>
-                        </td>
-                        <td style="padding:14px 20px;">
-                            <span class="badge <?= $st_cls ?>"><?= $st ?></span>
-                        </td>
-                        <td style="padding:14px 20px;">
-                            <?php if ($leave['approval_status'] === 'pending'): ?>
-                            <div style="display:flex;gap:6px;justify-content:center;">
-                                <a href="?page=leaves&action=approve&id=<?= $leave['id'] ?>" class="ib ib-green" style="width:32px;height:32px;border-radius:8px;text-decoration:none;" title="Setujui">
-                                    <span class="material-symbols-outlined" style="font-size:18px;color:#10B981;">check</span>
-                                </a>
-                                <a href="?page=leaves&action=reject&id=<?= $leave['id'] ?>" class="ib ib-red" style="width:32px;height:32px;border-radius:8px;text-decoration:none;" title="Tolak">
-                                    <span class="material-symbols-outlined" style="font-size:18px;color:#EF4444;">close</span>
-                                </a>
-                            </div>
-                            <?php else: ?>
-                                <div style="display:flex;justify-content:center;">
-                                    <span class="material-symbols-outlined" style="font-size:20px;color:var(--text-muted);opacity:.5;">task_alt</span>
-                                </div>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+        
+        <div class="flex items-center gap-3">
+             <div class="flex items-center gap-2 px-4 py-2 bg-surface rounded-lg border border-border shadow-sm">
+                 <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                 <span data-theme-text class="text-[9px] font-bold   opacity-60"><?= count($pending) ?> Pending Requests</span>
+             </div>
+        </div>
+    </header>
+
+    <!-- ══ Macro Stats ══ -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div data-theme-card class="bg-surface p-5 rounded-lg border border-border flex items-center gap-5">
+            <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-2xl font-bold">pending_actions</span>
+            </div>
+            <div>
+                <div data-theme-muted class="text-[9px] font-bold   opacity-40">Awaiting Auth</div>
+                <div data-theme-text class="text-xl font-bold"><?= count($pending) ?></div>
+            </div>
+        </div>
+        <div data-theme-card class="bg-surface p-5 rounded-lg border border-border flex items-center gap-5">
+            <div class="w-12 h-12 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                <span class="material-symbols-outlined text-2xl font-bold">fact_check</span>
+            </div>
+            <div>
+                <div data-theme-muted class="text-[9px] font-bold   opacity-40">Processed Today</div>
+                <div data-theme-text class="text-xl font-bold">24</div>
+            </div>
+        </div>
+        <div data-theme-card class="bg-surface p-5 rounded-lg border border-border flex items-center gap-5">
+            <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-2xl font-bold">groups</span>
+            </div>
+            <div>
+                <div data-theme-muted class="text-[9px] font-bold   opacity-40">Staff on Duty</div>
+                <div data-theme-text class="text-xl font-bold">Active</div>
+            </div>
+        </div>
+        <div data-theme-card class="bg-surface p-5 rounded-lg border border-border flex items-center gap-5">
+            <div class="w-12 h-12 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center">
+                <span class="material-symbols-outlined text-2xl font-bold">event_busy</span>
+            </div>
+            <div>
+                <div data-theme-muted class="text-[9px] font-bold   opacity-40">Out of Office</div>
+                <div data-theme-text class="text-xl font-bold"><?= count($leaves) - count($approved) ?> Mixed</div>
+            </div>
         </div>
     </div>
-</div>
 
-<?php else:
-    // Employee: hanya tampilkan milik sendiri
-    $my_leaves = array_filter($leaves, fn($l) => $l['user_id'] === $my_uid);
-?>
-
-<!-- ─── Employee: Pengajuan Izin ───────────────── -->
-<div class="space-y-6">
-
-    <!-- Hero Section -->
-    <section style="background:linear-gradient(145deg,#111 55%,#1c1c1c); border-radius:14px; color:#fff; padding:24px; position:relative; overflow:hidden;">
-        <div style="position:relative; z-index:1; display:flex; justify-content:space-between; align-items:center; gap:20px;">
-            <div>
-                <p style="font-size:10px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; color:var(--accent); margin:0 0 6px;">Manajemen Absensi</p>
-                <h1 style="font-size:22px; font-weight:900; margin:0 0 8px; line-height:1.2; color:#fff;">Pengajuan Izin</h1>
-                <p style="font-size:12px; color:rgba(255,255,255,.6); margin:0; max-width:400px; line-height:1.5;">Ajukan izin atau cuti dengan mudah. Pantau status persetujuan Anda secara real-time di sini.</p>
-            </div>
-            <button onclick="openModal('leaveModal')" style="background:var(--primary); color:#fff; border:none; border-radius:12px; padding:12px 20px; font-size:13px; font-weight:800; cursor:pointer; box-shadow:0 10px 20px rgba(0,61,155,.3); display:flex; align-items:center; gap:8px;">
-                <span class="material-symbols-outlined" style="font-size:20px;">add_circle</span>
-                Ajukan Izin
-            </button>
-        </div>
-        <div style="position:absolute;right:-30px;top:-30px;width:160px;height:160px;background:radial-gradient(circle,rgba(178,197,255,.15) 0%,transparent 70%);border-radius:50%;pointer-events:none;"></div>
-    </section>
-
-    <!-- Stats -->
-    <div class="stat-grid">
-        <?php
-        $stats = [
-            ['label' => 'Pending', 'count' => count(array_filter($my_leaves, fn($l) => $l['approval_status'] === 'pending')), 'ib' => 'ib-orange', 'ic' => 'var(--primary)', 'sym' => 'pending_actions'],
-            ['label' => 'Approved', 'count' => count(array_filter($my_leaves, fn($l) => $l['approval_status'] === 'approved')), 'ib' => 'ib-green', 'ic' => '#10B981', 'sym' => 'check_circle'],
-            ['label' => 'Rejected', 'count' => count(array_filter($my_leaves, fn($l) => $l['approval_status'] === 'rejected')), 'ib' => 'ib-red', 'ic' => '#EF4444', 'sym' => 'cancel'],
-        ];
-        foreach ($stats as $s):
+    <!-- ══ Approval Queue Grid ══ -->
+    <div id="leaveGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 pb-20">
+        <?php foreach ($leaves as $leave): 
+             $st = $leave['approval_status'];
+             $is_pending = $st === 'pending';
+             $st_clr = $st==='approved'?'emerald':($st==='pending'?'amber':'rose');
         ?>
-        <div data-theme-card class="stat-card">
-            <div class="ib <?= $s['ib'] ?> st-icon">
-                <span class="material-symbols-outlined icon-size" style="color:<?= $s['ic'] ?>;"><?= $s['sym'] ?></span>
-            </div>
-            <div>
-                <p data-theme-muted class="st-label"><?= $s['label'] ?></p>
-                <p data-theme-text class="st-val"><?= $s['count'] ?></p>
+        <div class="leave-card" data-search-content="<?= strtolower($leave['employee_name'] . ' ' . $leave['department']) ?>">
+            <div data-theme-card class="bg-surface p-6 rounded-lg border border-border group hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 relative flex flex-col h-full overflow-hidden">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-<?= $st_clr ?>-500/[0.03] rounded-bl-[3rem] transition-transform group-hover:scale-125"></div>
+                
+                <div class="flex items-center gap-4 mb-5 pb-4">
+                    <div class="w-12 h-12 bg-surface2 border border-border rounded-lg flex items-center justify-center text-primary font-bold text-lg">
+                        <?= avatar_initials($leave['employee_name']) ?>
+                    </div>
+                    <div>
+                        <h4 data-theme-text class="text-sm font-bold  leading-tight"><?= h($leave['employee_name']) ?></h4>
+                        <p data-theme-muted class="text-[8px] font-bold   opacity-30 mt-1"><?= h($leave['department']) ?></p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 mb-6 grow mt-2">
+                    <div class="flex items-center justify-between">
+                         <span class="px-2 py-0.5 bg-<?= $st_clr ?>-500/10 text-<?= $st_clr ?>-500 rounded-lg text-[8px] font-bold  "><?= h($st) ?></span>
+                         <span data-theme-muted class="text-[8px] font-bold   opacity-30"><?= leave_type_label($leave['leave_type']) ?></span>
+                    </div>
+
+                    <div class="p-4 bg-surface2 rounded-lg border-none">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="material-symbols-outlined text-xs text-primary">calendar_month</span>
+                            <span data-theme-text class="text-[10px] font-bold"><?= date('d M', strtotime($leave['leave_start'])) ?> – <?= date('d M', strtotime($leave['leave_end'])) ?></span>
+                        </div>
+                        <p data-theme-muted class="text-[10px] font-medium leading-relaxed italic opacity-70">"<?= h($leave['leave_reason']) ?>"</p>
+                    </div>
+                </div>
+
+                <?php if ($is_pending): ?>
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="confirmApprove(<?= $leave['id'] ?>, '<?= h($leave['employee_name']) ?>')" class="w-full py-3 bg-emerald-500 text-white rounded-lg text-[9px] font-bold   shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all">
+                        <span class="material-symbols-outlined text-sm">check_circle</span>
+                        <span>Approve</span>
+                    </button>
+                    <button onclick="confirmReject(<?= $leave['id'] ?>, '<?= h($leave['employee_name']) ?>')" class="w-full py-3 bg-rose-500/5 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/10 rounded-lg text-[9px] font-bold   flex items-center justify-center gap-2 active:scale-95 transition-all">
+                        <span class="material-symbols-outlined text-sm">cancel</span>
+                        <span>Reject</span>
+                    </button>
+                </div>
+                <?php else: ?>
+                <div class="w-full py-3 bg-surface2 text-on-surface/30 rounded-lg text-[9px] font-bold   text-center border-none shadow-sm">
+                    Process Complete
+                </div>
+                <?php endif; ?>
             </div>
         </div>
         <?php endforeach; ?>
     </div>
+</div>
 
-    <!-- My Leaves List -->
-    <div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:0 2px;">
-            <p data-theme-muted style="font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin:0;">Riwayat Pengajuan</p>
-            <span class="badge badge-blue"><?= count($my_leaves) ?> Records</span>
+<!-- Modal Konfirmasi Approve -->
+<div id="approveModal" style="display:none;" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" onclick="if(event.target===this)closeModal('approveModal')">
+    <div data-theme-card class="w-full max-w-sm bg-surface rounded-lg border border-border shadow-2xl overflow-hidden p-8 text-center">
+        <div class="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-lg flex items-center justify-center mx-auto mb-6">
+            <span class="material-symbols-outlined text-3xl font-bold">verified_user</span>
         </div>
-
-        <div style="display:flex;flex-direction:column;gap:10px;">
-            <?php if (!empty($my_leaves)): ?>
-                <?php foreach ($my_leaves as $i => $leave): 
-                    $st = $leave['approval_status'];
-                    $st_cls = $st==='approved'?'badge-green':($st==='pending'?'badge-orange':'badge-red');
-                ?>
-                <div data-theme-card style="background:var(--surface);border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px;border:1px solid var(--border);box-shadow:var(--shadow);position:relative;overflow:hidden;">
-                    <!-- Date Badge -->
-                    <div style="background:var(--surface2);border-radius:10px;padding:6px;min-width:55px;text-align:center;border:1px solid var(--border);">
-                        <div style="font-size:8px;font-weight:800;text-transform:uppercase;color:var(--text-muted);"><?= date('M', strtotime($leave['leave_start'])) ?></div>
-                        <div style="font-size:18px;font-weight:950;color:var(--text-primary);line-height:1;margin:2px 0;"><?= date('d', strtotime($leave['leave_start'])) ?></div>
-                        <div style="font-size:8px;font-weight:700;color:var(--text-muted);"><?= date('Y', strtotime($leave['leave_start'])) ?></div>
-                    </div>
-
-                    <div style="flex:1;min-width:0;">
-                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-                            <h4 data-theme-text style="font-size:12px;font-weight:900;color:var(--text-primary);margin:0;"><?= leave_type_label($leave['leave_type']) ?></h4>
-                            <span class="badge <?= $st_cls ?>" style="font-size:8px;padding:1px 6px;"><?= $st ?></span>
-                        </div>
-                        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
-                            <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-muted);font-weight:600;">
-                                <span class="material-symbols-outlined" style="font-size:14px;color:var(--primary);">calendar_today</span>
-                                <?= format_date($leave['leave_start']) ?> – <?= format_date($leave['leave_end']) ?>
-                            </div>
-                            <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-muted);font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                                <span class="material-symbols-outlined" style="font-size:14px;color:var(--primary);">chat_bubble_outline</span>
-                                <?= h($leave['leave_reason']) ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="opacity:.3;">
-                        <span class="material-symbols-outlined" style="font-size:20px;">chevron_right</span>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div data-theme-card style="background:var(--surface);border-radius:14px;padding:40px 20px;text-align:center;border:1px solid var(--border);border-style:dashed;">
-                    <div class="ib ib-orange" style="width:48px;height:48px;border-radius:12px;margin:0 auto 12px;">
-                        <span class="material-symbols-outlined" style="font-size:24px;color:var(--primary);">event_note</span>
-                    </div>
-                    <p data-theme-text style="font-size:14px;font-weight:900;color:var(--text-primary);margin:0;">Belum ada pengajuan</p>
-                    <p data-theme-muted style="font-size:11px;color:var(--text-muted);margin:4px 0 0;">Anda dapat mulai mengajukan izin dengan menekan tombol diatas.</p>
-                </div>
-            <?php endif; ?>
+        <h3 data-theme-text class="text-xl font-bold  mb-2">Authorize Absence?</h3>
+        <p data-theme-muted class="text-xs font-medium opacity-60 mb-8 leading-relaxed">Approving this request for <span id="app_name" class="font-bold text-on-surface"></span> will formalize their absence in the roster.</p>
+        
+        <div class="grid grid-cols-2 gap-3">
+            <button onclick="closeModal('approveModal')" class="py-3.5 bg-surface2 text-on-surface font-bold text-[10px] rounded-lg border border-border">Back</button>
+            <a id="app_confirm_btn" href="#" class="py-3.5 bg-emerald-500 text-white font-bold text-[10px] rounded-lg shadow-lg shadow-emerald-500/20">Authorize</a>
         </div>
     </div>
 </div>
 
-<!-- Modal Pengajuan Izin -->
-<!-- Modal Pengajuan Izin -->
-<div id="leaveModal" style="display:none;" class="modal-backdrop" onclick="if(event.target===this)closeModal('leaveModal')">
-    <div data-theme-card class="w-full max-w-lg bg-surface rounded-2xl border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
-        
-        <!-- Modal Header -->
-        <div class="p-5 pb-1 flex justify-between items-start">
-            <div>
-                <h3 data-theme-text class="text-xl font-black tracking-tight leading-none mb-2">Formulir Izin</h3>
-                <div class="flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                    <p data-theme-muted class="text-[9px] font-black uppercase tracking-[0.2em] opacity-60">Lengkapi detail pengajuan Anda</p>
-                </div>
-            </div>
-            <button onclick="closeModal('leaveModal')" data-theme-surface2 class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/40 hover:bg-surface2 transition-colors">
-                <span class="material-symbols-outlined font-black">close</span>
-            </button>
+<!-- Modal Konfirmasi Reject -->
+<div id="rejectModal" style="display:none;" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" onclick="if(event.target===this)closeModal('rejectModal')">
+    <div data-theme-card class="w-full max-w-sm bg-surface rounded-lg border border-border shadow-2xl overflow-hidden p-8 text-center">
+        <div class="w-16 h-16 bg-rose-500/10 text-rose-500 rounded-lg flex items-center justify-center mx-auto mb-6">
+            <span class="material-symbols-outlined text-3xl font-bold">block</span>
         </div>
+        <h3 data-theme-text class="text-xl font-bold  mb-2">Decline Request?</h3>
+        <p data-theme-muted class="text-xs font-medium opacity-60 mb-8 leading-relaxed">Declining this request for <span id="rej_name" class="font-bold text-on-surface"></span> will mark it as rejected. The employee will be notified of the refusal.</p>
+        
+        <div class="grid grid-cols-2 gap-3">
+            <button onclick="closeModal('rejectModal')" class="py-3.5 bg-surface2 text-on-surface font-bold text-[10px] rounded-lg border border-border">Cancel</button>
+            <a id="rej_confirm_btn" href="#" class="py-3.5 bg-rose-500 text-white font-bold text-[10px] rounded-lg shadow-lg shadow-rose-500/20">Decline</a>
+        </div>
+    </div>
+</div>
 
-        <!-- Modal Body -->
-        <form method="POST" action="?page=leaves&action=submit" class="p-5 pt-1 space-y-5">
-            <!-- Type Selection (Radio Cards) -->
-            <div class="space-y-2.5">
-                <label data-theme-muted class="text-[9px] font-black uppercase tracking-widest opacity-50 block">Pilih Tipe Izin</label>
-                <div class="grid grid-cols-2 gap-2.5">
-                    <?php 
-                    $types = [
-                        ['val' => 'sick',     'label' => 'Sakit', 'sym' => 'medical_services', 'clr' => 'emerald'],
-                        ['val' => 'annual',   'label' => 'Cuti',  'sym' => 'beach_access', 'clr' => 'blue'],
-                        ['val' => 'personal', 'label' => 'Urgent', 'sym' => 'priority_high', 'clr' => 'amber'],
-                        ['val' => 'other',    'label' => 'Lainnya','sym' => 'more_horiz', 'clr' => 'purple'],
-                    ];
-                    foreach ($types as $t):
-                    ?>
-                    <label class="relative cursor-pointer group">
-                        <input type="radio" name="leave_type" value="<?= $t['val'] ?>" class="peer sr-only" required <?= $t['val'] === 'sick' ? 'checked' : '' ?>>
-                        <div class="radio-card p-4 rounded-2xl border-2 border-border transition-all group-active:scale-[0.98] flex items-center gap-3" style="background:var(--surface);">
-                            <div class="icon-box w-10 h-10 rounded-xl bg-<?= $t['clr'] ?>-500/10 text-<?= $t['clr'] ?>-500 flex items-center justify-center shrink-0 transition-colors">
-                                <span class="material-symbols-outlined text-xl font-black"><?= $t['sym'] ?></span>
-                            </div>
-                            <span data-theme-text class="label-text text-xs font-black tracking-tight transition-colors"><?= $t['label'] ?></span>
-                        </div>
-                    </label>
-                    <?php endforeach; ?>
-                </div>
+<?php else: 
+    // Employee View: Redirect to simplified modern list or self-managed roster
+    $my_leaves = array_filter($leaves, fn($l) => $l['user_id'] === $my_uid);
+?>
+<div class="space-y-8 performance-page-container">
+    <header class="flex items-end justify-between gap-6">
+        <div>
+            <h1 data-theme-text class="text-4xl font-bold  leading-none mb-2">My Absences</h1>
+            <p data-theme-muted class="text-[10px] font-bold   ml-1 opacity-50">Manage your time off</p>
+        </div>
+        <button onclick="openModal('leaveModal')" class="px-6 py-3.5 bg-primary text-white rounded-lg font-bold text-xs   flex items-center gap-2 shadow-xl shadow-primary/20 active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-lg">add_circle</span>
+            <span>Request Leave</span>
+        </button>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+        <?php foreach ($my_leaves as $leave): 
+            $st = $leave['approval_status'];
+            $st_clr = $st==='approved'?'emerald':($st==='pending'?'amber':'rose');
+        ?>
+        <div data-theme-card class="bg-surface p-6 rounded-lg border border-border relative overflow-hidden flex flex-col">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-<?= $st_clr ?>-500/[0.03] rounded-bl-[2.5rem]"></div>
+            
+            <div class="flex items-center justify-between mb-4">
+                 <span class="px-2 py-0.5 bg-<?= $st_clr ?>-500/10 text-<?= $st_clr ?>-500 rounded-lg text-[8px] font-bold  "><?= h($st) ?></span>
+                 <span data-theme-muted class="text-[8px] font-bold opacity-30"><?= date('M Y', strtotime($leave['leave_start'])) ?></span>
             </div>
+            
+            <h4 data-theme-text class="text-lg font-bold  mb-4"><?= leave_type_label($leave['leave_type']) ?></h4>
+            
+            <div class="grow space-y-3 mb-6">
+                <div class="flex items-center gap-2 text-xs font-bold opacity-60">
+                    <span class="material-symbols-outlined text-sm">calendar_range</span>
+                    <?= date('d M', strtotime($leave['leave_start'])) ?> – <?= date('d M', strtotime($leave['leave_end'])) ?>
+                </div>
+                <p data-theme-muted class="text-xs italic opacity-40">"<?= h($leave['leave_reason']) ?>"</p>
+            </div>
+            
+            <div class="pt-4 text-right">
+                <span class="text-[9px] font-bold   opacity-20"><?= $st === 'pending' ? 'Decision Awaited' : 'Archive' ?></span>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
 
-            <!-- Date Range -->
+<!-- Modal remains mostly similar but themed for Neon -->
+<div id="leaveModal" style="display:none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-md p-4" onclick="if(event.target===this)closeModal('leaveModal')">
+    <div data-theme-card class="w-full max-w-lg bg-surface rounded-lg border border-border shadow-2xl overflow-hidden">
+        <div class="p-8 pb-1 flex justify-between items-center">
+            <h3 data-theme-text class="text-2xl font-bold ">Request Leave</h3>
+            <button onclick="closeModal('leaveModal')" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/40 hover:bg-surface2"><span class="material-symbols-outlined font-bold">close</span></button>
+        </div>
+        <form method="POST" action="?page=leaves&action=submit" class="p-8 pt-4 space-y-6">
             <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-3">
-                    <label data-theme-muted class="text-[9px] font-black uppercase tracking-widest opacity-50 block">Dari Tanggal</label>
-                    <input data-theme-text name="leave_start" type="date" class="w-full border border-border rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" style="background:var(--surface2) !important; color:var(--text-primary) !important;" min="<?= date('Y-m-d') ?>" required>
+                <?php foreach (['sick'=>'Sakit','annual'=>'Cuti','personal'=>'Urgent','other'=>'Lainnya'] as $v=>$l): ?>
+                <label class="cursor-pointer">
+                    <input type="radio" name="leave_type" value="<?= $v ?>" class="sr-only peer" required <?= $v==='sick'?'checked':'' ?>>
+                    <div class="p-4 bg-surface2 border-2 border-border peer-checked:border-primary peer-checked:bg-primary/5 rounded-lg transition-all">
+                        <span data-theme-text class="text-[10px] font-bold   peer-checked:text-primary"><?= $l ?></span>
+                    </div>
+                </label>
+                <?php endforeach; ?>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label data-theme-muted class="text-[9px] font-bold  opacity-40">Start Date</label>
+                    <input name="leave_start" type="date" class="w-full px-4 py-3 bg-surface2 rounded-lg text-xs font-bold border-border outline-none focus:ring-2 focus:ring-primary/20" required>
                 </div>
-                <div class="space-y-3">
-                    <label data-theme-muted class="text-[9px] font-black uppercase tracking-widest opacity-50 block">Hingga Tanggal</label>
-                    <input data-theme-text name="leave_end" type="date" class="w-full border border-border rounded-xl px-4 py-3 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" style="background:var(--surface2) !important; color:var(--text-primary) !important;" min="<?= date('Y-m-d') ?>" required>
+                <div class="space-y-2">
+                    <label data-theme-muted class="text-[9px] font-bold  opacity-40">End Date</label>
+                    <input name="leave_end" type="date" class="w-full px-4 py-3 bg-surface2 rounded-lg text-xs font-bold border-border outline-none focus:ring-2 focus:ring-primary/20" required>
                 </div>
             </div>
-
-            <!-- Reason -->
-            <div class="space-y-2.5">
-                <label data-theme-muted class="text-[9px] font-black uppercase tracking-widest opacity-50 block">Alasan & Keterangan</label>
-                <textarea data-theme-text name="leave_reason" rows="3" class="w-full border border-border rounded-xl px-4 py-2.5 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none" style="background:var(--surface2) !important; color:var(--text-primary) !important;" placeholder="Tuliskan alasan pengajuan Anda..." required></textarea>
-            </div>
-
-            <!-- Actions -->
-            <div class="pt-4 flex flex-col gap-3">
-                <button type="submit" class="w-full py-5 bg-primary text-white rounded-full text-sm font-black uppercase shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-3">
-                    <span class="material-symbols-outlined font-black">send</span>
-                    Kirim Pengajuan
-                </button>
-                <button type="button" onclick="closeModal('leaveModal')" data-theme-muted class="w-full py-3 text-xs font-bold uppercase tracking-widest hover:bg-surface2 rounded-full transition-all text-center">
-                    Batal
-                </button>
-            </div>
+            <textarea name="leave_reason" rows="3" class="w-full p-4 bg-surface2 rounded-lg text-xs font-bold border-border outline-none focus:ring-2 focus:ring-primary/20 resize-none" placeholder="Reason for leave..." required></textarea>
+            <button type="submit" class="w-full py-5 bg-primary text-white rounded-full text-xs font-bold   shadow-2xl shadow-primary/20 active:scale-95 transition-all">Submit Request</button>
         </form>
     </div>
 </div>
-
-<style>
-
-.stat-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
-.stat-card {
-    background: var(--surface);
-    border-radius: 14px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-}
-.st-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    flex-shrink: 0;
-}
-.icon-size {
-    font-size: 20px;
-}
-.st-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin: 0 0 2px;
-}
-.st-val {
-    font-size: 16px;
-    font-weight: 950;
-    color: var(--text-primary);
-    margin: 0;
-}
-
-@media (max-width: 640px) {
-    .stat-grid {
-        gap: 6px;
-        grid-template-columns: repeat(3, 1fr);
-    }
-    .stat-card {
-        padding: 5px 2px;
-        gap: 4px;
-        flex-direction: column;
-        text-align: center;
-        border-radius: 8px;
-    }
-    .st-icon {
-        width: 24px !important;
-        height: 24px !important;
-        border-radius: 6px !important;
-        margin: 0 auto;
-    }
-    .icon-size {
-        font-size: 14px !important;
-    }
-    .st-label {
-        font-size: 7px !important;
-        letter-spacing: 0 !important;
-    }
-    .st-val {
-        font-size: 11px !important;
-    }
-}
-</style>
-
 <?php endif; ?>
+
+<script>
+function filterLeaves(q) {
+    q = q.toLowerCase();
+    document.querySelectorAll('.leave-card').forEach(c => {
+        c.style.display = c.getAttribute('data-search-content').includes(q) ? 'block' : 'none';
+    });
+}
+function confirmApprove(id, name) {
+    document.getElementById('app_name').innerText = name;
+    document.getElementById('app_confirm_btn').href = `?page=leaves&action=approve&id=${id}`;
+    openModal('approveModal');
+}
+function confirmReject(id, name) {
+    document.getElementById('rej_name').innerText = name;
+    document.getElementById('rej_confirm_btn').href = `?page=leaves&action=reject&id=${id}`;
+    openModal('rejectModal');
+}
+</script>

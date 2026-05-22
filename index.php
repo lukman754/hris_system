@@ -38,11 +38,12 @@ if (isset($_SESSION['user']) && (isset($_GET['action']) || isset($_POST['action'
     // Employee Actions (HRD Only)
     if ($page === 'employees' && auth_is_hrd()) {
         if ($action === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $stmt = $pdo->prepare("INSERT INTO users (id, name, email, password, role, position, department, salary, join_date) VALUES (?, ?, ?, ?, 'employee', ?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO users (id, name, email, phone_number, password, role, position, department, salary, join_date, can_attendance) VALUES (?, ?, ?, ?, ?, 'employee', ?, ?, ?, ?, ?)");
             $new_id = 'emp' . str_pad(rand(100, 999), 3, '0', STR_PAD_LEFT);
             $stmt->execute([
-                $new_id, $_POST['name'], $_POST['email'], $_POST['password'], 
-                $_POST['position'], $_POST['department'], $_POST['salary'], $_POST['join_date']
+                $new_id, $_POST['name'], $_POST['email'], $_POST['phone_number'] ?? null, $_POST['password'], 
+                $_POST['position'], $_POST['department'], $_POST['salary'], $_POST['join_date'],
+                isset($_POST['can_attendance']) ? 1 : 0
             ]);
             header("Location: /hris_system/?page=employees&success=Karyawan berhasil ditambahkan");
             exit;
@@ -51,6 +52,81 @@ if (isset($_SESSION['user']) && (isset($_GET['action']) || isset($_POST['action'
             $stmt = $pdo->prepare("DELETE FROM users WHERE id = ? AND role = 'employee'");
             $stmt->execute([$_GET['id']]);
             header("Location: /hris_system/?page=employees&success=Karyawan berhasil dihapus");
+            exit;
+        }
+        if ($action === 'edit' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $stmt = $pdo->prepare("UPDATE users SET name=?, email=?, phone_number=?, position=?, department=?, salary=?, can_attendance=? WHERE id = ?");
+            $stmt->execute([
+                $_POST['name'], $_POST['email'], $_POST['phone_number'] ?? null, $_POST['position'], 
+                $_POST['department'], $_POST['salary'], 
+                isset($_POST['can_attendance']) ? 1 : 0,
+                $_POST['id']
+            ]);
+            header("Location: /hris_system/?page=employees&success=Karyawan berhasil diperbarui");
+            exit;
+        }
+        if ($action === 'reset-password' && isset($_GET['id'])) {
+            $emp_id = $_GET['id'];
+            $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            $new_password = '';
+            for ($i = 0; $i < 8; $i++) {
+                $new_password .= $chars[rand(0, strlen($chars) - 1)];
+            }
+            
+            $stmt = $pdo->prepare("SELECT name, phone_number FROM users WHERE id = ? AND role = 'employee'");
+            $stmt->execute([$emp_id]);
+            $emp = $stmt->fetch();
+            if ($emp) {
+                $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+                $stmt->execute([$new_password, $emp_id]);
+                $_SESSION['reset_password_success'] = [
+                    'name' => $emp['name'],
+                    'password' => $new_password
+                ];
+                
+                $phone = $emp['phone_number'] ?? '';
+                $clean_phone = preg_replace('/[^0-9]/', '', $phone);
+                if (str_starts_with($clean_phone, '0')) {
+                    $clean_phone = '62' . substr($clean_phone, 1);
+                } else if (!empty($clean_phone) && !str_starts_with($clean_phone, '62')) {
+                    $clean_phone = '62' . $clean_phone;
+                }
+
+                if (!empty($clean_phone)) {
+                    $msg = "Yth. *" . $emp['name'] . "*,\n\nPassword akun HRIS Anda telah direset oleh Administrator dengan password sementara berikut:\n\n🔑 *Password Baru:* `" . $new_password . "`\n\nSilakan segera login ke sistem portal HRIS dan ganti password ini melalui menu *Profil Saya* demi menjaga keamanan akun Anda.\n\nTerima kasih,\n*HRD - Perkasa Abadi Logistik*";
+                    $wa_link = "https://wa.me/" . $clean_phone . "?text=" . urlencode($msg);
+                    header("Location: " . $wa_link);
+                } else {
+                    header("Location: /hris_system/?page=employees&success=Password berhasil direset (karyawan belum mengisi No. HP)");
+                }
+                exit;
+            }
+        }
+    }
+
+    // Profile Actions (Any logged-in user)
+    if ($page === 'profile') {
+        if ($action === 'change-password' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $old_pass = $_POST['old_password'] ?? '';
+            $new_pass = $_POST['new_password'] ?? '';
+            $confirm_pass = $_POST['confirm_password'] ?? '';
+            
+            if ($old_pass === $_SESSION['user']['password']) {
+                if ($new_pass === $confirm_pass) {
+                    if (strlen($new_pass) >= 8) {
+                        $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+                        $stmt->execute([$new_pass, $uid]);
+                        $_SESSION['user']['password'] = $new_pass;
+                        header("Location: /hris_system/?page=profile&success=Password berhasil diperbarui");
+                    } else {
+                        header("Location: /hris_system/?page=profile&error=Password baru minimal 8 karakter");
+                    }
+                } else {
+                    header("Location: /hris_system/?page=profile&error=Konfirmasi password baru tidak cocok");
+                }
+            } else {
+                header("Location: /hris_system/?page=profile&error=Password lama salah");
+            }
             exit;
         }
     }
@@ -138,6 +214,18 @@ if (isset($_SESSION['user']) && (isset($_GET['action']) || isset($_POST['action'
             header("Location: /hris_system/?page=announcements&success=Pengumuman dipublikasikan");
             exit;
         }
+        if ($action === 'edit' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $stmt = $pdo->prepare("UPDATE announcements SET title = ?, content = ?, priority = ?, expires_at = ? WHERE id = ?");
+            $stmt->execute([$_POST['title'], $_POST['content'], $_POST['priority'], $_POST['expires_at'] ?: null, $_POST['id']]);
+            header("Location: /hris_system/?page=announcements&success=Pengumuman diperbarui");
+            exit;
+        }
+        if ($action === 'delete') {
+            $stmt = $pdo->prepare("DELETE FROM announcements WHERE id = ?");
+            $stmt->execute([$_GET['id']]);
+            header("Location: /hris_system/?page=announcements&success=Pengumuman dihapus");
+            exit;
+        }
     }
 
     // Performance Reviews (HRD)
@@ -149,6 +237,12 @@ if (isset($_SESSION['user']) && (isset($_GET['action']) || isset($_POST['action'
             $_POST['communication'], $_POST['teamwork'], $_POST['initiative'], $overall, $_POST['feedback']
         ]);
         header("Location: /hris_system/?page=performance&success=Review kinerja disimpan");
+        exit;
+    }
+    if ($page === 'performance' && auth_is_hrd() && $action === 'delete') {
+        $stmt = $pdo->prepare("DELETE FROM performance_reviews WHERE id = ?");
+        $stmt->execute([$_GET['id']]);
+        header("Location: /hris_system/?page=performance&success=Review kinerja dihapus");
         exit;
     }
 
@@ -194,6 +288,12 @@ if (isset($_SESSION['user']) && (isset($_GET['action']) || isset($_POST['action'
             }
             exit;
         }
+        if ($action === 'delete') {
+            $stmt = $pdo->prepare("DELETE FROM locations WHERE id = ?");
+            $stmt->execute([$_GET['id']]);
+            header("Location: /hris_system/?page=locations&success=Kantor berhasil dihapus");
+            exit;
+        }
     }
 }
 
@@ -209,7 +309,7 @@ if (empty($_SESSION['user'])):
     <!-- Google Fonts: Manrope & Inter -->
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800;900&display=swap" rel="stylesheet"/>
     <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -218,7 +318,7 @@ if (empty($_SESSION['user'])):
             darkMode: "class",
             theme: {
                 extend: {
-                    "colors": {
+                    colors: {
                         "on-background": "#191c1e",
                         "primary": "#003d9b",
                         "surface-container": "#edeef0",
@@ -267,171 +367,154 @@ if (empty($_SESSION['user'])):
                         "error-container": "#ffdad6",
                         "primary-fixed": "#dae2ff"
                     },
-                    "borderRadius": {
+                    borderRadius: {
                         "DEFAULT": "0.125rem",
                         "lg": "0.25rem",
                         "xl": "0.5rem",
                         "full": "0.75rem"
                     },
-                    "fontFamily": {
-                        "headline": ["Manrope"],
-                        "body": ["Inter"],
-                        "label": ["Inter"]
+                    fontFamily: {
+                        "headline": ["Manrope", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            "0%": { opacity: "0", transform: "translateY(20px)" },
+                            "100%": { opacity: "1", transform: "translateY(0)" }
+                        },
+                        float: {
+                            "0%, 100%": { transform: "translateY(0)" },
+                            "50%": { transform: "translateY(-12px)" }
+                        }
+                    },
+                    animation: {
+                        "fade-up": "fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
+                        "float": "float 6s ease-in-out infinite"
                     }
                 },
             },
         }
     </script>
-    <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, .font-headline { font-family: 'Manrope', sans-serif; }
-        
-        .kp-input {
-            background-color: transparent;
-            border: none;
-            border-bottom: 2px solid #737685;
-            transition: border-bottom-color 0.2s ease;
-            padding-left: 0;
-            padding-right: 0;
-        }
-        .kp-input:focus {
-            border-bottom-color: #003d9b;
-            ring: 0;
-            outline: none;
-            box-shadow: none;
-        }
-
-        .grid-pattern {
-            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 30px 30px;
-        }
-
-        /* Re-adding essential project classes */
-        .card { background: white; border-radius: 12px; border: 1px solid rgba(0,0,0,.06); box-shadow: 0 4px 20px rgba(0,0,0,.04); }
-        .fade-up { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
 </head>
-<body class="bg-white min-h-screen">
+<body class="bg-slate-50 min-h-screen font-body antialiased">
 <main class="flex min-h-screen flex-col md:flex-row">
     <!-- Left Column: Branding & Illustration (Adaptive Navbar on Mobile) -->
-    <div class="relative w-full md:w-1/2 bg-primary flex flex-col md:items-center md:justify-center p-5 md:p-12 text-on-primary overflow-hidden shrink-0">
-        <!-- Decorative Grid Pattern (Desktop Only) -->
-        <div class="absolute inset-0 grid-pattern opacity-20 hidden md:block"></div>
+    <div class="relative w-full md:w-1/2 bg-gradient-to-br from-[#002f7a] via-[#003d9b] to-[#001848] flex flex-col md:items-center md:justify-center p-6 md:p-12 text-white overflow-hidden shrink-0">
+        <!-- Floating glow decorations for a premium look (Desktop only) -->
+        <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-500 rounded-full blur-[120px] opacity-25 pointer-events-none hidden md:block animate-float"></div>
+        <div class="absolute -bottom-32 -right-32 w-[450px] h-[450px] bg-indigo-500 rounded-full blur-[140px] opacity-20 pointer-events-none hidden md:block" style="animation: float 8s ease-in-out infinite;"></div>
         
         <!-- Content Container -->
         <div class="relative z-10 flex flex-row md:flex-col items-center md:justify-center text-left md:text-center w-full max-w-md gap-4 md:gap-0">
-            <!-- Logo Bin (Clean, No Effects) -->
-            <div class="bg-white p-1.5 md:p-6 rounded-xl md:rounded-2xl shadow-sm">
-                <img alt="Perkasa Abadi Logo" class="w-10 h-10 md:w-48 md:h-48 object-contain" src="/hris_system/public/img/logo.jpg"/>
+            <!-- Logo container (Sleek glassmorphism style) -->
+            <div class="bg-white/10 backdrop-blur-md border border-white/15 p-2.5 md:p-6 rounded-2xl md:rounded-3xl shadow-xl transition-all duration-300 hover:scale-[1.03]">
+                <img alt="Perkasa Abadi Logo" class="w-10 h-10 md:w-44 md:h-44 object-contain brightness-110" src="/hris_system/public/img/logo.jpg"/>
             </div>
             
             <div class="flex flex-col md:items-center">
-                <h2 class="text-lg md:text-4xl font-extrabold font-headline tracking-tight uppercase leading-none md:mt-12 md:mb-4">Perkasa Abadi Logistik</h2>
-                <div class="hidden md:block h-1 w-20 bg-inverse-primary mb-6"></div>
-                <p class="hidden md:block text-xl font-medium text-on-primary-container opacity-90 leading-relaxed">
+                <h2 class="text-lg md:text-3xl font-black font-headline tracking-wider uppercase leading-none mt-0 md:mt-10 mb-0 md:mb-3 text-white">Perkasa Abadi Logistik</h2>
+                <div class="hidden md:block h-0.5 w-16 bg-gradient-to-r from-blue-300 to-indigo-300 mb-6"></div>
+                <p class="hidden md:block text-sm font-medium text-blue-100/80 leading-relaxed max-w-xs">
                     Logistics Excellence through People. <br/>
-                    Empowering movement, delivering trust.
+                    <span class="text-[10px] text-blue-200/60 uppercase tracking-widest font-bold mt-2.5 block">Empowering movement, delivering trust.</span>
                 </p>
             </div>
         </div>
         
-        <!-- Floating Decorative Element (Desktop Only) -->
-        <div class="absolute bottom-[-10%] right-[-10%] opacity-10 hidden md:block">
-            <span class="material-symbols-outlined text-[300px]" style="font-variation-settings: 'wght' 100;">precision_manufacturing</span>
+        <!-- Floating Decorative Icon in Background (Desktop Only) -->
+        <div class="absolute bottom-[-8%] right-[-8%] opacity-[0.04] hidden md:block pointer-events-none select-none">
+            <span class="material-symbols-outlined" style="font-family: 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 100, 'GRAD' 0, 'opsz' 24; font-size: 320px; line-height: 1;">precision_manufacturing</span>
         </div>
     </div>
     
     <!-- Right Column: Login Form -->
-    <div class="w-full md:w-1/2 bg-white flex flex-col justify-center items-center p-8 md:p-24">
-        <div class="w-full max-w-md fade-up">
+    <div class="w-full md:w-1/2 bg-slate-50/50 flex flex-col justify-center items-center p-6 md:p-16 lg:p-24">
+        <div class="w-full max-w-md bg-white p-8 md:p-12 rounded-[2rem] border border-slate-100/80 shadow-[0_8px_30px_rgb(0,0,0,0.015)] transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.03)] animate-fade-up">
             <!-- Header -->
-            <div class="mb-12">
-                <h1 class="text-4xl font-extrabold text-on-surface font-headline mb-3">Employee Access</h1>
-                <p class="text-on-surface-variant text-lg">Enter your credentials to secure your shift.</p>
+            <div class="mb-10 text-center md:text-left">
+                <h1 class="text-3xl font-black text-slate-900 font-headline tracking-tight mb-2">Employee Access</h1>
+                <p class="text-slate-400 text-sm font-medium">Enter your credentials to secure your shift.</p>
             </div>
 
             <!-- Functional Error Message -->
             <?php if (!empty($login_error)): ?>
-            <div class="p-4 bg-error/5 border border-error/10 rounded-xl text-error text-sm mb-8 flex items-center gap-3 animate-pulse">
-                <span class="material-symbols-outlined">error</span>
-                <span class="font-bold"><?= htmlspecialchars($login_error) ?></span>
+            <div class="p-4 bg-red-50 border border-red-100/60 rounded-2xl text-red-600 text-xs font-bold mb-6 flex items-center gap-3 animate-pulse">
+                <span class="material-symbols-outlined shrink-0" style="font-family: 'Material Symbols Outlined'; font-variation-settings: 'wght' 500;">error</span>
+                <span><?= htmlspecialchars($login_error) ?></span>
             </div>
             <?php endif; ?>
 
             <!-- Form -->
-            <form method="POST" class="space-y-8">
+            <form method="POST" class="space-y-6">
                 <!-- Email / ID Field -->
                 <div class="space-y-2">
-                    <label class="text-xs font-bold text-outline uppercase tracking-widest" for="employee-id">Employee ID or Email</label>
-                    <input class="kp-input w-full py-4 text-on-surface text-lg font-medium" 
-                           id="employee-id" name="email" 
-                           placeholder="e.g. name@perkasaabadi.com" 
-                           type="email" required autofocus
-                           value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"/>
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block" for="employee-id">Employee ID or Email</label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none" style="font-family: 'Material Symbols Outlined';">mail</span>
+                        <input class="w-full bg-slate-50/60 border border-slate-200/80 rounded-2xl pl-12 pr-5 py-4 text-slate-800 text-sm placeholder-slate-400 font-semibold focus:bg-white focus:border-[#003d9b] focus:ring-4 focus:ring-blue-100/50 focus:outline-none transition-all duration-200" 
+                               id="employee-id" name="email" 
+                               placeholder="name@perkasaabadi.com" 
+                               type="email" required autofocus
+                               value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"/>
+                    </div>
                 </div>
                 <!-- Password Field -->
                 <div class="space-y-2">
-                    <label class="text-xs font-bold text-outline uppercase tracking-widest" for="password">Password</label>
+                    <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block" for="password">Password</label>
                     <div class="relative">
-                        <input class="kp-input w-full py-4 pr-12 text-on-surface text-lg font-medium" 
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none" style="font-family: 'Material Symbols Outlined';">lock</span>
+                        <input class="w-full bg-slate-50/60 border border-slate-200/80 rounded-2xl pl-12 pr-12 py-4 text-slate-800 text-sm placeholder-slate-400 font-semibold focus:bg-white focus:border-[#003d9b] focus:ring-4 focus:ring-blue-100/50 focus:outline-none transition-all duration-200" 
                                id="password" name="password" 
                                placeholder="••••••••" type="password" required/>
-                        <button class="absolute right-0 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors" 
+                        <button class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#003d9b] transition-colors focus:outline-none" 
                                 type="button" onclick="const p = document.getElementById('password'); p.type = p.type === 'password' ? 'text' : 'password';">
-                            <span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+                            <span class="material-symbols-outlined" style="font-family: 'Material Symbols Outlined';">visibility</span>
                         </button>
                     </div>
                 </div>
                 <!-- Actions Row -->
-                <div class="flex items-center justify-between">
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input class="w-5 h-5 rounded-sm border-2 border-outline text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
-                        <span class="text-sm font-semibold text-on-surface-variant group-hover:text-on-surface transition-colors">Remember me</span>
+                <div class="flex items-center justify-between pt-1">
+                    <label class="flex items-center gap-2.5 cursor-pointer group">
+                        <input class="w-4.5 h-4.5 rounded border-slate-300 text-[#003d9b] focus:ring-0 focus:ring-offset-0 cursor-pointer" type="checkbox"/>
+                        <span class="text-xs font-bold text-slate-500 group-hover:text-slate-700 transition-colors">Remember me</span>
                     </label>
-                    <a class="text-sm font-bold text-primary hover:underline transition-all" href="#">Forgot Password?</a>
+                    <a class="text-xs font-extrabold text-[#003d9b] hover:text-[#002f7a] hover:underline transition-all" href="#">Forgot Password?</a>
                 </div>
-                <!-- Primary Action -->
-                <button class="w-full bg-primary text-on-primary font-bold py-5 rounded-lg hover:bg-primary-container transition-colors flex items-center justify-center gap-3 text-lg shadow-md" type="submit">
+                <!-- Primary Action Button -->
+                <button class="w-full bg-gradient-to-r from-[#003d9b] to-[#0052cc] text-white font-bold py-4 rounded-2xl shadow-[0_8px_20px_-6px_rgba(0,61,155,0.3)] hover:shadow-[0_12px_24px_-6px_rgba(0,61,155,0.4)] hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 text-xs uppercase tracking-widest" type="submit">
                     <span>Login to Dashboard</span>
-                    <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+                    <span class="material-symbols-outlined text-sm" style="font-family: 'Material Symbols Outlined';">arrow_forward</span>
                 </button>
             </form>
 
             <!-- Demo credentials -->
-            <div class="mt-10 p-6 bg-surface-container rounded-2xl border border-outline-variant/30">
+            <div class="mt-8 p-5 bg-slate-50/80 rounded-2xl border border-slate-100">
                 <div class="flex items-center gap-2 mb-3">
-                    <span class="material-symbols-outlined text-primary">info</span>
-                    <span class="text-xs font-black uppercase tracking-widest text-on-surface">Demo Credentials</span>
+                    <span class="material-symbols-outlined text-[#003d9b] text-base" style="font-family: 'Material Symbols Outlined';">info</span>
+                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-700">Demo Credentials</span>
                 </div>
-                <div class="space-y-2">
-                    <div class="flex justify-between text-xs">
-                        <span class="text-outline">HRD:</span>
-                        <span class="font-bold text-on-surface">hrd@company.com / admin123</span>
+                <div class="space-y-2.5">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-slate-400">HRD:</span>
+                        <code class="px-2 py-1 bg-white border border-slate-100 rounded-lg font-mono text-[11px] font-semibold text-slate-700">hrd@company.com / admin123</code>
                     </div>
-                    <div class="flex justify-between text-xs">
-                        <span class="text-outline">Employee:</span>
-                        <span class="font-bold text-on-surface">ayu@company.com / emp123</span>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-slate-400">Employee:</span>
+                        <code class="px-2 py-1 bg-white border border-slate-100 rounded-lg font-mono text-[11px] font-semibold text-slate-700">ayu@company.com / emp123</code>
                     </div>
                 </div>
             </div>
 
-            <!-- Bottom Status & Footer -->
-            <div class="mt-12 flex flex-col items-center gap-6">
-                <div class="flex items-center gap-3 bg-surface-container-low px-6 py-2.5 rounded-full border border-outline-variant/30">
-                    <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
-                    <span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">System Status: Excellence Operational</span>
+            <!-- Bottom Status & Security Notice -->
+            <div class="mt-8 flex flex-col items-center gap-4">
+                <div class="flex items-center gap-2 bg-emerald-50 text-emerald-700 border border-emerald-100/50 px-4 py-1.5 rounded-full">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[10px] font-black uppercase tracking-widest">System Status: Operational</span>
                 </div>
                 <div class="text-center">
-                    <p class="text-[10px] text-outline uppercase tracking-[0.2em] leading-relaxed">
-                        Unauthorized access is strictly prohibited <br/> under security protocol 14-B.
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-[0.18em] leading-relaxed max-w-[280px]">
+                        Unauthorized access is strictly prohibited under security protocol 14-B.
                     </p>
                 </div>
             </div>
@@ -439,18 +522,18 @@ if (empty($_SESSION['user'])):
     </div>
 </main>
 <!-- Minimal Footer -->
-<footer class="bg-white border-t border-outline-variant/30 py-8 px-8">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+<footer class="bg-white border-t border-slate-100 py-6 px-6">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500">
         <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary text-xl" data-icon="precision_manufacturing">precision_manufacturing</span>
-            <span class="font-bold text-on-surface text-sm">Perkasa Abadi Logistik</span>
+            <span class="material-symbols-outlined text-[#003d9b] text-lg" style="font-family: 'Material Symbols Outlined';">precision_manufacturing</span>
+            <span class="font-bold text-slate-700 text-xs tracking-wider uppercase">Perkasa Abadi Logistik</span>
         </div>
-        <div class="flex gap-8">
-            <a class="text-on-surface-variant hover:text-primary transition-colors text-xs font-semibold uppercase tracking-wider" href="#">Support</a>
-            <a class="text-on-surface-variant hover:text-primary transition-colors text-xs font-semibold uppercase tracking-wider" href="#">Privacy</a>
-            <a class="text-on-surface-variant hover:text-primary transition-colors text-xs font-semibold uppercase tracking-wider" href="#">Terms</a>
+        <div class="flex gap-6">
+            <a class="hover:text-[#003d9b] transition-colors text-[10px] font-bold uppercase tracking-wider" href="#">Support</a>
+            <a class="hover:text-[#003d9b] transition-colors text-[10px] font-bold uppercase tracking-wider" href="#">Privacy</a>
+            <a class="hover:text-[#003d9b] transition-colors text-[10px] font-bold uppercase tracking-wider" href="#">Terms</a>
         </div>
-        <p class="text-on-surface-variant text-[11px] font-medium">© 2026 Perkasa Abadi Logistik. All rights reserved.</p>
+        <p class="text-[10px] font-semibold">© 2026 Perkasa Abadi Logistik. All rights reserved.</p>
     </div>
 </footer>
 </body>
@@ -479,6 +562,7 @@ $page_files = [
     'calendar'           => 'pages/calendar.php',
     'people'             => 'pages/people.php',
     'locations'          => 'pages/locations.php',
+    'profile'            => 'pages/profile.php',
 ];
 
 $page_titles = [
@@ -494,11 +578,17 @@ $page_titles = [
     'calendar'           => 'Company Calendar',
     'people'             => 'Pegawai',
     'locations'          => 'QR Office',
+    'profile'            => 'Profil Saya',
 ];
 
 // Validasi akses HRD-only
-$hrd_only = ['employees','attendance-reports','photo-approvals','payroll','locations'];
+$hrd_only = ['employees','attendance-reports','photo-approvals','locations'];
 if (in_array($page, $hrd_only) && !auth_is_hrd()) {
+    $page = 'dashboard';
+}
+
+// Validasi akses Absensi
+if ($page === 'attendance' && ($user['can_attendance'] ?? 0) == 0) {
     $page = 'dashboard';
 }
 

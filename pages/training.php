@@ -17,7 +17,7 @@ $category_badge  = ['skill'=>'badge-info','leadership'=>'badge-warning','technic
         <?php foreach ($programs as $prog): ?>
         <div class="card p-6 flex flex-col gap-4">
             <div class="flex items-start justify-between gap-2">
-                <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i class="fas fa-graduation-cap text-white text-lg"></i>
                 </div>
                 <span class="badge <?= $category_badge[$prog['category']] ?? 'badge-gray' ?>">

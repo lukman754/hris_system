@@ -12,6 +12,8 @@ $today_records = array_filter($my_att, fn($r) => $r['attendance_date'] === $toda
 
 $has_in = false;
 $has_out = false;
+$has_pending_in = false;
+$has_approved_in = false;
 $check_in_time = '--:--';
 $check_out_time = '--:--';
 
@@ -70,19 +72,19 @@ if ($hour >= 18) $greeting = "Good Evening";
 <section class="mb-6">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-black tracking-tighter leading-tight mb-1 text-on-surface"><?= $greeting ?>, <?= explode(' ', $user['name'])[0] ?>!</h1>
+            <h1 class="text-3xl font-bold  leading-tight mb-1 text-on-surface"><?= $greeting ?>, <?= explode(' ', $user['name'])[0] ?>!</h1>
             <div class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                <p class="text-[9px] font-black uppercase tracking-[0.2em] opacity-80 text-on-surface-variant">Attendance Dashboard • <?= date('d M Y') ?></p>
+                <p class="text-[9px] font-bold   opacity-80 text-on-surface-variant">Attendance Dashboard • <?= date('d M Y') ?></p>
             </div>
         </div>
-        <div data-theme-card class="bg-surface px-4 py-2.5 rounded-xl border border-border shadow-sm flex items-center justify-between md:justify-start gap-3 w-full md:w-auto">
+        <div data-theme-card class="px-4 py-2.5 rounded-lg flex items-center justify-between md:justify-start gap-3 w-full md:w-auto">
             <div class="text-right ml-auto md:ml-0">
-                <div id="live-clock" class="text-xl font-black leading-none tracking-tight text-on-surface">00:00:00</div>
-                <div class="text-[8px] font-black uppercase tracking-widest mt-1 opacity-50 text-on-surface-variant">Local Server Time</div>
+                <div id="live-clock" class="text-xl font-bold leading-none  text-on-surface">00:00:00</div>
+                <div class="text-[8px] font-bold   mt-1 opacity-50 text-on-surface-variant">Local Server Time</div>
             </div>
-            <div class="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-primary text-xl font-black">schedule</span>
+            <div class="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-primary text-xl font-bold">schedule</span>
             </div>
         </div>
     </div>
@@ -93,41 +95,41 @@ if ($hour >= 18) $greeting = "Good Evening";
     
     <!-- QR Scanner Card -->
     <?php if ($can_check_in || $can_check_out): ?>
-    <div onclick="openModal('qrModal')" data-theme-card class="bg-surface p-5 rounded-2xl shadow-sm text-center cursor-pointer group hover:bg-blue-500/5 transition-all relative overflow-hidden active:scale-[0.98]">
+    <div onclick="openModal('qrModal')" data-theme-card class="p-5 rounded-lg text-center cursor-pointer group hover:bg-blue-500/5 transition-all relative overflow-hidden active:scale-[0.98]">
         <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-all"></div>
-        <div class="w-16 h-16 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm border border-blue-500/10 group-hover:border-blue-600">
-            <span class="material-symbols-outlined text-3xl font-black">qr_code_scanner</span>
+        <div class="w-16 h-16 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm border border-blue-500/10 group-hover:border-blue-600">
+            <span class="material-symbols-outlined text-3xl font-bold">qr_code_scanner</span>
         </div>
-        <h3 data-theme-text class="text-base font-black tracking-tight mb-1">Office Terminal</h3>
-        <p data-theme-muted class="text-[8px] font-black uppercase tracking-widest opacity-50"><?= $has_in ? 'Verify Check-Out' : 'Standard workplace verification' ?></p>
+        <h3 data-theme-text class="text-base font-bold  mb-1">Office Terminal</h3>
+        <p data-theme-muted class="text-[8px] font-bold   opacity-50"><?= $has_in ? 'Verify Check-Out' : 'Standard workplace verification' ?></p>
     </div>
     <?php else: ?>
-    <div data-theme-card class="bg-surface/50 p-5 rounded-2xl border border-border text-center opacity-60 grayscale relative overflow-hidden">
-        <div class="w-16 h-16 bg-surface-variant/50 text-on-surface/30 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-border">
-            <span class="material-symbols-outlined text-3xl font-black"><?= $has_out ? 'verified' : ($is_pending_in ? 'pending_actions' : 'qr_code_scanner') ?></span>
+    <div data-theme-card class="bg-surface/50 p-5 rounded-lg border border-border text-center opacity-60 grayscale relative overflow-hidden">
+        <div class="w-16 h-16 bg-surface-variant/50 text-on-surface/30 rounded-lg flex items-center justify-center mx-auto mb-4 border border-border">
+            <span class="material-symbols-outlined text-3xl font-bold"><?= $has_out ? 'verified' : ($is_pending_in ? 'pending_actions' : 'qr_code_scanner') ?></span>
         </div>
-        <h3 data-theme-text class="text-base font-black tracking-tight mb-1"><?= $has_out ? 'Sesi Selesai' : ($is_pending_in ? 'Menunggu Approval' : 'Terminal Locked') ?></h3>
-        <p data-theme-muted class="text-[8px] font-black uppercase tracking-widest opacity-50"><?= $has_out ? 'Sampai jumpa besok!' : ($is_pending_in ? 'Check-in diproses HRD' : 'Akses saat ini dibatasi') ?></p>
+        <h3 data-theme-text class="text-base font-bold  mb-1"><?= $has_out ? 'Sesi Selesai' : ($is_pending_in ? 'Menunggu Approval' : 'Terminal Locked') ?></h3>
+        <p data-theme-muted class="text-[8px] font-bold   opacity-50"><?= $has_out ? 'Sampai jumpa besok!' : ($is_pending_in ? 'Check-in diproses HRD' : 'Akses saat ini dibatasi') ?></p>
     </div>
     <?php endif; ?>
 
     <!-- Photo Check-in Card (WFH) -->
     <?php if ($can_check_in || $can_check_out): ?>
-    <div onclick="openModal('photoModal')" data-theme-card class="bg-surface p-5 rounded-2xl shadow-sm text-center cursor-pointer group hover:bg-emerald-500/5 transition-all relative overflow-hidden active:scale-[0.98]">
+    <div onclick="openModal('photoModal')" data-theme-card class="p-5 rounded-lg text-center cursor-pointer group hover:bg-emerald-500/5 transition-all relative overflow-hidden active:scale-[0.98]">
         <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-all"></div>
-        <div class="w-16 h-16 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm border border-emerald-500/10 group-hover:border-emerald-600">
-            <span class="material-symbols-outlined text-3xl font-black">camera_enhance</span>
+        <div class="w-16 h-16 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm border border-emerald-500/10 group-hover:border-emerald-600">
+            <span class="material-symbols-outlined text-3xl font-bold">camera_enhance</span>
         </div>
-        <h3 data-theme-text class="text-base font-black tracking-tight mb-1">Remote Snapshot</h3>
-        <p data-theme-muted class="text-[8px] font-black uppercase tracking-widest opacity-50"><?= $has_in ? 'Remote Check-Out' : 'Verified remote check-in' ?></p>
+        <h3 data-theme-text class="text-base font-bold  mb-1">Remote Snapshot</h3>
+        <p data-theme-muted class="text-[8px] font-bold   opacity-50"><?= $has_in ? 'Remote Check-Out' : 'Verified remote check-in' ?></p>
     </div>
     <?php else: ?>
-    <div data-theme-card class="bg-surface/50 p-5 rounded-2xl border border-border text-center opacity-60 grayscale relative overflow-hidden">
-        <div class="w-16 h-16 bg-surface-variant/50 text-on-surface/30 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-border">
-            <span class="material-symbols-outlined text-3xl font-black"><?= $has_out ? 'verified' : ($is_pending_in ? 'history_edu' : 'camera_enhance') ?></span>
+    <div data-theme-card class="bg-surface/50 p-5 rounded-lg border border-border text-center opacity-60 grayscale relative overflow-hidden">
+        <div class="w-16 h-16 bg-surface-variant/50 text-on-surface/30 rounded-lg flex items-center justify-center mx-auto mb-4 border border-border">
+            <span class="material-symbols-outlined text-3xl font-bold"><?= $has_out ? 'verified' : ($is_pending_in ? 'history_edu' : 'camera_enhance') ?></span>
         </div>
-        <h3 data-theme-text class="text-base font-black tracking-tight mb-1"><?= $has_out ? 'Shift Completed' : ($is_pending_in ? 'Pending Review' : 'Remote Locked') ?></h3>
-        <p data-theme-muted class="text-[8px] font-black uppercase tracking-widest opacity-50"><?= $has_out ? 'Attendance recorded' : ($is_pending_in ? 'Verifikasi foto berlangsung' : 'Action currently unavailable') ?></p>
+        <h3 data-theme-text class="text-base font-bold  mb-1"><?= $has_out ? 'Shift Completed' : ($is_pending_in ? 'Pending Review' : 'Remote Locked') ?></h3>
+        <p data-theme-muted class="text-[8px] font-bold   opacity-50"><?= $has_out ? 'Attendance recorded' : ($is_pending_in ? 'Verifikasi foto berlangsung' : 'Action currently unavailable') ?></p>
     </div>
     <?php endif; ?>
 
@@ -147,7 +149,7 @@ if ($hour >= 18) $greeting = "Good Evening";
             </div>
         </div>
         <div class="st-footer-att hide-mobile">
-            <span class="px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest <?= $has_in ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500' ?>">
+            <span class="px-2 py-0.5 rounded-md text-[8px] font-bold   <?= $has_in ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500' ?>">
                 <?= $has_in ? 'Verified' : 'Required' ?>
             </span>
         </div>
@@ -165,7 +167,7 @@ if ($hour >= 18) $greeting = "Good Evening";
             </div>
         </div>
         <div class="st-footer-att hide-mobile">
-            <span class="px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest <?= $has_out ? 'bg-emerald-500/10 text-emerald-500' : 'bg-surface-container-high text-secondary opacity-30 shadow-none' ?>">
+            <span class="px-2 py-0.5 rounded-md text-[8px] font-bold   <?= $has_out ? 'bg-emerald-500/10 text-emerald-500' : 'bg-surface-container-high text-secondary opacity-30 shadow-none' ?>">
                 <?= $has_out ? 'Logged Out' : 'Active Duty' ?>
             </span>
         </div>
@@ -197,11 +199,8 @@ if ($hour >= 18) $greeting = "Good Evening";
     gap: 12px;
 }
 .stat-card-att {
-    background: var(--surface);
     padding: 14px;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -214,7 +213,7 @@ if ($hour >= 18) $greeting = "Good Evening";
 .st-icon-att {
     width: 36px;
     height: 36px;
-    border-radius: 10px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -227,7 +226,7 @@ if ($hour >= 18) $greeting = "Good Evening";
 .st-label-att {
     font-size: 8px;
     font-weight: 800;
-    text-transform: uppercase;
+    text-transform: ;
     letter-spacing: .08em;
     opacity: 0.5;
 }
@@ -284,30 +283,30 @@ if ($hour >= 18) $greeting = "Good Evening";
 <section>
     <div class="flex justify-between items-center mb-5 px-1">
         <div>
-            <h2 data-theme-muted class="text-[10px] font-black uppercase tracking-widest opacity-50">Attendance Ledger</h2>
+            <h2 data-theme-muted class="text-[10px] font-bold   opacity-50">Attendance Ledger</h2>
             <p data-theme-muted class="text-[8px] font-bold opacity-30 mt-0.5">Summary of your latest activity</p>
         </div>
-        <div data-theme-card class="flex items-center gap-3 bg-surface  px-3 py-1.5 rounded-xl border border-outline-variant/10">
+        <div data-theme-card class="flex items-center gap-3 px-3 py-1.5 rounded-lg">
             <div class="flex flex-col items-end">
-                <span data-theme-text class="text-[10px] font-black leading-none"><?= count($my_att) ?></span>
-                <span data-theme-muted class="text-[6px] font-black uppercase tracking-widest opacity-30">Total</span>
+                <span data-theme-text class="text-[10px] font-bold leading-none"><?= count($my_att) ?></span>
+                <span data-theme-muted class="text-[6px] font-bold   opacity-30">Total</span>
             </div>
             <div class="w-[1px] h-3 bg-outline-variant/10"></div>
             <div class="flex flex-col items-end">
-                <span class="text-[10px] font-black text-emerald-500 leading-none"><?= count(array_filter($my_att, fn($r) => $r['approval_status'] === 'approved')) ?></span>
-                <span data-theme-muted class="text-[6px] font-black uppercase tracking-widest opacity-30">Valid</span>
+                <span class="text-[10px] font-bold text-emerald-500 leading-none"><?= count(array_filter($my_att, fn($r) => $r['approval_status'] === 'approved')) ?></span>
+                <span data-theme-muted class="text-[6px] font-bold   opacity-30">Valid</span>
             </div>
         </div>
     </div>
 
-    <div data-theme-card class="bg-surface rounded-2xl overflow-hidden shadow-sm">
+    <div data-theme-card class="rounded-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="border-b bg-surface2" style="border-color:var(--border);">
-                        <th data-theme-muted class="px-6 py-4 text-[8px] font-black uppercase tracking-widest opacity-40">Date & Session</th>
-                        <th data-theme-muted class="px-4 py-4 text-[8px] font-black uppercase tracking-widest opacity-40">Location</th>
-                        <th data-theme-muted class="px-6 py-4 text-[8px] font-black uppercase tracking-widest opacity-40 text-right">Time & Status</th>
+                        <th data-theme-muted class="px-6 py-4 text-[8px] font-bold   opacity-40">Date & Session</th>
+                        <th data-theme-muted class="px-4 py-4 text-[8px] font-bold   opacity-40">Location</th>
+                        <th data-theme-muted class="px-6 py-4 text-[8px] font-bold   opacity-40 text-right">Time & Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y" style="border-color:var(--border); border-top:none;">
@@ -315,7 +314,7 @@ if ($hour >= 18) $greeting = "Good Evening";
                         <tr>
                             <td colspan="3" class="p-12 text-center text-surface2" style="color:var(--text-muted); opacity:0.3;">
                                 <span class="material-symbols-outlined text-3xl block mb-2">inbox</span>
-                                <p data-theme-muted class="text-[9px] italic font-black uppercase tracking-widest">Queue empty - Start today?</p>
+                                <p data-theme-muted class="text-[9px] italic font-bold  ">Queue empty - Start today?</p>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -325,7 +324,7 @@ if ($hour >= 18) $greeting = "Good Evening";
                         <tr class="hover:bg-surface2 transition-colors group" style="border-color:var(--border);">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
-                                    <div data-theme-surface2 class="w-10 h-10 rounded-xl bg-surface2 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-all shadow-sm">
+                                    <div data-theme-surface2 class="w-10 h-10 rounded-lg bg-surface2 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-all shadow-sm">
                                         <?php if (!$is_qr && $rec['photo_path']): ?>
                                             <img src="<?= h($rec['photo_path']) ?>" 
                                                  class="w-full h-full object-cover cursor-zoom-in" 
@@ -335,8 +334,8 @@ if ($hour >= 18) $greeting = "Good Evening";
                                         <?php endif; ?>
                                     </div>
                                     <div>
-                                        <div data-theme-text class="text-xs font-black tracking-tight leading-none"><?= format_date($rec['attendance_date']) ?></div>
-                                        <div data-theme-surface2 class="px-1.5 py-0.5 rounded bg-surface2 text-[7px] font-black uppercase tracking-widest w-fit mt-1.5" style="color:var(--text-muted);">
+                                        <div data-theme-text class="text-xs font-bold  leading-none"><?= format_date($rec['attendance_date']) ?></div>
+                                        <div data-theme-surface2 class="px-1.5 py-0.5 rounded bg-surface2 text-[7px] font-bold   w-fit mt-1.5" style="color:var(--text-muted);">
                                             <?= $rec['attendance_flow'] === 'in' ? 'Check-In' : 'Check-Out' ?>
                                         </div>
                                     </div>
@@ -344,11 +343,11 @@ if ($hour >= 18) $greeting = "Good Evening";
                             </td>
                             <td class="px-4 py-4">
                                 <div data-theme-text class="text-xs font-bold leading-tight"><?= h($rec['location']) ?></div>
-                                <div data-theme-muted class="text-[8px] font-bold opacity-30 mt-1 uppercase tracking-tighter italic"><?= $rec['attendance_type'] ?> verified</div>
+                                <div data-theme-muted class="text-[8px] font-bold opacity-30 mt-1   italic"><?= $rec['attendance_type'] ?> verified</div>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <div data-theme-text class="text-[13px] font-black tracking-tighter leading-none"><?= date('H:i', strtotime($rec['attendance_time'])) ?></div>
-                                <div class="mt-2 text-[8px] font-black uppercase tracking-widest <?= $rec['approval_status'] === 'approved' ? 'text-emerald-500' : ($rec['approval_status'] === 'pending' ? 'text-amber-500' : 'text-rose-500') ?>">
+                                <div data-theme-text class="text-[13px] font-bold  leading-none"><?= date('H:i', strtotime($rec['attendance_time'])) ?></div>
+                                <div class="mt-2 text-[8px] font-bold   <?= $rec['approval_status'] === 'approved' ? 'text-emerald-500' : ($rec['approval_status'] === 'pending' ? 'text-amber-500' : 'text-rose-500') ?>">
                                     <?= $rec['approval_status'] ?>
                                 </div>
                             </td>
@@ -360,34 +359,34 @@ if ($hour >= 18) $greeting = "Good Evening";
         </div>
         <?php if (count($my_att) > 30): ?>
             <div data-theme-surface2 class="p-4 text-center border-t bg-surface2" style="border-color:var(--border);">
-                <button class="text-[9px] font-black text-primary uppercase tracking-[0.2em] hover:opacity-70 transition-opacity">Show All Records</button>
+                <button class="text-[9px] font-bold text-primary   hover:opacity-70 transition-opacity">Show All Records</button>
             </div>
         <?php endif; ?>
     </div>
 </section>
 <!-- MODAL: QR Scanner -->
 <div id="qrModal" style="display:none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4" onclick="if(event.target===this){closeModal('qrModal'); stopQR()}">
-    <div data-theme-card class="w-full max-w-sm bg-surface rounded-2xl border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+    <div data-theme-card class="w-full max-w-sm bg-surface rounded-lg border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
         <!-- Header -->
         <div class="p-5 pb-1 flex justify-between items-start">
             <div>
-                <h3 data-theme-text class="text-xl font-black tracking-tight mb-2">QR Terminal</h3>
+                <h3 data-theme-text class="text-xl font-bold  mb-2">QR Terminal</h3>
                 <div class="flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                    <p data-theme-muted class="text-[9px] font-black uppercase tracking-widest opacity-50">Office verification</p>
+                    <p data-theme-muted class="text-[9px] font-bold   opacity-50">Office verification</p>
                 </div>
             </div>
             <button onclick="closeModal('qrModal'); stopQR()" data-theme-surface2 class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/40 hover:bg-surface2 transition-colors">
-                <span class="material-symbols-outlined font-black">close</span>
+                <span class="material-symbols-outlined font-bold">close</span>
             </button>
         </div>
         
         <div class="p-5 pt-3">
-            <div id="qr-reader" class="rounded-2xl overflow-hidden bg-black/20 aspect-square border-2 border-dashed border-blue-500/20 flex items-center justify-center scale-[1.02]">
+            <div id="qr-reader" class="rounded-lg overflow-hidden bg-black/20 aspect-square border-2 border-dashed border-blue-500/20 flex items-center justify-center scale-[1.02]">
                 <p class="text-[10px] text-secondary opacity-40 px-8 text-center italic font-bold">Initializing camera...</p>
             </div>
             <div class="mt-4 text-center">
-                <p data-theme-muted class="text-[10px] font-black uppercase leading-relaxed opacity-40">Position code in center frame</p>
+                <p data-theme-muted class="text-[10px] font-bold  leading-relaxed opacity-40">Position code in center frame</p>
             </div>
         </div>
     </div>
@@ -395,18 +394,18 @@ if ($hour >= 18) $greeting = "Good Evening";
 
 <!-- MODAL: Photo Attendance -->
 <div id="photoModal" style="display:none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4" onclick="if(event.target===this){closeModal('photoModal');stopCamera()}">
-    <div data-theme-card class="w-full max-w-sm bg-surface rounded-2xl border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+    <div data-theme-card class="w-full max-w-sm bg-surface rounded-lg border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
         <!-- Header -->
         <div class="p-5 pb-1 flex justify-between items-start">
             <div>
-                <h3 data-theme-text class="text-xl font-black tracking-tight mb-2">Remote Snapshot</h3>
+                <h3 data-theme-text class="text-xl font-bold  mb-2">Remote Snapshot</h3>
                 <div class="flex items-center gap-2">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <p data-theme-muted class="text-[9px] font-black uppercase tracking-widest opacity-50">WFH Verification</p>
+                    <p data-theme-muted class="text-[9px] font-bold   opacity-50">WFH Verification</p>
                 </div>
             </div>
             <button onclick="closeModal('photoModal');stopCamera()" data-theme-surface2 class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/40 hover:bg-surface2 transition-colors">
-                <span class="material-symbols-outlined font-black">close</span>
+                <span class="material-symbols-outlined font-bold">close</span>
             </button>
         </div>
 
@@ -414,19 +413,19 @@ if ($hour >= 18) $greeting = "Good Evening";
             <div id="location-branding" class="flex flex-col gap-1 px-1">
                 <div class="flex items-center gap-2">
                     <span class="material-symbols-outlined text-xs text-primary">location_on</span>
-                    <span id="current-coords" class="text-[9px] font-black uppercase tracking-widest text-on-surface">Detecting GPS...</span>
+                    <span id="current-coords" class="text-[9px] font-bold   text-on-surface">Detecting GPS...</span>
                 </div>
                 <p id="current-address" class="text-[10px] font-medium text-on-surface-variant opacity-60 leading-tight">Waiting for location access...</p>
             </div>
 
-            <div class="relative rounded-2xl overflow-hidden bg-black/40 aspect-square shadow-inner border border-border">
+            <div class="relative rounded-lg overflow-hidden bg-black/40 aspect-square shadow-inner border border-border">
                 <video id="cameraFeed" class="w-full h-full object-cover" autoplay playsinline></video>
                 <img id="photoPreview" class="hidden absolute inset-0 w-full h-full object-cover" src="" alt="Preview">
-                <div class="absolute inset-0 border-[16px] border-black/5 pointer-events-none rounded-2xl"></div>
+                <div class="absolute inset-0 border-[16px] border-black/5 pointer-events-none rounded-lg"></div>
             </div>
             
             <div id="camera-ctrls" class="flex flex-col gap-3">
-                <button id="btnCapture" onclick="capturePhoto()" class="w-full py-5 bg-emerald-500 text-white rounded-full text-xs font-black uppercase shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                <button id="btnCapture" onclick="capturePhoto()" class="w-full py-5 bg-emerald-500 text-white rounded-full text-xs font-bold  shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-lg">photo_camera</span>
                     Take Snapshot
                 </button>
@@ -438,11 +437,11 @@ if ($hour >= 18) $greeting = "Good Evening";
                     <input type="hidden" name="lat" id="formLat">
                     <input type="hidden" name="lng" id="formLng">
                     <input type="hidden" name="address" id="formAddress">
-                    <button type="submit" class="w-full py-5 bg-primary text-white rounded-full text-xs font-black uppercase shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                    <button type="submit" class="w-full py-5 bg-primary text-white rounded-full text-xs font-bold  shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-2">
                         <span class="material-symbols-outlined text-lg">send</span>
                         Submit Verification
                     </button>
-                    <button type="button" onclick="startCamera()" data-theme-muted class="w-full py-2 text-[10px] font-black uppercase hover:bg-surface2 rounded-full transition-colors text-center opacity-40">Retake Photo</button>
+                    <button type="button" onclick="startCamera()" data-theme-muted class="w-full py-2 text-[10px] font-bold  hover:bg-surface2 rounded-full transition-colors text-center opacity-40">Retake Photo</button>
                 </form>
             </div>
         </div>
@@ -452,12 +451,12 @@ if ($hour >= 18) $greeting = "Good Evening";
 <!-- MODAL: Photo Preview -->
 <div id="photoPreviewModal" style="display:none;" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 backdrop-blur-md p-4" onclick="if(event.target===this)closeModal('photoPreviewModal')">
     <div class="relative max-w-2xl w-full flex flex-col items-center">
-        <button onclick="closeModal('photoPreviewModal')" class="absolute -top-10 right-0 text-white/50 hover:text-white flex items-center gap-2 font-black uppercase tracking-widest text-[9px] transition-colors">
+        <button onclick="closeModal('photoPreviewModal')" class="absolute -top-10 right-0 text-white/50 hover:text-white flex items-center gap-2 font-bold   text-[9px] transition-colors">
             <span>Dismiss</span>
             <span class="material-symbols-outlined text-base">close</span>
         </button>
-        <div class="w-full flex justify-center overflow-hidden rounded-xl">
-            <img id="previewImg" src="" class="max-h-[85vh] w-auto h-auto rounded-lg shadow-2xl border border-white/5" alt="Attendance Identity">
+        <div class="w-full flex justify-center overflow-hidden rounded-lg">
+            <img id="previewImg" src="" class="max-h-[85vh] w-auto h-auto rounded-lg shadow-2xl border-none" alt="Attendance Identity">
         </div>
     </div>
 </div>

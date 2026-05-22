@@ -30,7 +30,7 @@
                         "brand-primary": "#003d9b",
                     },
                     fontFamily: { "headline": ["Inter"], "body": ["Inter"] },
-                    borderRadius: { "3xl": "24px", "4xl": "32px" },
+                    borderRadius: { "lg": "8px" },
                 },
             },
         }
@@ -61,8 +61,8 @@
         html.dark {
             --bg:           #0D0D0D;
             --surface:      #1A1A1A;
-            --surface2:     #242424;
-            --border:       rgba(255,255,255,.07);
+            --surface2:     #262626;
+            --border:       rgba(255,255,255,.005);
             --text-primary: #F3F4F6;
             --text-muted:   #9CA3AF;
             --shadow:       0 1px 4px rgba(0,0,0,.3);
@@ -129,10 +129,9 @@
             transition: background .3s, border-color .3s;
         }
 
-        /* Cards — used by non-dashboard pages */
         .card {
             background: var(--surface);
-            border-radius: 14px;
+            border-radius: 8px;
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
             padding: 20px;
@@ -142,7 +141,7 @@
         .card-hover:hover { transform: translateY(-2px); }
 
         /* Badges */
-        .badge { display:inline-flex; align-items:center; padding:3px 8px; border-radius:6px; font-size:.7rem; font-weight:700; }
+        .badge { display:inline-flex; align-items:center; padding:3px 8px; border-radius:4px; font-size:.7rem; font-weight:600; }
         .badge-success { background:#ECFDF5; color:#059669; }
         .badge-danger  { background:#FEF2F2; color:#DC2626; }
         .badge-warning { background:#FFFBEB; color:#D97706; }
@@ -157,8 +156,8 @@
         /* Buttons */
         .btn {
             display:inline-flex; align-items:center; justify-content:center;
-            gap:8px; padding:10px 20px; border-radius:12px;
-            font-size:.875rem; font-weight:700; cursor:pointer;
+            gap:8px; padding:10px 20px; border-radius:8px;
+            font-size:.875rem; font-weight:600; cursor:pointer;
             border:none; text-decoration:none; transition:all .2s ease; white-space:nowrap;
         }
         .btn:active { transform:scale(.97); }
@@ -172,10 +171,10 @@
         .btn-outline:hover { filter:brightness(.95); }
 
         /* Forms */
-        .form-label { display:block; font-size:.8rem; font-weight:600; color:var(--text-primary); margin-bottom:6px; }
+        .form-label { display:block; font-size:.8rem; font-weight:500; color:var(--text-primary); margin-bottom:6px; }
         .form-input {
             display:block; width:100%; padding:10px 14px;
-            border:1.5px solid var(--border); border-radius:9px;
+            border:1.5px solid var(--border); border-radius:8px;
             font-size:.875rem; color:var(--text-primary);
             background:var(--surface); outline:none; font-family:inherit;
             transition:border-color .15s, box-shadow .15s;
@@ -187,8 +186,7 @@
         .data-table { width:100%; border-collapse:collapse; font-size:.875rem; }
         .data-table th {
             padding:11px 16px; background:var(--surface2); color:var(--text-muted);
-            font-size:.72rem; font-weight:700; text-transform:uppercase;
-            letter-spacing:.04em; text-align:left; border-bottom:1px solid var(--border);
+            font-size:.72rem; font-weight:600; letter-spacing:normal; text-align:left; border-bottom:1px solid var(--border);
         }
         .data-table td { padding:13px 16px; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text-primary); }
         .data-table tbody tr:hover { background:var(--surface2); }
@@ -201,7 +199,7 @@
             z-index:1000; padding:16px; backdrop-filter:blur(4px);
         }
         .modal-box {
-            background:var(--surface); border-radius:20px; width:100%;
+            background:var(--surface); border-radius:8px; width:100%;
             max-width:540px; max-height:90vh; overflow-y:auto;
             box-shadow:0 24px 64px rgba(0,0,0,.25);
         }
@@ -216,11 +214,11 @@
         /* Calendar days */
         .calendar-day {
             aspect-ratio:1; display:flex; align-items:center; justify-content:center;
-            border-radius:9px; font-size:.875rem; cursor:pointer; font-weight:500;
+            border-radius:6px; font-size:.875rem; cursor:pointer; font-weight:500;
             color:var(--text-primary); transition:background .15s;
         }
         .calendar-day:hover  { background:rgba(0,26,75,.08); color:var(--primary-dark); }
-        .calendar-day.today  { background:var(--primary); color:#fff; font-weight:700; }
+        .calendar-day.today  { background:var(--primary); color:#fff; font-weight:600; }
 
         /* Animations */
         @keyframes fadeUp {
@@ -255,22 +253,20 @@
 
         /* Loading overlay */
         #loading-overlay {
-            position:fixed; inset:0; z-index:9999; background:#0D0D0D;
+            position:fixed; inset:0; z-index:9999; background:#fff;
             display:flex; flex-direction:column; align-items:center; justify-content:center;
             transition:opacity .5s ease, visibility .5s ease;
         }
-        .loading-logo { width:64px; height:64px; animation:logo-pulse 1.8s infinite ease-in-out; }
-        @keyframes logo-pulse {
-            0%,100% { transform:scale(1); opacity:.8; }
-            50%      { transform:scale(1.1); opacity:1; }
-        }
+        html.dark #loading-overlay { background:#0D0D0D; }
+        .loading-spinner { border: 3px solid rgba(0,0,0,.1); border-top: 3px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* View transition */
         ::view-transition-old(root),
         ::view-transition-new(root) { animation:none; mix-blend-mode:normal; }
 
         /* ─── Icon Badge Colors (auto dark mode) ─── */
-        .ib { display:flex; align-items:center; justify-content:center; border-radius:10px; flex-shrink:0; transition:background .3s; }
+        .ib { display:flex; align-items:center; justify-content:center; border-radius:8px; flex-shrink:0; transition:background .3s; }
         .ib-orange { background:#FFF3E8; }
         .ib-green  { background:#ECFDF5; }
         .ib-blue   { background:#EFF6FF; }
@@ -292,7 +288,7 @@
         html.dark .ib-slate  { background:rgba(100,116,139,.10); }
 
         /* ─── Badge Labels (auto dark mode) ─── */
-        .badge { display:inline-block; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; padding:2px 8px; border-radius:4px; transition:all .3s ease; }
+        .badge { display:inline-block; font-size:9px; font-weight:700; padding:2px 8px; border-radius:4px; transition:all .3s ease; }
         .badge-green  { background:#ECFDF5; color:#059669; }
         .badge-orange { background:#FFF3E8; color:#FF7D00; }
         .badge-yellow { background:#FFFBEB; color:#D97706; }
@@ -306,8 +302,8 @@
         html.dark .badge-blue   { background:rgba(59,130,246,.12); color:#60A5FA; }
 
         /* ─── Header & Dropdown (Dark Mode) ─── */
-        header#main-header { background: #fff; border-bottom: 1px solid rgba(0,0,0,.05); transition: background .3s, border .3s; }
-        html.dark header#main-header { background: #111; border-bottom: 1px solid rgba(255,255,255,.03); }
+        header#main-header { background: #fff; border-bottom: 1px solid rgba(0,0,0,.03); transition: background .3s, border .3s; }
+        html.dark header#main-header { background: #111; border-bottom: 1px solid transparent; }
         
         .header-btn { color: #6B7280; transition: all .2s; }
         .header-btn:hover { background: rgba(0,0,0,.04); }
@@ -339,46 +335,74 @@
 <body class="flex flex-col min-h-screen">
 
 <div id="loading-overlay">
-    <div class="loading-logo"><img src="/hris_system/public/img/logo.jpg" class="w-16 h-16 object-contain rounded-2xl shadow-2xl bg-white p-2"></div>
-    <span class="mt-8 text-[10px] font-black uppercase tracking-[0.3em] text-white/50">Perkasa Abadi Logistik</span>
+    <div class="loading-spinner"></div>
+    <span class="mt-4 text-xs font-medium text-gray-500">Loading System...</span>
 </div>
 
 <!-- Sidebar -->
 <aside id="sidebar" class="fixed left-0 top-0 h-full z-[60] hidden md:flex flex-col sidebar-transition w-64 shadow-2xl">
-    <div class="px-5 py-6 flex items-center gap-3 overflow-hidden border-b border-white/10">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-white p-1.5 shadow-lg">
+    <div class="px-5 py-6 flex items-center gap-3 overflow-hidden">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-white p-1.5 shadow-lg">
             <img src="/hris_system/public/img/logo.jpg" class="w-full h-full object-contain">
         </div>
-        <span class="font-bold text-white text-sm tracking-tight sidebar-text line-clamp-1">Perkasa Abadi Logistik</span>
+        <span class="font-bold text-white text-sm  sidebar-text line-clamp-1">Perkasa Abadi Logistik</span>
     </div>
     <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto no-scrollbar">
         <?php
-        $nav_items = auth_is_hrd() ? [
-            ['page'=>'dashboard',          'icon'=>'dashboard',      'label'=>'Dashboard'],
-            ['page'=>'employees',          'icon'=>'group',          'label'=>'Pegawai'],
-            ['page'=>'locations',          'icon'=>'location_on',    'label'=>'QR Office'],
-            ['page'=>'leaves',             'icon'=>'event_busy',     'label'=>'Izin'],
-            ['page'=>'payroll',            'icon'=>'payments',       'label'=>'Gaji'],
-            ['page'=>'performance',        'icon'=>'insights',       'label'=>'Kinerja'],
-            ['page'=>'announcements',      'icon'=>'campaign',       'label'=>'Info'],
-        ] : [
-            ['page'=>'dashboard',   'icon'=>'dashboard',     'label'=>'Dashboard'],
-            ['page'=>'attendance',  'icon'=>'fingerprint',   'label'=>'Absen'],
-            ['page'=>'people',      'icon'=>'diversity_3',   'label'=>'People'],
-            ['page'=>'leaves',      'icon'=>'calendar_add_on','label'=>'Izin'],
-            ['page'=>'calendar',    'icon'=>'calendar_today','label'=>'Kalender'],
-        ];
+        $nav_items = [];
+        if (auth_is_hrd()) {
+            $nav_items[] = ['page'=>'dashboard',          'icon'=>'dashboard',      'label'=>'Dashboard'];
+            if (($user['can_attendance'] ?? 0) == 1) {
+                $nav_items[] = ['page'=>'attendance',     'icon'=>'fingerprint',    'label'=>'Absen'];
+            }
+            $nav_items = array_merge($nav_items, [
+                ['page'=>'employees',          'icon'=>'group',          'label'=>'Pegawai'],
+                ['page'=>'attendance-reports', 'icon'=>'insights',        'label'=>'Riwayat Absensi'],
+                ['page'=>'locations',          'icon'=>'location_on',    'label'=>'QR Office'],
+                ['page'=>'leaves',             'icon'=>'event_busy',     'label'=>'Izin'],
+                ['page'=>'payroll',            'icon'=>'payments',       'label'=>'Gaji'],
+                ['page'=>'performance',        'icon'=>'insights',       'label'=>'Kinerja'],
+                ['page'=>'announcements',      'icon'=>'campaign',       'label'=>'Info'],
+            ]);
+        } else {
+            $nav_items = [
+                ['page'=>'dashboard',    'icon'=>'dashboard',          'label'=>'Dashboard'],
+                ['page'=>'attendance',   'icon'=>'fingerprint',        'label'=>'Absen'],
+                ['page'=>'people',       'icon'=>'diversity_3',        'label'=>'People'],
+                ['page'=>'leaves',       'icon'=>'calendar_add_on',    'label'=>'Izin'],
+                ['page'=>'payroll',      'icon'=>'account_balance_wallet','label'=>'Gaji'],
+                ['page'=>'calendar',     'icon'=>'calendar_today',     'label'=>'Kalender'],
+                ['page'=>'announcements','icon'=>'campaign',           'label'=>'Info'],
+            ];
+        }
+
+        $all_active_announcements = get_announcements();
+        $latest_ann_id = !empty($all_active_announcements) ? $all_active_announcements[0]['id'] : 0;
+        
+        // Update "last seen" ID if we are currently on the announcements page
+        if (($_GET['page'] ?? '') === 'announcements') {
+            $_SESSION['last_seen_ann_id'] = $latest_ann_id;
+        }
+
+        $last_seen_id = $_SESSION['last_seen_ann_id'] ?? 0;
+        $has_unread = ($latest_ann_id > 0 && $latest_ann_id > $last_seen_id);
+
         $current = $_GET['page'] ?? 'dashboard';
         foreach ($nav_items as $nav):
             $is_active = ($current === $nav['page']);
+            $has_badge = ($nav['page'] === 'announcements' && $has_unread);
         ?>
-        <a href="?page=<?= $nav['page'] ?>" class="flex items-center gap-3 px-3 py-3 rounded-xl transition-all text-sm font-semibold
+        <a href="?page=<?= $nav['page'] ?>" class="flex items-center gap-3 px-3 py-3 rounded-lg transition-all text-sm font-semibold relative
             <?= $is_active
                 ? 'text-white font-bold'
                 : 'text-white/45 hover:text-white/80 hover:bg-white/5'
             ?>" <?= $is_active ? 'style="background:var(--primary); box-shadow:0 4px 16px rgba(0,61,155,.3);"' : '' ?>>
             <span class="material-symbols-outlined" style="font-size:20px;"><?= $nav['icon'] ?></span>
             <span class="sidebar-text"><?= h($nav['label']) ?></span>
+            
+            <?php if ($has_badge): ?>
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 bg-rose-500 rounded-full border-2 border-black animate-pulse shadow-lg shadow-rose-500/50"></span>
+            <?php endif; ?>
         </a>
         <?php endforeach; ?>
     </nav>
@@ -386,18 +410,18 @@
 
 <div id="main-content" class="flex-1 md:pl-64 sidebar-transition">
     <!-- Top Header Bar -->
-    <header id="main-header" class="sticky top-0 z-50 flex items-center justify-between px-6 h-16">
+    <header id="main-header" class="sticky top-0 z-50 flex items-center justify-between px-4 md:px-6 h-16">
         <!-- Left: toggle + logo mobile -->
         <div class="flex items-center gap-3">
-            <button onclick="toggleSidebar()" class="w-9 h-9 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100 transition-colors hidden md:flex">
+            <button onclick="toggleSidebar()" class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors hidden md:flex">
                 <span class="material-symbols-outlined" style="font-size:22px;">menu</span>
             </button>
             <!-- Mobile logo -->
             <div class="flex items-center gap-2 md:hidden">
-                <div class="w-8 h-8 rounded-xl flex items-center justify-center bg-white p-1 shadow-sm">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-white p-1 shadow-sm">
                     <img src="/hris_system/public/img/logo.jpg" class="w-full h-full object-contain">
                 </div>
-                <span data-theme-text class="text-xs font-black" style="color: #111;">Perkasa Abadi Logistik</span>
+                <span data-theme-text class="text-xs font-bold" style="color: #111;">Perkasa Abadi Logistik</span>
             </div>
         </div>
 
@@ -405,34 +429,34 @@
         <div class="flex items-center gap-2">
             <!-- Theme Toggle -->
             <button id="theme-toggle-btn" onclick="toggleTheme(event)"
-                class="w-9 h-9 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100 transition-colors">
+                class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
                 <span id="theme-icon" class="material-symbols-outlined" style="font-size:20px;">dark_mode</span>
             </button>
 
             <!-- Profile Dropdown -->
             <div class="relative">
                 <button onclick="toggleUserDropdown()"
-                    class="header-btn flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-xl">
+                    class="header-btn flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-lg">
                     <!-- Avatar -->
-                    <div class="w-8 h-8 rounded-full overflow-hidden border-2 shrink-0" style="border-color:var(--primary);">
+                    <div class="w-8 h-8 rounded-full overflow-hidden border shrink-0" style="border-color:var(--primary);">
                         <?php if (!empty($user['photo_profile'])): ?>
                             <img src="<?= h($user['photo_profile']) ?>" alt="Profile" class="w-full h-full object-cover">
                         <?php else: ?>
-                            <div class="w-full h-full flex items-center justify-center text-white text-[10px] font-black" style="background:var(--primary);">
+                            <div class="w-full h-full flex items-center justify-center text-white text-[10px] font-bold" style="background:var(--primary);">
                                 <?= avatar_initials($user['name']) ?>
                             </div>
                         <?php endif; ?>
                     </div>
                     <!-- Name -->
                     <div class="hidden sm:block text-left">
-                        <p data-theme-text class="text-xs font-bold leading-none" style="color: #111;"><?= h($user['name']) ?></p>
-                        <p data-theme-muted class="text-[9px] font-semibold mt-0.5" style="color: #9CA3AF;"><?= h($user['position'] ?? $user['role']) ?></p>
+                        <p data-theme-text class="text-xs font-bold leading-none"><?= h($user['name']) ?></p>
+                        <p data-theme-muted class="text-[9px] font-medium mt-0.5"><?= h($user['position'] ?? $user['role']) ?></p>
                     </div>
-                    <span class="material-symbols-outlined hidden sm:block" style="font-size:16px; color: #9CA3AF;">expand_more</span>
+                    <span class="material-symbols-outlined hidden sm:block" style="font-size:16px;">expand_more</span>
                 </button>
 
                 <!-- Dropdown Menu -->
-                <div id="user-dropdown" class="absolute right-0 mt-2 w-52 rounded-2xl shadow-xl overflow-hidden hidden" style="background: white; border: 1px solid rgba(0,0,0,.05); z-index: 100;">
+                <div id="user-dropdown" class="absolute right-0 mt-2 w-52 rounded-lg shadow-xl overflow-hidden hidden" style="background: white; border: 1px solid var(--border); z-index: 100;">
                     <div class="px-4 py-3 border-b" style="border-color: rgba(0,0,0,.04);">
                         <p data-theme-text class="text-xs font-bold" style="color: #111;"><?= h($user['name']) ?></p>
                         <p data-theme-muted class="text-[10px] mt-0.5" style="color: #9CA3AF;"><?= h($user['email']) ?></p>
@@ -450,18 +474,32 @@
         </div>
     </header>
 
-    <main class="px-6 pt-4 pb-32 mx-auto">
+    <main class="px-4 md:px-6 pt-4 pb-32 mx-auto w-full max-w-[1920px]">
     <?php if (isset($_GET['success'])): ?>
-        <div class="p-4 mb-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-semibold flex items-center gap-3">
-            <span class="material-symbols-outlined">check_circle</span>
-            <span><?= h($_GET['success']) ?></span>
+        <div class="p-4 mb-6 rounded-xl bg-emerald-50 border border-emerald-200/60 dark:bg-emerald-500/10 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold flex items-center justify-between gap-4 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined" style="font-family: 'Material Symbols Outlined' !important; font-size: 18px;">check_circle</span>
+                </div>
+                <span><?= h($_GET['success']) ?></span>
+            </div>
+            <button onclick="this.parentElement.style.display='none'" class="opacity-50 hover:opacity-100 transition-opacity">
+                <span class="material-symbols-outlined" style="font-family: 'Material Symbols Outlined' !important; font-size: 16px;">close</span>
+            </button>
         </div>
     <?php endif; ?>
 
     <?php if (isset($_GET['error'])): ?>
-        <div class="p-4 mb-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm font-semibold flex items-center gap-3">
-            <span class="material-symbols-outlined">error</span>
-            <span><?= h($_GET['error']) ?></span>
+        <div class="p-4 mb-6 rounded-xl bg-rose-50 border border-rose-200/60 dark:bg-rose-500/10 dark:border-rose-500/20 text-rose-700 dark:text-rose-400 text-xs font-bold flex items-center justify-between gap-4 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined" style="font-family: 'Material Symbols Outlined' !important; font-size: 18px;">error</span>
+                </div>
+                <span><?= h($_GET['error']) ?></span>
+            </div>
+            <button onclick="this.parentElement.style.display='none'" class="opacity-50 hover:opacity-100 transition-opacity">
+                <span class="material-symbols-outlined" style="font-family: 'Material Symbols Outlined' !important; font-size: 16px;">close</span>
+            </button>
         </div>
     <?php endif; ?>
 
@@ -518,18 +556,18 @@ window.addEventListener('click', e => {
 /* ────────── Theme System ────────── */
 
 // Inline-style element selectors that need color updates on dark mode
-const DARK_SURFACE  = '#1A1A1A';
-const LIGHT_SURFACE = '#FFFFFF';
-const DARK_SURFACE2 = '#242424';
+// Enhanced Theme Palette (Clean, Industrial, Non-Flat)
+const DARK_SURFACE  = 'linear-gradient(135deg, #1A1A1A 0%, #151515 100%)';
+const LIGHT_SURFACE = 'linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%)';
+const DARK_SURFACE2 = '#222222';
 const LIGHT_SURFACE2 = '#F3F4F6';
 const DARK_TEXT     = '#F3F4F6';
 const LIGHT_TEXT    = '#111111';
-const DARK_MUTED    = '#9CA3AF'; // Lightened for better readability
-const LIGHT_MUTED   = '#6B7280';
-const DARK_BORDER   = 'rgba(255,255,255,.07)';
-const LIGHT_BORDER  = 'rgba(0,0,0,.06)';
-const DARK_SHADOW   = '0 1px 4px rgba(0,0,0,.3)';
-const LIGHT_SHADOW  = '0 1px 4px rgba(0,0,0,.06)';
+const DARK_MUTED    = '#98A2B3';
+const LIGHT_MUTED   = '#667085';
+const LIGHT_BORDER  = 'rgba(0,0,0,.04)';
+const DARK_SHADOW   = '0 10px 25px -5px rgba(0,0,0,0.4), 0 8px 10px -6px rgba(0,0,0,0.4)';
+const LIGHT_SHADOW  = '0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.05)';
 
 function applyTheme(theme) {
     const dark = theme === 'dark';
@@ -553,9 +591,9 @@ function applyTheme(theme) {
     // 5. Update all inline-styled white/light cards on the page
     //    (dashboard cards use inline styles so we update them here)
     document.querySelectorAll('[data-theme-card]').forEach(el => {
-        el.style.background  = dark ? DARK_SURFACE  : LIGHT_SURFACE;
-        el.style.border      = '1px solid ' + (dark ? DARK_BORDER : LIGHT_BORDER);
-        el.style.boxShadow   = dark ? DARK_SHADOW : LIGHT_SHADOW;
+        el.style.backgroundImage = dark ? DARK_SURFACE  : LIGHT_SURFACE;
+        el.style.border          = dark ? '1px solid rgba(255,255,255,0.03)' : '1px solid ' + LIGHT_BORDER;
+        el.style.boxShadow       = dark ? DARK_SHADOW : LIGHT_SHADOW;
     });
 
     // Text-primary elements
