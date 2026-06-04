@@ -425,12 +425,12 @@ if ($hour >= 18) $greeting = "Good Evening";
             </div>
             
             <div id="camera-ctrls" class="flex flex-col gap-3">
-                <button id="btnCapture" onclick="capturePhoto()" class="w-full py-5 bg-emerald-500 text-white rounded-full text-xs font-bold  shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-lg">photo_camera</span>
-                    Take Snapshot
+                <button id="btnCapture" onclick="capturePhoto()" disabled class="w-full py-5 bg-emerald-500/50 cursor-not-allowed text-white rounded-full text-xs font-bold shadow-lg shadow-emerald-500/10 transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-lg animate-spin">autorenew</span>
+                    Detecting GPS...
                 </button>
                 
-                <form method="POST" action="/hris_system/index.php" id="photoForm" class="hidden flex flex-col gap-3">
+                <form method="POST" action="/hris_system/index.php" id="photoForm" class="hidden flex flex-col gap-3" onsubmit="return validatePhotoSubmit()">
                     <input type="hidden" name="page" value="attendance">
                     <input type="hidden" name="action" value="submit-photo">
                     <input type="hidden" name="photo_data" id="photoData">
@@ -527,6 +527,35 @@ window.closeModal = function(id) {
 
 let stream = null;
 let currentPos = { lat: 0, lng: 0, addr: 'Unknown Location' };
+let watchId = null;
+
+function disableCaptureButton(text = "Detecting GPS...") {
+    const btn = document.getElementById('btnCapture');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined text-lg animate-spin">autorenew</span> ${text}`;
+        btn.className = "w-full py-5 bg-emerald-500/50 cursor-not-allowed text-white rounded-full text-xs font-bold shadow-lg shadow-emerald-500/10 transition-all flex items-center justify-center gap-2";
+    }
+}
+
+function enableCaptureButton() {
+    const btn = document.getElementById('btnCapture');
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `<span class="material-symbols-outlined text-lg">photo_camera</span> Take Snapshot`;
+        btn.className = "w-full py-5 bg-emerald-500 text-white rounded-full text-xs font-bold shadow-lg shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-2";
+    }
+}
+
+function validatePhotoSubmit() {
+    const lat = document.getElementById('formLat').value;
+    const lng = document.getElementById('formLng').value;
+    if (!lat || !lng || parseFloat(lat) === 0 || parseFloat(lng) === 0) {
+        alert("Gagal mendapatkan koordinat GPS yang valid. Harap aktifkan GPS Anda dan coba lagi.");
+        return false;
+    }
+    return true;
+}
 
 function startCamera() {
     stopCamera();
@@ -534,6 +563,7 @@ function startCamera() {
     document.getElementById('cameraFeed').classList.remove('hidden');
     document.getElementById('photoPreview').classList.add('hidden');
     document.getElementById('btnCapture').classList.remove('hidden');
+    disableCaptureButton("Detecting GPS...");
     document.getElementById('photoForm').classList.add('hidden');
 
     navigator.mediaDevices.getUserMedia({video:{aspectRatio: 1, facingMode:'user'}})
@@ -547,19 +577,36 @@ function startCamera() {
 }
 
 function initGeolocation() {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+        document.getElementById('current-coords').innerText = "GPS Not Supported";
+        document.getElementById('current-address').innerText = "Your browser does not support Geolocation.";
+        disableCaptureButton("GPS Not Supported");
+        return;
+    }
     
-    // Reset display
+    // Reset display and disable capture
     document.getElementById('current-coords').innerText = "Detecting GPS...";
     document.getElementById('current-address').innerText = "Waiting for location...";
+    disableCaptureButton("Detecting GPS...");
 
-    navigator.geolocation.getCurrentPosition(pos => {
+    const geoOptions = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+    };
+
+    function handleSuccess(pos) {
+        if (pos.coords.latitude === 0 && pos.coords.longitude === 0) {
+            return; // Ignore dummy/zero coordinates
+        }
         currentPos.lat = pos.coords.latitude;
         currentPos.lng = pos.coords.longitude;
         document.getElementById('current-coords').innerText = `${currentPos.lat.toFixed(6)}, ${currentPos.lng.toFixed(6)}`;
         document.getElementById('formLat').value = currentPos.lat;
         document.getElementById('formLng').value = currentPos.lng;
         
+        enableCaptureButton();
+
         // Reverse Geocoding via Nominatim
         fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentPos.lat}&lon=${currentPos.lng}&zoom=18&addressdetails=1`)
             .then(res => res.json())
@@ -571,12 +618,45 @@ function initGeolocation() {
                 currentPos.addr = "Location details unavailable";
                 document.getElementById('current-address').innerText = currentPos.addr;
             });
-    }, err => {
-        document.getElementById('current-address').innerText = "Permission Denied: Enable GPS to proceed.";
-    }, { enableHighAccuracy: true });
+    }
+
+    function handleError(err) {
+        console.warn(`Geolocation error (${err.code}): ${err.message}`);
+        
+        // Fallback to low accuracy if high accuracy timed out or failed
+        if (err.code === 3 || err.code === 2) {
+            document.getElementById('current-coords').innerText = "Retrying with lower accuracy...";
+            navigator.geolocation.getCurrentPosition(handleSuccess, err2 => {
+                let errorMsg = "Permission Denied: Enable GPS to proceed.";
+                if (err2.code === 2) {
+                    errorMsg = "Position Unavailable: GPS signal not found.";
+                } else if (err2.code === 3) {
+                    errorMsg = "Timeout: Failed to acquire GPS signal.";
+                }
+                document.getElementById('current-address').innerText = errorMsg;
+                disableCaptureButton(errorMsg);
+            }, { enableHighAccuracy: false, timeout: 10000 });
+        } else {
+            let errorMsg = "Permission Denied: Enable GPS to proceed.";
+            document.getElementById('current-address').innerText = errorMsg;
+            disableCaptureButton(errorMsg);
+        }
+    }
+
+    // Attempt to get position immediately
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, geoOptions);
+
+    // Watch position to update coordinates dynamically
+    if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+    }
+    watchId = navigator.geolocation.watchPosition(handleSuccess, handleError, geoOptions);
 }
 
-function stopCamera() { if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } }
+function stopCamera() { 
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } 
+    if (watchId !== null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+}
 
 function capturePhoto() {
     const video = document.getElementById('cameraFeed');
