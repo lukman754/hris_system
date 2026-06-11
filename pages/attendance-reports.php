@@ -37,45 +37,41 @@ $attendance = array_slice($all_attendance, $offset, $per_page);
 <div class="space-y-8 performance-page-container">
     
     <!-- ══ Header Section ══ -->
-    <header class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div>
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-3xl font-bold">query_stats</span>
                 </div>
-                <h1 data-theme-text class="text-4xl font-bold  leading-none">Attendance Logs</h1>
+                <h1 data-theme-text class="text-3xl font-bold leading-none">Attendance Logs</h1>
             </div>
-            <div class="flex items-center gap-3 ml-1">
-                <p data-theme-muted class="text-[10px] font-bold   opacity-50">Enterprise Compliance Activity</p>
-                <span class="w-1 h-1 rounded-full bg-border"></span>
-                <span class="text-[10px] font-bold text-primary"><?= $total_records ?> Records</span>
-            </div>
+            <p data-theme-muted class="text-[10px] font-bold ml-1 opacity-50">Enterprise Compliance Activity (<?= $total_records ?> entries)</p>
         </div>
         
-        <div class="flex flex-col md:flex-row items-center gap-3">
+        <div class="flex items-center gap-3 flex-wrap self-stretch md:self-auto">
             <!-- Quick Filters -->
-            <div class="flex items-center gap-1.5 bg-surface p-1 rounded-xl border border-border shadow-sm">
-                <a href="?page=attendance-reports&period=week" class="px-4 py-2 rounded-lg text-[10px] font-bold transition-all <?= $period === 'week' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-on-surface/50 hover:bg-surface2' ?>">MINGGU</a>
-                <a href="?page=attendance-reports&period=month" class="px-4 py-2 rounded-lg text-[10px] font-bold transition-all <?= $period === 'month' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-on-surface/50 hover:bg-surface2' ?>">BULAN</a>
+            <div class="flex items-center gap-1 bg-surface p-1 rounded-lg" style="border:1px solid var(--border); height:38px;">
+                <a href="?page=attendance-reports&period=week" class="px-3 py-1 rounded text-[11px] font-bold transition-all <?= $period === 'week' ? 'bg-primary text-white' : 'text-on-surface-variant opacity-60 hover:bg-surface-variant hover:text-on-surface' ?>">WEEK</a>
+                <a href="?page=attendance-reports&period=month" class="px-3 py-1 rounded text-[11px] font-bold transition-all <?= $period === 'month' ? 'bg-primary text-white' : 'text-on-surface-variant opacity-60 hover:bg-surface-variant hover:text-on-surface' ?>">MONTH</a>
             </div>
 
             <!-- Custom Date Range -->
-            <form method="GET" class="flex items-center gap-2 bg-surface p-1.5 px-3 rounded-xl border border-border shadow-sm">
+            <form method="GET" class="flex items-center gap-2 bg-surface p-1 rounded-lg border border-border" style="height:38px;">
                 <input type="hidden" name="page" value="attendance-reports">
-                <div class="flex items-center gap-2">
-                    <input type="date" name="start_date" value="<?= $_GET['start_date'] ?? '' ?>" class="bg-transparent text-[10px] font-bold outline-none border-none p-1 focus:ring-0 w-28">
-                    <span class="text-[10px] opacity-20 font-bold">TO</span>
-                    <input type="date" name="end_date" value="<?= $_GET['end_date'] ?? '' ?>" class="bg-transparent text-[10px] font-bold outline-none border-none p-1 focus:ring-0 w-28">
+                <div class="flex items-center gap-1">
+                    <input type="date" name="start_date" value="<?= $_GET['start_date'] ?? '' ?>" class="bg-transparent text-[11px] font-semibold outline-none border-none p-1 focus:ring-0 w-28 text-on-surface">
+                    <span class="text-[9px] opacity-30 font-bold text-on-surface-variant">TO</span>
+                    <input type="date" name="end_date" value="<?= $_GET['end_date'] ?? '' ?>" class="bg-transparent text-[11px] font-semibold outline-none border-none p-1 focus:ring-0 w-28 text-on-surface">
                 </div>
-                <div class="w-px h-4 bg-border mx-1"></div>
-                <button type="submit" class="bg-on-surface text-surface text-[10px] font-bold px-4 py-1.5 rounded-lg hover:opacity-90 transition-all">
+                <div class="w-px h-4 bg-border"></div>
+                <button type="submit" class="px-4 py-1.5 bg-primary text-white rounded font-bold text-xs hover:bg-primary-dark transition-all">
                     APPLY
                 </button>
             </form>
 
             <?php if ($period || !empty($_GET['start_date'])): ?>
-                <a href="?page=attendance-reports" class="w-9 h-9 flex items-center justify-center rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all shadow-sm" title="Reset Filters">
-                    <span class="material-symbols-outlined text-sm">filter_alt_off</span>
+                <a href="?page=attendance-reports" class="w-[38px] h-[38px] flex items-center justify-center rounded bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all shadow-sm" style="border-radius:8px;" title="Reset Filters">
+                    <span class="material-symbols-outlined text-[16px]">filter_alt_off</span>
                 </a>
             <?php endif; ?>
         </div>

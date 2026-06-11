@@ -22,6 +22,12 @@ function handle_scan_attendance($user_id, $token, $lat, $lng) {
     $today = $now->format('Y-m-d');
     $time = $now->format('H:i:s');
 
+    // Check if today is a holiday
+    $holiday_title = is_holiday_date($today);
+    if ($holiday_title) {
+        return ['status' => 'error', 'message' => "Hari ini adalah hari libur resmi ($holiday_title). Anda tidak dapat melakukan absensi."];
+    }
+
     // 1. Validate Token
     $stmt = $pdo->prepare("SELECT t.*, l.* FROM qr_tokens t JOIN locations l ON t.location_id = l.id WHERE t.token = ? AND t.is_active = 1 LIMIT 1");
     $stmt->execute([$token]);

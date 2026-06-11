@@ -10,17 +10,17 @@ if (!auth_is_hrd()):
 ?>
 
 <!-- Header Section -->
-<section class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
     <div>
         <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                <span class="material-symbols-outlined font-bold">monitoring</span>
+            <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-3xl font-bold">monitoring</span>
             </div>
-            <h1 data-theme-text class="text-3xl font-bold  leading-none">Performance Summary</h1>
+            <h1 data-theme-text class="text-3xl font-bold leading-none">Performance Summary</h1>
         </div>
-        <p data-theme-muted class="text-[10px] font-bold   ml-1">Self Assessment Ledger</p>
+        <p data-theme-muted class="text-[10px] font-bold ml-1 opacity-50">Self Assessment Ledger</p>
     </div>
-</section>
+</header>
 
 <style>
     /* Performance Page Specific Overrides */
@@ -134,65 +134,67 @@ if (!auth_is_hrd()):
 <!-- HRD View -->
 <div class="space-y-6">
     <!-- Header Section -->
-    <section class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div>
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                    <span class="material-symbols-outlined font-bold">analytics</span>
+                <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-3xl font-bold">monitoring</span>
                 </div>
-                <h1 data-theme-text class="text-3xl font-bold  leading-none">Employee Reviews</h1>
+                <h1 data-theme-text class="text-3xl font-bold leading-none">Employee Reviews</h1>
             </div>
-            <p data-theme-muted class="text-[10px] font-bold   ml-1">Team Performance Ledger</p>
+            <p data-theme-muted class="text-[10px] font-bold ml-1 opacity-50">Team Performance Ledger</p>
         </div>
         
-        <button onclick="openModal('reviewModal')" class="group relative px-6 py-3.5 bg-primary text-white rounded-lg font-bold text-xs   flex items-center gap-3 overflow-hidden transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-primary/20">
+        <button onclick="openModal('reviewModal')" class="px-6 py-3.5 bg-primary text-white rounded-lg font-bold text-xs flex items-center gap-2 shadow-xl shadow-primary/20 active:scale-95 transition-all">
             <span class="material-symbols-outlined text-lg">add_circle</span>
             <span>Tambah Review</span>
-            <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
         </button>
-    </section>
+    </header>
 
     <!-- HRD Summary Stats -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:16px; margin-bottom:24px;">
         <?php 
         $avg_score = !empty($reviews) ? array_sum(array_column($reviews, 'overall')) / count($reviews) : 0;
         $total_reviewed = count($reviews);
         $top_performer = !empty($reviews) ? max(array_column($reviews, 'overall')) : 0;
         ?>
-        <div data-theme-card class="bg-surface p-4 rounded-lg border border-border shadow-sm flex items-center gap-4">
-            <div class="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center grow-0 shrink-0">
-                <span class="material-symbols-outlined text-xl">avg_pace</span>
+        <div class="card" style="padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.02em;">Average Team Score</span>
+                <span class="material-symbols-outlined" style="color:var(--primary); font-size:20px;">avg_pace</span>
             </div>
-            <div>
-                <div data-theme-muted class="text-[8px] font-bold   opacity-40">Average Team Score</div>
-                <div data-theme-text class="text-lg font-bold"><?= number_format($avg_score, 1) ?></div>
-            </div>
-        </div>
-        <div data-theme-card class="bg-surface p-4 rounded-lg border border-border shadow-sm flex items-center gap-4">
-            <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center grow-0 shrink-0">
-                <span class="material-symbols-outlined text-xl">reviews</span>
-            </div>
-            <div>
-                <div data-theme-muted class="text-[8px] font-bold   opacity-40">Reviews Completed</div>
-                <div data-theme-text class="text-lg font-bold"><?= $total_reviewed ?></div>
+            <div style="display:flex; align-items:baseline; gap:4px;">
+                <span style="font-size:20px; font-weight:700; color:var(--text-primary); line-height:1;"><?= number_format($avg_score, 1) ?></span>
             </div>
         </div>
-        <div data-theme-card class="bg-surface p-4 rounded-lg border border-border shadow-sm flex items-center gap-4">
-            <div class="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center grow-0 shrink-0">
-                <span class="material-symbols-outlined text-xl">stars</span>
+        
+        <div class="card" style="padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.02em;">Reviews Completed</span>
+                <span class="material-symbols-outlined" style="color:#10B981; font-size:20px;">reviews</span>
             </div>
-            <div>
-                <div data-theme-muted class="text-[8px] font-bold   opacity-40">Top Achievement</div>
-                <div data-theme-text class="text-lg font-bold"><?= number_format($top_performer, 1) ?></div>
+            <div style="display:flex; align-items:baseline; gap:4px;">
+                <span style="font-size:20px; font-weight:700; color:var(--text-primary); line-height:1;"><?= $total_reviewed ?></span>
             </div>
         </div>
-        <div data-theme-card class="bg-surface p-4 rounded-lg border border-border shadow-sm flex items-center gap-4">
-            <div class="w-10 h-10 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center grow-0 shrink-0">
-                <span class="material-symbols-outlined text-xl">pending_actions</span>
+        
+        <div class="card" style="padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.02em;">Top Achievement</span>
+                <span class="material-symbols-outlined" style="color:#F59E0B; font-size:20px;">stars</span>
             </div>
-            <div>
-                <div data-theme-muted class="text-[8px] font-bold   opacity-40">Pending Evaluations</div>
-                <div data-theme-text class="text-lg font-bold"><?= count($employees) - $total_reviewed ?></div>
+            <div style="display:flex; align-items:baseline; gap:4px;">
+                <span style="font-size:20px; font-weight:700; color:var(--text-primary); line-height:1;"><?= number_format($top_performer, 1) ?></span>
+            </div>
+        </div>
+        
+        <div class="card" style="padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.02em;">Pending Evaluations</span>
+                <span class="material-symbols-outlined" style="color:#EF4444; font-size:20px;">pending_actions</span>
+            </div>
+            <div style="display:flex; align-items:baseline; gap:4px;">
+                <span style="font-size:20px; font-weight:700; color:var(--text-primary); line-height:1;"><?= count($employees) - $total_reviewed ?></span>
             </div>
         </div>
     </div>
@@ -253,10 +255,10 @@ if (!auth_is_hrd()):
             </div>
 
             <div class="grid grid-cols-2 gap-2 mt-6">
-                <button class="py-3 border border-border hover:bg-surface2 rounded-lg text-[10px] font-bold   text-on-surface/40 hover:text-primary transition-all active:scale-95">
+                <button class="py-3 bg-surface-variant text-primary hover:bg-primary hover:text-white border border-border rounded-lg text-[10px] font-bold transition-all active:scale-95 shadow-sm">
                     View Dossier
                 </button>
-                <button onclick="confirmDeleteReview(<?= $r['id'] ?>, '<?= h($emp['name']) ?>')" class="py-3 bg-rose-500/5 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg text-[10px] font-bold   transition-all active:scale-95 border border-rose-500/10">
+                <button onclick="confirmDeleteReview(<?= $r['id'] ?>, '<?= h($emp['name']) ?>')" class="py-3 bg-surface-variant text-rose-500 hover:bg-rose-500 hover:text-white border border-border rounded-lg text-[10px] font-bold transition-all active:scale-95 shadow-sm">
                     <span class="material-symbols-outlined text-sm">delete</span>
                 </button>
             </div>

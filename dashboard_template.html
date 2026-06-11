@@ -1,0 +1,1277 @@
+<!doctype html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>PresPay Admin - Perkasa Abadi Logistik</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed": "#dee3eb",
+              "surface-bright": "#f8f9fb",
+              primary: "#003d9b",
+              "on-error-container": "#93000a",
+              "on-secondary-fixed-variant": "#3b475b",
+              "tertiary-container": "#565b62",
+              "error-container": "#ffdad6",
+              "primary-fixed-dim": "#b2c5ff",
+              "surface-variant": "#e1e2e4",
+              "on-background": "#191c1e",
+              "on-secondary-container": "#576377",
+              "on-primary": "#ffffff",
+              "inverse-primary": "#b2c5ff",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#434654",
+              "on-tertiary-fixed": "#171c22",
+              "surface-container-lowest": "#ffffff",
+              "primary-fixed": "#dae2ff",
+              background: "#f8f9fb",
+              "primary-container": "#0052cc",
+              "outline-variant": "#d1d5db",
+              "on-tertiary": "#ffffff",
+              "surface-container-low": "#f3f4f6",
+              outline: "#737685",
+              "tertiary-fixed-dim": "#c2c7cf",
+              surface: "#f8f9fb",
+              "surface-container-high": "#e7e8ea",
+              "on-primary-container": "#c4d2ff",
+              "surface-container-highest": "#e1e2e4",
+              "secondary-container": "#d4e0f8",
+              "on-primary-fixed": "#001848",
+              error: "#ba1a1a",
+              "surface-tint": "#0c56d0",
+              "on-tertiary-fixed-variant": "#42474e",
+              "on-tertiary-container": "#cfd3db",
+              "inverse-on-surface": "#f0f1f3",
+              "surface-dim": "#d9dadc",
+              "on-error": "#ffffff",
+              "secondary-fixed-dim": "#bbc7de",
+              "on-primary-fixed-variant": "#0040a2",
+              secondary: "#535f73",
+              "surface-container": "#edeef0",
+              "secondary-fixed": "#d7e3fb",
+              "on-secondary-fixed": "#101c2d",
+              tertiary: "#3f444a",
+              "inverse-surface": "#24292F",
+              "on-surface": "#191c1e",
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "6px",
+              xl: "8px",
+              full: "9999px",
+            },
+            spacing: {
+              xl: "2rem",
+              md: "1rem",
+              lg: "1.5rem",
+              base: "4px",
+              gutter: "16px",
+              xs: "0.25rem",
+              sm: "0.5rem",
+              "container-max": "1440px",
+            },
+            fontFamily: {
+              caption: ["Inter"],
+              "page-title": ["Inter"],
+              "label-emphasis": ["Inter"],
+              "table-cell": ["Inter"],
+              "section-title": ["Inter"],
+              "card-title": ["Inter"],
+              "body-main": ["Inter"],
+            },
+            fontSize: {
+              caption: ["12px", { lineHeight: "16px", fontWeight: "400" }],
+              "page-title": [
+                "20px",
+                {
+                  lineHeight: "28px",
+                  letterSpacing: "-0.01em",
+                  fontWeight: "700",
+                },
+              ],
+              "label-emphasis": [
+                "13px",
+                { lineHeight: "18px", fontWeight: "600" },
+              ],
+              "table-cell": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+              "section-title": [
+                "16px",
+                { lineHeight: "22px", fontWeight: "600" },
+              ],
+              "card-title": ["14px", { lineHeight: "20px", fontWeight: "600" }],
+              "body-main": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f4f5f7;
+      }
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+        font-size: 20px;
+      }
+      .sidebar-active {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-left: 3px solid #0052cc;
+        color: white !important;
+      }
+      .card-border {
+        border: 1px solid #d1d5db;
+      }
+      .table-zebra tr:nth-child(even) {
+        background-color: #f9fafb;
+      }
+    </style>
+  </head>
+  <body class="text-on-surface">
+    <!-- Side Navigation -->
+    <aside
+      class="fixed left-0 top-0 h-full w-60 bg-inverse-surface flex flex-col py-md z-50 overflow-y-auto hidden md:flex"
+    >
+      <div class="px-md mb-xl flex items-center gap-sm">
+        <div
+          class="w-8 h-8 bg-primary rounded flex items-center justify-center"
+        >
+          <span
+            class="material-symbols-outlined text-white"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >architecture</span
+          >
+        </div>
+        <div>
+          <h1
+            class="font-section-title text-section-title font-bold text-surface-lowest leading-none"
+          >
+            PresPay Admin
+          </h1>
+          <p
+            class="text-[10px] text-surface-variant/60 uppercase tracking-widest mt-1"
+          >
+            Enterprise Suite
+          </p>
+        </div>
+      </div>
+      <nav class="flex-1 px-sm space-y-1">
+        <div
+          class="px-md py-sm text-[11px] font-bold text-surface-variant/40 uppercase tracking-wider"
+        >
+          Management
+        </div>
+        <a
+          class="flex items-center gap-md px-md py-2 cursor-pointer text-surface-variant hover:bg-white/5 transition-all rounded-lg sidebar-active"
+          href="#"
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          <span class="font-label-emphasis text-label-emphasis">Dashboard</span>
+        </a>
+        <a
+          class="flex items-center gap-md px-md py-2 cursor-pointer text-surface-variant hover:bg-white/5 transition-all rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">groups</span>
+          <span class="font-label-emphasis text-label-emphasis">Employees</span>
+        </a>
+        <a
+          class="flex items-center gap-md px-md py-2 cursor-pointer text-surface-variant hover:bg-white/5 transition-all rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">work_outline</span>
+          <span class="font-label-emphasis text-label-emphasis">Positions</span>
+        </a>
+        <a
+          class="flex items-center gap-md px-md py-2 cursor-pointer text-surface-variant hover:bg-white/5 transition-all rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">location_on</span>
+          <span class="font-label-emphasis text-label-emphasis"
+            >Office Locations</span
+          >
+        </a>
+        <a
+          class="flex items-center gap-md px-md py-2 cursor-pointer text-surface-variant hover:bg-white/5 transition-all rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">qr_code_2</span>
+          <span class="font-label-emphasis text-label-emphasis"
+            >QR Management</span
+          >
+        </a>
+        <div
+          class="px-md py-sm pt-4 text-[11px] font-bold text-surface-variant/40 uppercase tracking-wider"
+        >
+          Operations
+        </div>
+        <a
+          class="flex items-center gap-md px-md py-2 cursor-pointer text-surface-variant hover:bg-white/5 transition-all rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">event_available</span>
+          <span class="font-label-emphasis text-label-emphasis"
+            >Attendance</span
+          >
+        </a>
+        <a
+          class="flex items-center gap-md px-md py-2 cursor-pointer text-surface-variant hover:bg-white/5 transition-all rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">history_toggle_off</span>
+          <span class="font-label-emphasis text-label-emphasis">Overtime</span>
+        </a>
+        <a
+          class="flex items-center gap-md px-md py-2 cursor-pointer text-surface-variant hover:bg-white/5 transition-all rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">payments</span>
+          <span class="font-label-emphasis text-label-emphasis">Payroll</span>
+        </a>
+        <div
+          class="px-md py-sm pt-4 text-[11px] font-bold text-surface-variant/40 uppercase tracking-wider"
+        >
+          System
+        </div>
+        <a
+          class="flex items-center gap-md px-md py-2 cursor-pointer text-surface-variant hover:bg-white/5 transition-all rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">assessment</span>
+          <span class="font-label-emphasis text-label-emphasis">Reports</span>
+        </a>
+        <a
+          class="flex items-center gap-md px-md py-2 cursor-pointer text-surface-variant hover:bg-white/5 transition-all rounded-lg"
+          href="#"
+        >
+          <span class="material-symbols-outlined">settings</span>
+          <span class="font-label-emphasis text-label-emphasis">Settings</span>
+        </a>
+      </nav>
+      <div class="mt-auto px-md pt-md border-t border-white/10">
+        <div class="flex items-center gap-sm">
+          <div
+            class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-[10px] font-bold text-white"
+          >
+            AD
+          </div>
+          <div class="overflow-hidden">
+            <p class="text-xs font-bold text-white truncate">Admin HRD</p>
+            <p class="text-[10px] text-surface-variant/50 truncate">
+              Perkasa Abadi Logistik
+            </p>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <!-- Main Content Wrapper -->
+    <main class="md:ml-60 min-h-screen flex flex-col">
+      <!-- Top App Bar -->
+      <header
+        class="h-12 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-md sticky top-0 z-40"
+      >
+        <div class="flex items-center gap-md">
+          <span
+            class="material-symbols-outlined text-outline cursor-pointer md:hidden"
+            >menu</span
+          >
+          <div class="relative w-80 group hidden sm:block">
+            <span
+              class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-outline text-[18px]"
+              >search</span
+            >
+            <input
+              class="w-full h-8 pl-8 pr-4 bg-surface-container-low border-none rounded-lg text-body-main focus:ring-1 focus:ring-primary"
+              placeholder="Search employees, reports, or tasks..."
+              type="text"
+            />
+          </div>
+        </div>
+        <div class="flex items-center gap-sm">
+          <div
+            class="flex items-center gap-1 border-r border-outline-variant pr-sm mr-sm"
+          >
+            <button
+              class="w-8 h-8 flex items-center justify-center text-outline hover:bg-surface-container-high rounded-full transition-colors relative"
+            >
+              <span class="material-symbols-outlined">notifications</span>
+              <span
+                class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full border border-white"
+              ></span>
+            </button>
+            <button
+              class="w-8 h-8 flex items-center justify-center text-outline hover:bg-surface-container-high rounded-full transition-colors"
+            >
+              <span class="material-symbols-outlined">help</span>
+            </button>
+            <button
+              class="w-8 h-8 flex items-center justify-center text-outline hover:bg-surface-container-high rounded-full transition-colors"
+            >
+              <span class="material-symbols-outlined">dark_mode</span>
+            </button>
+          </div>
+          <div
+            class="flex items-center gap-sm cursor-pointer hover:bg-surface-container-high p-1 px-2 rounded transition-colors"
+          >
+            <div class="text-right hidden sm:block">
+              <p class="text-[11px] font-bold leading-tight">Admin HRD</p>
+              <p class="text-[10px] text-outline leading-tight">HR Manager</p>
+            </div>
+            <img
+              alt="Admin Profile"
+              class="w-7 h-7 rounded-full object-cover border border-outline-variant"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoH9UjATvtHViDkUWG3tk7BxRB4fHL_SjfJArtc5QG_Rk8yb3fOgqiacRcEwkNfWw35ppHFLhqdXmavpxoZruDpCe_jvamASjREncV3VRJUHqAKgIWs6neZ5P1IxX9JvtCoqtlRVz82bGzCrlG7NROGVlHkYSt_sKE74_2RONHb_5elE9Hxu8Vjh_qDTYD1RQTaQ9-b2HhmRPfPXofpa2YGDuHo5IF79cjQOxVOXkkMCOWu9DWe9em0nRbIVcWoE4wwjKGH0hGbR0"
+            />
+            <span class="material-symbols-outlined text-[16px] text-outline"
+              >expand_more</span
+            >
+          </div>
+        </div>
+      </header>
+      <!-- Page Content -->
+      <div class="p-lg flex-1">
+        <!-- Header Actions -->
+        <div
+          class="flex flex-col sm:flex-row sm:items-end justify-between gap-md mb-lg"
+        >
+          <div>
+            <h2 class="font-page-title text-page-title text-primary">
+              Admin Dashboard
+            </h2>
+            <p class="text-body-main text-on-surface-variant">
+              Overview of organization workforce and financial performance for
+              Perkasa Abadi Logistik.
+            </p>
+          </div>
+          <div class="flex items-center gap-sm">
+            <button
+              class="flex items-center gap-sm bg-white border border-outline-variant px-md py-2 rounded-lg text-label-emphasis text-on-surface hover:bg-surface-container-low transition-colors"
+            >
+              <span class="material-symbols-outlined">download</span>
+              Export Data
+            </button>
+            <button
+              class="flex items-center gap-sm bg-primary-container text-white px-md py-2 rounded-lg text-label-emphasis hover:opacity-90 transition-opacity"
+            >
+              <span class="material-symbols-outlined">add</span>
+              Quick Action
+            </button>
+          </div>
+        </div>
+        <!-- 1. Summary Stats (ERP Grid) -->
+        <div
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-md mb-lg"
+        >
+          <div
+            class="bg-white card-border rounded-lg p-md flex flex-col justify-between"
+          >
+            <div class="flex items-center justify-between mb-sm">
+              <span
+                class="text-caption font-medium text-on-surface-variant uppercase tracking-wider"
+                >Total Employees</span
+              >
+              <span class="material-symbols-outlined text-primary text-[20px]"
+                >groups</span
+              >
+            </div>
+            <div class="flex items-baseline gap-xs">
+              <span class="text-page-title font-bold">1,248</span>
+              <span
+                class="text-[10px] text-green-600 font-bold bg-green-50 px-1 rounded"
+                >+12</span
+              >
+            </div>
+            <p class="text-caption text-outline mt-1 italic">
+              Active in company
+            </p>
+          </div>
+          <div
+            class="bg-white card-border rounded-lg p-md flex flex-col justify-between"
+          >
+            <div class="flex items-center justify-between mb-sm">
+              <span
+                class="text-caption font-medium text-on-surface-variant uppercase tracking-wider"
+                >Present</span
+              >
+              <span class="material-symbols-outlined text-green-600 text-[20px]"
+                >person_check</span
+              >
+            </div>
+            <div class="flex items-baseline gap-xs">
+              <span class="text-page-title font-bold">1,182</span>
+              <span class="text-[10px] text-outline">94.7%</span>
+            </div>
+            <p class="text-caption text-outline mt-1 italic">Logged in today</p>
+          </div>
+          <div
+            class="bg-white card-border rounded-lg p-md flex flex-col justify-between"
+          >
+            <div class="flex items-center justify-between mb-sm">
+              <span
+                class="text-caption font-medium text-on-surface-variant uppercase tracking-wider"
+                >Late Arrivals</span
+              >
+              <span class="material-symbols-outlined text-amber-500 text-[20px]"
+                >schedule</span
+              >
+            </div>
+            <div class="flex items-baseline gap-xs">
+              <span class="text-page-title font-bold">42</span>
+              <span
+                class="text-[10px] text-amber-600 font-bold bg-amber-50 px-1 rounded"
+                >High</span
+              >
+            </div>
+            <p class="text-caption text-outline mt-1 italic">
+              Grace period expired
+            </p>
+          </div>
+          <div
+            class="bg-white card-border rounded-lg p-md flex flex-col justify-between"
+          >
+            <div class="flex items-center justify-between mb-sm">
+              <span
+                class="text-caption font-medium text-on-surface-variant uppercase tracking-wider"
+                >Absent</span
+              >
+              <span class="material-symbols-outlined text-error text-[20px]"
+                >person_off</span
+              >
+            </div>
+            <div class="flex items-baseline gap-xs">
+              <span class="text-page-title font-bold">18</span>
+              <span class="text-[10px] text-outline">Unnotified</span>
+            </div>
+            <p class="text-caption text-outline mt-1 italic">
+              No records found
+            </p>
+          </div>
+          <div
+            class="bg-white card-border rounded-lg p-md flex flex-col justify-between"
+          >
+            <div class="flex items-center justify-between mb-sm">
+              <span
+                class="text-caption font-medium text-on-surface-variant uppercase tracking-wider"
+                >On Leave</span
+              >
+              <span class="material-symbols-outlined text-tertiary text-[20px]"
+                >event_busy</span
+              >
+            </div>
+            <div class="flex items-baseline gap-xs">
+              <span class="text-page-title font-bold">6</span>
+              <span class="text-[10px] text-outline">Approved</span>
+            </div>
+            <p class="text-caption text-outline mt-1 italic">
+              Annual &amp; Sick leave
+            </p>
+          </div>
+          <div
+            class="bg-white card-border rounded-lg p-md flex flex-col justify-between border-l-4 border-l-primary"
+          >
+            <div class="flex items-center justify-between mb-sm">
+              <span
+                class="text-caption font-medium text-on-surface-variant uppercase tracking-wider"
+                >Overtime</span
+              >
+              <span class="material-symbols-outlined text-blue-600 text-[20px]"
+                >hourglass_empty</span
+              >
+            </div>
+            <div class="flex items-baseline gap-xs">
+              <span class="text-page-title font-bold">142</span>
+              <span
+                class="text-[10px] text-blue-600 font-bold bg-blue-50 px-1 rounded"
+                >Claimed</span
+              >
+            </div>
+            <p class="text-caption text-outline mt-1 italic">
+              Pending approval
+            </p>
+          </div>
+        </div>
+        <!-- 2. Workforce Overview (Bento Grid Style) -->
+        <div class="grid grid-cols-12 gap-lg">
+          <!-- Recent Attendance Activity -->
+          <div class="col-span-12 lg:col-span-8 flex flex-col">
+            <div
+              class="bg-white card-border rounded-lg flex flex-col h-full overflow-hidden"
+            >
+              <div
+                class="px-md py-sm border-b border-outline-variant bg-surface-container flex items-center justify-between"
+              >
+                <h3
+                  class="font-card-title text-card-title flex items-center gap-xs"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >list_alt</span
+                  >
+                  Recent Attendance Activity
+                </h3>
+                <div class="flex gap-xs">
+                  <button
+                    class="bg-white border border-outline-variant px-2 py-0.5 rounded text-[11px] font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors"
+                  >
+                    All
+                  </button>
+                  <button
+                    class="bg-white border border-outline-variant px-2 py-0.5 rounded text-[11px] font-bold text-error hover:bg-error-container/20 transition-colors"
+                  >
+                    Critical
+                  </button>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left table-zebra">
+                  <thead class="bg-surface-container-low">
+                    <tr>
+                      <th
+                        class="px-md py-2 font-label-emphasis text-[11px] text-outline uppercase"
+                      >
+                        Employee
+                      </th>
+                      <th
+                        class="px-md py-2 font-label-emphasis text-[11px] text-outline uppercase"
+                      >
+                        Activity Type
+                      </th>
+                      <th
+                        class="px-md py-2 font-label-emphasis text-[11px] text-outline uppercase"
+                      >
+                        Time
+                      </th>
+                      <th
+                        class="px-md py-2 font-label-emphasis text-[11px] text-outline uppercase text-center"
+                      >
+                        Status
+                      </th>
+                      <th
+                        class="px-md py-2 font-label-emphasis text-[11px] text-outline uppercase text-right"
+                      >
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-outline-variant">
+                    <tr
+                      class="hover:bg-surface-container-low transition-colors"
+                    >
+                      <td class="px-md py-2">
+                        <div class="flex items-center gap-sm">
+                          <img
+                            alt="Employee"
+                            class="w-6 h-6 rounded-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1t227rE_fCCiCSSXIHdkfu2eej6lRMNaxo5d3gQwqLYgL3kkHB3-eCDvlfFk1KGE-5CnkhPH5b95aX5CSyDCof1GBQ7HNByWr8A-ldq-eHaCs7CIufjOzdUR2FQQ4ibZ8qpLMDievYBkT-8JtMtYPyzs86daqwM3Gv88t4IrGKR4qZgfnPOCwHhYUirwNXspvQqmBnKHRvA4k_WXgrdRpDJASVEofREgNMXqF3zygKBH1vE90rIRZbNeT_6yzNcxy5YyKt-PvqeU"
+                          />
+                          <div>
+                            <p class="text-table-cell font-medium leading-none">
+                              Ayu Lestari
+                            </p>
+                            <p class="text-[10px] text-outline mt-1">LOG-429</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-md py-2 text-table-cell">
+                        Check-in via Office QR
+                      </td>
+                      <td class="px-md py-2 text-table-cell">04 Jun, 08:59</td>
+                      <td class="px-md py-2 text-center">
+                        <span
+                          class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold"
+                          >VALID</span
+                        >
+                      </td>
+                      <td class="px-md py-2 text-right">
+                        <button
+                          class="material-symbols-outlined text-outline hover:text-primary transition-colors"
+                        >
+                          visibility
+                        </button>
+                      </td>
+                    </tr>
+                    <!-- Repeat Rows -->
+                    <tr
+                      class="hover:bg-surface-container-low transition-colors"
+                    >
+                      <td class="px-md py-2">
+                        <div class="flex items-center gap-sm">
+                          <div
+                            class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-bold"
+                          >
+                            BS
+                          </div>
+                          <div>
+                            <p class="text-table-cell font-medium leading-none">
+                              Budi Santoso
+                            </p>
+                            <p class="text-[10px] text-outline mt-1">LOG-112</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-md py-2 text-table-cell">
+                        Late Check-in (GPS)
+                      </td>
+                      <td class="px-md py-2 text-table-cell">04 Jun, 09:15</td>
+                      <td class="px-md py-2 text-center">
+                        <span
+                          class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold"
+                          >LATE</span
+                        >
+                      </td>
+                      <td class="px-md py-2 text-right">
+                        <button
+                          class="material-symbols-outlined text-outline hover:text-primary transition-colors"
+                        >
+                          visibility
+                        </button>
+                      </td>
+                    </tr>
+                    <tr
+                      class="hover:bg-surface-container-low transition-colors"
+                    >
+                      <td class="px-md py-2">
+                        <div class="flex items-center gap-sm">
+                          <img
+                            alt="Employee"
+                            class="w-6 h-6 rounded-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrbRqUnu_eE-Ji1IoibhhszsQPDWYhZMy14yGo6MUWpdk2FMCygUJ5zYDR8-6-A3TPVIMvhjPjKjdIu4_tHWPYlqWzre1EJA-GYf2At_2FTProDhsa-o5uJUNeTbxeUN8s-uf5ICAtx_Dr5-P5D22_9c8_YCCqrESOZsezMoMKYB1gAGNAtPY5Xu7uZ-mQGwCPyNivWcijiFNfUoskpWlqdy6tuDwXbcNjZIC3D-WIoRmlwJaMQtKLQd0wFBaOI15WtFxVgeFvOJc"
+                          />
+                          <div>
+                            <p class="text-table-cell font-medium leading-none">
+                              Dimas Pratama
+                            </p>
+                            <p class="text-[10px] text-outline mt-1">LOG-881</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-md py-2 text-table-cell">
+                        Check-out via Facial
+                      </td>
+                      <td class="px-md py-2 text-table-cell">04 Jun, 17:30</td>
+                      <td class="px-md py-2 text-center">
+                        <span
+                          class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold"
+                          >VALID</span
+                        >
+                      </td>
+                      <td class="px-md py-2 text-right">
+                        <button
+                          class="material-symbols-outlined text-outline hover:text-primary transition-colors"
+                        >
+                          visibility
+                        </button>
+                      </td>
+                    </tr>
+                    <tr
+                      class="hover:bg-surface-container-low transition-colors"
+                    >
+                      <td class="px-md py-2">
+                        <div class="flex items-center gap-sm">
+                          <img
+                            alt="Employee"
+                            class="w-6 h-6 rounded-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB53-Mmi4hucMrGogwurya-XzBLyFaA1FmcyG7yXsxq122GIEzC_c7z4kbJEB_H6VINNuyKMxDoM1aX-qxFKoC0fQ8S8Dv9UxGwh2R0_wvCqTlPZJVByPVaA1xxbTLgsvRjOYa03fDDAQhvOujYBEs1nSw4CEqE6YC5VfF8L_sqDUKjmtFT5pkLMXBuGIA99YsuC5x-hMA-ZPMs_ooxm_XUAG5GGLe_2nu2GO2EP-3hiFLOw-CgVDBYu1Z4B6m6iG8idhW4HqKLCis"
+                          />
+                          <div>
+                            <p class="text-table-cell font-medium leading-none">
+                              Eka Wijaya
+                            </p>
+                            <p class="text-[10px] text-outline mt-1">LOG-334</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-md py-2 text-table-cell">
+                        Failed Check-in (Location)
+                      </td>
+                      <td class="px-md py-2 text-table-cell">04 Jun, 08:45</td>
+                      <td class="px-md py-2 text-center">
+                        <span
+                          class="px-2 py-0.5 rounded-full bg-error-container text-error text-[10px] font-bold"
+                          >INVALID</span
+                        >
+                      </td>
+                      <td class="px-md py-2 text-right">
+                        <button
+                          class="material-symbols-outlined text-outline hover:text-primary transition-colors"
+                        >
+                          visibility
+                        </button>
+                      </td>
+                    </tr>
+                    <!-- More rows to meet 8-10 requirement -->
+                    <tr
+                      class="hover:bg-surface-container-low transition-colors"
+                    >
+                      <td class="px-md py-2">
+                        <div class="flex items-center gap-sm">
+                          <div
+                            class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-bold text-primary"
+                          >
+                            HR
+                          </div>
+                          <div>
+                            <p class="text-table-cell font-medium leading-none">
+                              Hana Rizky
+                            </p>
+                            <p class="text-[10px] text-outline mt-1">LOG-012</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-md py-2 text-table-cell">
+                        Check-in via Office QR
+                      </td>
+                      <td class="px-md py-2 text-table-cell">04 Jun, 08:30</td>
+                      <td class="px-md py-2 text-center">
+                        <span
+                          class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold"
+                          >VALID</span
+                        >
+                      </td>
+                      <td class="px-md py-2 text-right">
+                        <button
+                          class="material-symbols-outlined text-outline hover:text-primary transition-colors"
+                        >
+                          visibility
+                        </button>
+                      </td>
+                    </tr>
+                    <tr
+                      class="hover:bg-surface-container-low transition-colors"
+                    >
+                      <td class="px-md py-2">
+                        <div class="flex items-center gap-sm">
+                          <img
+                            alt="Employee"
+                            class="w-6 h-6 rounded-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYhYwjHOg1frU8PTNT2PncsfyDUnUzvTNEkpkN9z4SmVThSMMNfN2VJI8i9qKOr9ImNkZ2i-XRbFO4VBN0vBPxmYEDhIfHaVmHyB2YhETMSE9-LFgWcY8Ri0pSpmps8g6Ze7OTbHRNXcapKL7xuzOGoYkraGL1b0UuflQoIHfya2BmAuB5bsAAVlGERHrA5rsExU2bolF01I85fW-N7NRn_qJXwhaVcbyZ2l8qzbq8cP9JXASgtxS3Hwb-hA7IYFwRjBAOkY-qIc0"
+                          />
+                          <div>
+                            <p class="text-table-cell font-medium leading-none">
+                              Irfan Hakim
+                            </p>
+                            <p class="text-[10px] text-outline mt-1">LOG-561</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-md py-2 text-table-cell">
+                        Check-in via Office QR
+                      </td>
+                      <td class="px-md py-2 text-table-cell">04 Jun, 08:55</td>
+                      <td class="px-md py-2 text-center">
+                        <span
+                          class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold"
+                          >VALID</span
+                        >
+                      </td>
+                      <td class="px-md py-2 text-right">
+                        <button
+                          class="material-symbols-outlined text-outline hover:text-primary transition-colors"
+                        >
+                          visibility
+                        </button>
+                      </td>
+                    </tr>
+                    <tr
+                      class="hover:bg-surface-container-low transition-colors"
+                    >
+                      <td class="px-md py-2">
+                        <div class="flex items-center gap-sm">
+                          <img
+                            alt="Employee"
+                            class="w-6 h-6 rounded-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqwuLJ4M07O5uWa0QcQY0BQUcYXDSWeNxK1QCIz42r5Ty1h6DR-CozJ5BfbP7ypow-8PW2_EqtYWAVCiH5Jqyv7NEJ21UtVNXUDB5PV23aXTIHJ-cXdINQUjS17j4AiuRfda0FeYCOQs_gGHyRR81VPHOv0sW1l5TdwQKsHjCbRSLBUR-oW-qE9hwWUT-JmcebGDBCi79onuBipKGRW2IiM6afY6USwOx2CysSRYnKtyhU-uMuvIYfNeBsGuyYd8qkc7I2uu8M-Lk"
+                          />
+                          <div>
+                            <p class="text-table-cell font-medium leading-none">
+                              Indah Sari
+                            </p>
+                            <p class="text-[10px] text-outline mt-1">LOG-902</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-md py-2 text-table-cell">
+                        Overtime Start (Manual)
+                      </td>
+                      <td class="px-md py-2 text-table-cell">04 Jun, 18:05</td>
+                      <td class="px-md py-2 text-center">
+                        <span
+                          class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold"
+                          >PENDING</span
+                        >
+                      </td>
+                      <td class="px-md py-2 text-right">
+                        <button
+                          class="material-symbols-outlined text-outline hover:text-primary transition-colors"
+                        >
+                          visibility
+                        </button>
+                      </td>
+                    </tr>
+                    <tr
+                      class="hover:bg-surface-container-low transition-colors"
+                    >
+                      <td class="px-md py-2">
+                        <div class="flex items-center gap-sm">
+                          <div
+                            class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-[10px] font-bold"
+                          >
+                            KP
+                          </div>
+                          <div>
+                            <p class="text-table-cell font-medium leading-none">
+                              Kiko Panglima
+                            </p>
+                            <p class="text-[10px] text-outline mt-1">LOG-115</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-md py-2 text-table-cell">
+                        Late Check-in (GPS)
+                      </td>
+                      <td class="px-md py-2 text-table-cell">04 Jun, 09:20</td>
+                      <td class="px-md py-2 text-center">
+                        <span
+                          class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold"
+                          >LATE</span
+                        >
+                      </td>
+                      <td class="px-md py-2 text-right">
+                        <button
+                          class="material-symbols-outlined text-outline hover:text-primary transition-colors"
+                        >
+                          visibility
+                        </button>
+                      </td>
+                    </tr>
+                    <tr
+                      class="hover:bg-surface-container-low transition-colors"
+                    >
+                      <td class="px-md py-2">
+                        <div class="flex items-center gap-sm">
+                          <img
+                            alt="Employee"
+                            class="w-6 h-6 rounded-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvdglZnKB1tdxlQU6K9Pp9ZRTTRaW4pfUXaTdmhLSToaj2Zd5GCCYccQNG3Y_aq6B8wQSBbYTpwAZiUOoPgV_uFhm2UzCWq9l7pXtE5d1FHHriKhnP8vJeKfhQ8cGHkhU_2kZvKPikMSY8lu6eK9JOoSmcHUGMkHkeyu0agNJgkKF79DB6iYUj9Kptl59fIDmvG4GUpIKqWC7KFEa7aShITyj9ggojm4uwHs69ivEcsa3NEgzW0BplfcGYwYoEOFm7VbmAJQHY6yQ"
+                          />
+                          <div>
+                            <p class="text-table-cell font-medium leading-none">
+                              Lars Erik
+                            </p>
+                            <p class="text-[10px] text-outline mt-1">LOG-667</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-md py-2 text-table-cell">
+                        Check-in via Office QR
+                      </td>
+                      <td class="px-md py-2 text-table-cell">04 Jun, 08:48</td>
+                      <td class="px-md py-2 text-center">
+                        <span
+                          class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold"
+                          >VALID</span
+                        >
+                      </td>
+                      <td class="px-md py-2 text-right">
+                        <button
+                          class="material-symbols-outlined text-outline hover:text-primary transition-colors"
+                        >
+                          visibility
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div
+                class="px-md py-2 bg-surface-container-low border-t border-outline-variant flex items-center justify-between text-[11px] text-outline font-medium"
+              >
+                <span>Showing 1-10 of 42 entries</span>
+                <div class="flex items-center gap-1">
+                  <button
+                    class="w-5 h-5 flex items-center justify-center hover:bg-surface-container transition-colors rounded"
+                  >
+                    <span class="material-symbols-outlined text-[14px]"
+                      >chevron_left</span
+                    >
+                  </button>
+                  <span class="px-1.5 py-0.5 bg-primary text-white rounded"
+                    >1</span
+                  >
+                  <button
+                    class="w-5 h-5 flex items-center justify-center hover:bg-surface-container transition-colors rounded"
+                  >
+                    2
+                  </button>
+                  <button
+                    class="w-5 h-5 flex items-center justify-center hover:bg-surface-container transition-colors rounded"
+                  >
+                    3
+                  </button>
+                  <button
+                    class="w-5 h-5 flex items-center justify-center hover:bg-surface-container transition-colors rounded"
+                  >
+                    <span class="material-symbols-outlined text-[14px]"
+                      >chevron_right</span
+                    >
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Right Side: Approvals & Distribution -->
+          <div class="col-span-12 lg:col-span-4 flex flex-col gap-lg">
+            <!-- Action Center -->
+            <div class="bg-white card-border rounded-lg p-md overflow-hidden">
+              <h3
+                class="font-card-title text-card-title mb-md flex items-center gap-xs"
+              >
+                <span class="material-symbols-outlined text-[18px]">bolt</span>
+                Action Center
+              </h3>
+              <div class="space-y-sm">
+                <button
+                  class="w-full flex items-center justify-between bg-primary-container text-white px-md py-2 rounded text-label-emphasis hover:opacity-90 transition-opacity"
+                >
+                  <div class="flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-[18px]"
+                      >payments</span
+                    >
+                    Generate Payroll
+                  </div>
+                  <span class="material-symbols-outlined text-[16px]"
+                    >arrow_forward</span
+                  >
+                </button>
+                <button
+                  class="w-full flex items-center justify-between bg-white border border-outline-variant px-md py-2 rounded text-label-emphasis text-on-surface hover:bg-surface-container-low transition-colors"
+                >
+                  <div class="flex items-center gap-sm text-on-surface">
+                    <span class="material-symbols-outlined text-[18px]"
+                      >person_add</span
+                    >
+                    Add New Employee
+                  </div>
+                  <span class="material-symbols-outlined text-[16px]"
+                    >arrow_forward</span
+                  >
+                </button>
+                <button
+                  class="w-full flex items-center justify-between bg-white border border-outline-variant px-md py-2 rounded text-label-emphasis text-on-surface hover:bg-surface-container-low transition-colors"
+                >
+                  <div class="flex items-center gap-sm text-on-surface">
+                    <span class="material-symbols-outlined text-[18px]"
+                      >analytics</span
+                    >
+                    Export Reports
+                  </div>
+                  <span class="material-symbols-outlined text-[16px]"
+                    >arrow_forward</span
+                  >
+                </button>
+              </div>
+            </div>
+            <!-- Pending Approvals -->
+            <div
+              class="bg-white card-border rounded-lg flex flex-col overflow-hidden"
+            >
+              <div
+                class="px-md py-2 border-b border-outline-variant bg-surface-container flex items-center justify-between"
+              >
+                <h3
+                  class="font-card-title text-card-title flex items-center gap-xs text-primary"
+                >
+                  <span class="material-symbols-outlined text-[18px]"
+                    >notification_important</span
+                  >
+                  Pending Approvals
+                </h3>
+                <span
+                  class="bg-primary-container text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                  >12</span
+                >
+              </div>
+              <div class="divide-y divide-outline-variant">
+                <div
+                  class="p-md hover:bg-surface-container-low transition-colors flex items-start justify-between"
+                >
+                  <div>
+                    <p class="text-table-cell font-bold leading-tight">
+                      Leave Request: Sick Leave
+                    </p>
+                    <p class="text-caption text-outline mt-1">
+                      Request by <b>Maya Sari</b> for 2 days
+                    </p>
+                    <p class="text-[10px] text-primary mt-2">
+                      Requested 2h ago
+                    </p>
+                  </div>
+                  <div class="flex gap-xs">
+                    <button
+                      class="w-7 h-7 bg-green-50 text-green-600 border border-green-200 flex items-center justify-center rounded hover:bg-green-100 transition-colors"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >check</span
+                      >
+                    </button>
+                    <button
+                      class="w-7 h-7 bg-red-50 text-red-600 border border-red-200 flex items-center justify-center rounded hover:bg-red-100 transition-colors"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >close</span
+                      >
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="p-md hover:bg-surface-container-low transition-colors flex items-start justify-between"
+                >
+                  <div>
+                    <p class="text-table-cell font-bold leading-tight">
+                      Overtime Claim: Night Shift
+                    </p>
+                    <p class="text-caption text-outline mt-1">
+                      Request by <b>Tono S.</b> for 4.5 hours
+                    </p>
+                    <p class="text-[10px] text-primary mt-2">
+                      Requested 5h ago
+                    </p>
+                  </div>
+                  <div class="flex gap-xs">
+                    <button
+                      class="w-7 h-7 bg-green-50 text-green-600 border border-green-200 flex items-center justify-center rounded hover:bg-green-100 transition-colors"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >check</span
+                      >
+                    </button>
+                    <button
+                      class="w-7 h-7 bg-red-50 text-red-600 border border-red-200 flex items-center justify-center rounded hover:bg-red-100 transition-colors"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >close</span
+                      >
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <a
+                class="block text-center py-2 text-[11px] font-bold text-primary hover:underline border-t border-outline-variant"
+                href="#"
+                >View all approval requests</a
+              >
+            </div>
+            <!-- Department Distribution Mini Chart -->
+            <div class="bg-white card-border rounded-lg p-md overflow-hidden">
+              <h3
+                class="font-card-title text-card-title mb-md flex items-center justify-between"
+              >
+                <span>Department Distribution</span>
+                <span class="material-symbols-outlined text-outline text-[18px]"
+                  >pie_chart</span
+                >
+              </h3>
+              <div class="space-y-sm">
+                <div>
+                  <div
+                    class="flex justify-between text-[11px] font-medium mb-1"
+                  >
+                    <span>Logistics &amp; Warehousing</span>
+                    <span>54%</span>
+                  </div>
+                  <div
+                    class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden"
+                  >
+                    <div
+                      class="h-full bg-primary rounded-full"
+                      style="width: 54%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div
+                    class="flex justify-between text-[11px] font-medium mb-1"
+                  >
+                    <span>Administration &amp; HR</span>
+                    <span>12%</span>
+                  </div>
+                  <div
+                    class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden"
+                  >
+                    <div
+                      class="h-full bg-secondary rounded-full"
+                      style="width: 12%"
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <div
+                    class="flex justify-between text-[11px] font-medium mb-1"
+                  >
+                    <span>Fleet &amp; Operations</span>
+                    <span>34%</span>
+                  </div>
+                  <div
+                    class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden"
+                  >
+                    <div
+                      class="h-full bg-tertiary rounded-full"
+                      style="width: 34%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Action Footer (High Density Menu from original) -->
+        <div class="mt-lg pt-lg border-t border-outline-variant">
+          <p
+            class="text-[11px] font-bold text-outline uppercase tracking-widest mb-md"
+          >
+            Quick Access Modules
+          </p>
+          <div class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-9 gap-sm">
+            <button
+              class="bg-white card-border rounded p-sm flex flex-col items-center justify-center gap-1 hover:border-primary group transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-outline group-hover:text-primary"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >fingerprint</span
+              >
+              <span class="text-[11px] font-medium">Absensi</span>
+            </button>
+            <button
+              class="bg-white card-border rounded p-sm flex flex-col items-center justify-center gap-1 hover:border-primary group transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-outline group-hover:text-primary"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >group</span
+              >
+              <span class="text-[11px] font-medium">Staff</span>
+            </button>
+            <button
+              class="bg-white card-border rounded p-sm flex flex-col items-center justify-center gap-1 hover:border-primary group transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-outline group-hover:text-primary"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >analytics</span
+              >
+              <span class="text-[11px] font-medium">Laporan</span>
+            </button>
+            <button
+              class="bg-white card-border rounded p-sm flex flex-col items-center justify-center gap-1 hover:border-primary group transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-outline group-hover:text-primary"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >assignment_turned_in</span
+              >
+              <span class="text-[11px] font-medium">Approvals</span>
+            </button>
+            <button
+              class="bg-white card-border rounded p-sm flex flex-col items-center justify-center gap-1 hover:border-primary group transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-outline group-hover:text-primary"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >photo_camera</span
+              >
+              <span class="text-[11px] font-medium">Foto Rec</span>
+            </button>
+            <button
+              class="bg-white card-border rounded p-sm flex flex-col items-center justify-center gap-1 hover:border-primary group transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-outline group-hover:text-primary"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >account_balance_wallet</span
+              >
+              <span class="text-[11px] font-medium">Keuangan</span>
+            </button>
+            <button
+              class="bg-white card-border rounded p-sm flex flex-col items-center justify-center gap-1 hover:border-primary group transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-outline group-hover:text-primary"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >monitoring</span
+              >
+              <span class="text-[11px] font-medium">Kinerja</span>
+            </button>
+            <button
+              class="bg-white card-border rounded p-sm flex flex-col items-center justify-center gap-1 hover:border-primary group transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-outline group-hover:text-primary"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >campaign</span
+              >
+              <span class="text-[11px] font-medium">Info</span>
+            </button>
+            <button
+              class="bg-white card-border rounded p-sm flex flex-col items-center justify-center gap-1 hover:border-primary group transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-outline group-hover:text-primary"
+                style="font-variation-settings: &quot;FILL&quot; 1"
+                >calendar_today</span
+              >
+              <span class="text-[11px] font-medium">Jadwal</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- System Footer -->
+      <footer
+        class="mt-auto py-sm px-lg bg-surface-container-lowest border-t border-outline-variant flex items-center justify-between text-caption text-outline"
+      >
+        <p>© 2024 PresPay Enterprise v4.2.0 - Perkasa Abadi Logistik</p>
+        <div class="flex items-center gap-md">
+          <a class="hover:text-primary" href="#">System Status</a>
+          <a class="hover:text-primary" href="#">Support</a>
+          <a class="hover:text-primary" href="#">Documentation</a>
+        </div>
+      </footer>
+    </main>
+    <!-- Mobile Floating Navigation Placeholder (Material Symbols requirement) -->
+    <div class="fixed bottom-4 right-4 md:hidden">
+      <button
+        class="w-12 h-12 bg-primary rounded-full shadow-lg text-white flex items-center justify-center"
+      >
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+    <script>
+      // Micro-interactions and state logic
+      document.addEventListener("DOMContentLoaded", () => {
+        // Logic for active tab could be added here
+        console.log("Dashboard Initialized");
+      });
+    </script>
+  </body>
+</html>

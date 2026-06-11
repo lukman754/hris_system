@@ -87,21 +87,42 @@ foreach ($events as $ev) { $event_map[$ev['date']][] = $ev; }
                 <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
                 
                 <!-- Month Navigation -->
-                <div class="flex items-center justify-between mb-10">
-                    <div class="relative min-w-[200px]">
-                        <h2 id="calendar-title" data-theme-text class="text-2xl font-bold  capitalize transition-all duration-300">
-                            <?= date('F Y', mktime(0,0,0,$month,1,$year)) ?>
-                        </h2>
-                        <div id="nav-loader" class="absolute -bottom-2 left-0 w-0 h-1 bg-primary rounded-full transition-all duration-500 opacity-50"></div>
-                    </div>
+                <div class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-border">
+                    <div id="nav-loader" class="absolute bottom-0 left-0 w-0 h-[2px] bg-primary rounded-full transition-all duration-500 opacity-50"></div>
                     
-                    <div class="flex items-center gap-3">
-                        <button onclick="navigateDebounced(-1)" data-theme-surface2 class="w-12 h-12 rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-all active:scale-90 border border-border group">
-                            <span class="material-symbols-outlined text-lg group-hover:scale-110">chevron_left</span>
-                        </button>
-                        <button onclick="navigateDebounced(1)" data-theme-surface2 class="w-12 h-12 rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-all active:scale-90 border border-border group">
-                            <span class="material-symbols-outlined text-lg group-hover:scale-110">chevron_right</span>
-                        </button>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Jump to Month -->
+                        <select id="jump-month" onchange="jumpToDate()" class="bg-surface2 border-border text-[12px] font-bold rounded-lg px-3 py-1.5 outline-none focus:ring-1 focus:ring-primary" style="background:var(--surface2); border:1px solid var(--border); color:var(--text-primary);">
+                            <?php 
+                            $months = [
+                                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 
+                                5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 
+                                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                            ];
+                            foreach ($months as $num => $name):
+                            ?>
+                            <option value="<?= $num ?>" <?= $month === $num ? 'selected' : '' ?>><?= $name ?></option>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <!-- Jump to Year -->
+                        <select id="jump-year" onchange="jumpToDate()" class="bg-surface2 border-border text-[12px] font-bold rounded-lg px-3 py-1.5 outline-none focus:ring-1 focus:ring-primary" style="background:var(--surface2); border:1px solid var(--border); color:var(--text-primary);">
+                            <?php 
+                            $max_yr = max((int)date('Y'), $year);
+                            for ($y = 2020; $y <= $max_yr; $y++):
+                            ?>
+                            <option value="<?= $y ?>" <?= $year === $y ? 'selected' : '' ?>><?= $y ?></option>
+                            <?php endfor; ?>
+                        </select>
+
+                        <div class="flex items-center gap-1.5 ml-2">
+                            <button onclick="navigateDebounced(-1)" data-theme-surface2 class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-all active:scale-95 border border-border group" style="background:var(--surface2); border:1px solid var(--border);">
+                                <span class="material-symbols-outlined text-[18px] group-hover:scale-110">chevron_left</span>
+                            </button>
+                            <button onclick="navigateDebounced(1)" data-theme-surface2 class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-all active:scale-95 border border-border group" style="background:var(--surface2); border:1px solid var(--border);">
+                                <span class="material-symbols-outlined text-[18px] group-hover:scale-110">chevron_right</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -298,18 +319,37 @@ function navigateDebounced(direction) {
 
     const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
     const title = document.getElementById('calendar-title');
-    title.innerText = monthNames[currentMonth-1] + " " + currentYear;
-    title.classList.add('opacity-40', 'scale-95');
+    if (title) title.innerText = monthNames[currentMonth-1] + " " + currentYear;
+    if (title) title.classList.add('opacity-40', 'scale-95');
     
-    document.getElementById('calendar-grid-wrapper').classList.add('opacity-30', 'blur-[2px]');
+    const selectMonth = document.getElementById('jump-month');
+    const selectYear = document.getElementById('jump-year');
+    if (selectMonth) selectMonth.value = currentMonth;
+    if (selectYear) selectYear.value = currentYear;
+
+    const wrapper = document.getElementById('calendar-grid-wrapper');
+    if (wrapper) wrapper.classList.add('opacity-30', 'blur-[2px]');
 
     const loader = document.getElementById('nav-loader');
-    loader.style.width = '100%';
+    if (loader) loader.style.width = '100%';
 
     if (navTimeout) clearTimeout(navTimeout);
 
     navTimeout = setTimeout(() => {
         window.location.href = `?page=calendar&cal_year=${currentYear}&cal_month=${currentMonth}`;
     }, 600);
+}
+
+function jumpToDate() {
+    const m = document.getElementById('jump-month').value;
+    const y = document.getElementById('jump-year').value;
+    
+    const wrapper = document.getElementById('calendar-grid-wrapper');
+    if (wrapper) wrapper.classList.add('opacity-30', 'blur-[2px]');
+    
+    const loader = document.getElementById('nav-loader');
+    if (loader) loader.style.width = '100%';
+    
+    window.location.href = `?page=calendar&cal_year=${y}&cal_month=${m}`;
 }
 </script>

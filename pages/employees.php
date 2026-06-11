@@ -26,25 +26,25 @@ $avg_salary = $total_staff > 0 ? array_sum(array_column($employees, 'salary')) /
     <?php endif; ?>
     
     <!-- ══ Header Section ══ -->
-    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div>
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                    <span class="material-symbols-outlined text-2xl font-bold">badge</span>
+                <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-3xl font-bold">group</span>
                 </div>
-                <h1 data-theme-text class="text-3xl font-bold  leading-none">Staff Directory</h1>
+                <h1 data-theme-text class="text-3xl font-bold leading-none">Staff Directory</h1>
             </div>
-            <p data-theme-muted class="text-[10px] font-bold   ml-1 opacity-50">Enterprise Workforce Management</p>
+            <p data-theme-muted class="text-[10px] font-bold ml-1 opacity-50">Enterprise Workforce Management for Perkasa Abadi Logistik.</p>
         </div>
         
-        <div class="flex items-center gap-3">
-             <div data-theme-card class="bg-surface p-1.5 rounded-lg shadow-sm flex items-center gap-2 w-full md:max-w-xs border border-border">
-                <div class="pl-3 text-on-surface-variant opacity-30">
-                    <span class="material-symbols-outlined text-[20px]">search</span>
+        <div class="flex items-center gap-3 self-stretch md:self-auto">
+             <div class="bg-surface p-1.5 rounded-lg shadow-sm flex items-center gap-2 grow md:w-64" style="border:1px solid var(--border); height:38px;">
+                <div class="pl-2 text-on-surface-variant opacity-60">
+                    <span class="material-symbols-outlined text-lg">search</span>
                 </div>
-                <input type="text" id="empSearch" placeholder="SEARCH STAFF..." oninput="filterStaff(this.value)" class="bg-transparent border-none text-[10px] font-bold w-full focus:ring-0 placeholder:text-on-surface-variant/20   text-on-surface">
+                <input type="text" id="empSearch" placeholder="Search staff..." oninput="filterStaff(this.value)" class="bg-transparent border-none text-xs font-semibold w-full focus:ring-0 placeholder:text-on-surface-variant placeholder:opacity-50 text-on-surface">
             </div>
-            <button onclick="openModal('addEmpModal')" class="px-5 py-3 bg-primary text-white rounded-lg font-bold text-xs   flex items-center gap-2 shadow-xl shadow-primary/20 active:scale-95 transition-all">
+            <button onclick="openModal('addEmpModal')" class="px-6 py-3.5 bg-primary text-white rounded-lg font-bold text-xs flex items-center gap-2 shadow-xl shadow-primary/20 active:scale-95 transition-all">
                 <span class="material-symbols-outlined text-lg">person_add</span>
                 <span>Onboard Staff</span>
             </button>
@@ -52,100 +52,91 @@ $avg_salary = $total_staff > 0 ? array_sum(array_column($employees, 'salary')) /
     </header>
 
     <!-- ══ Stats Overview ══ -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div data-theme-card class="p-5 rounded-lg flex items-center gap-5">
-            <div class="w-12 h-12 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center">
-                <span class="material-symbols-outlined text-2xl">groups</span>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:16px; margin-bottom:24px;">
+        <div class="card" style="padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.02em;">Total Workforce</span>
+                <span class="material-symbols-outlined" style="color:var(--primary); font-size:20px;">groups</span>
             </div>
-            <div>
-                <div data-theme-muted class="text-[9px] font-bold   opacity-40">Total Workforce</div>
-                <div data-theme-text class="text-xl font-bold"><?= $total_staff ?></div>
-            </div>
-        </div>
-        <div data-theme-card class="p-5 rounded-lg flex items-center gap-5">
-            <div class="w-12 h-12 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-                <span class="material-symbols-outlined text-2xl">account_tree</span>
-            </div>
-            <div>
-                <div data-theme-muted class="text-[9px] font-bold   opacity-40">Departments</div>
-                <div data-theme-text class="text-xl font-bold"><?= count($depts) ?></div>
+            <div style="display:flex; align-items:baseline; gap:4px;">
+                <span style="font-size:20px; font-weight:700; color:var(--text-primary); line-height:1;"><?= $total_staff ?></span>
             </div>
         </div>
-        <div data-theme-card class="p-5 rounded-lg flex items-center gap-5">
-            <div class="w-12 h-12 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
-                <span class="material-symbols-outlined text-2xl">payments</span>
+        
+        <div class="card" style="padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.02em;">Departments</span>
+                <span class="material-symbols-outlined" style="color:#10B981; font-size:20px;">account_tree</span>
             </div>
-            <div>
-                <div data-theme-muted class="text-[9px] font-bold   opacity-40">Avg Salary Base</div>
-                <div data-theme-text class="text-lg font-bold ">Rp <?= number_format($avg_salary/1000000, 1) ?>M</div>
+            <div style="display:flex; align-items:baseline; gap:4px;">
+                <span style="font-size:20px; font-weight:700; color:var(--text-primary); line-height:1;"><?= count($depts) ?></span>
             </div>
         </div>
-        <div data-theme-card class="p-5 rounded-lg flex items-center gap-5">
-            <div class="w-12 h-12 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
-                <span class="material-symbols-outlined text-2xl">verified</span>
+        
+        <div class="card" style="padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.02em;">Avg Salary Base</span>
+                <span class="material-symbols-outlined" style="color:#F59E0B; font-size:20px;">payments</span>
             </div>
-            <div>
-                <div data-theme-muted class="text-[9px] font-bold   opacity-40">Active Status</div>
-                <div data-theme-text class="text-xl font-bold">100%</div>
+            <div style="display:flex; align-items:baseline; gap:4px;">
+                <span style="font-size:18px; font-weight:700; color:var(--text-primary); line-height:1;">Rp <?= number_format($avg_salary/1000000, 1) ?>M</span>
+            </div>
+        </div>
+        
+        <div class="card" style="padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.02em;">Active Status</span>
+                <span class="material-symbols-outlined" style="color:#8B5CF6; font-size:20px;">verified</span>
+            </div>
+            <div style="display:flex; align-items:baseline; gap:4px;">
+                <span style="font-size:20px; font-weight:700; color:var(--text-primary); line-height:1;">100%</span>
             </div>
         </div>
     </div>
 
     <!-- ══ Staff Directory Grid ══ -->
-    <div id="staffGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 pb-20">
+    <div id="staffGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 pb-20">
         <?php foreach ($employees as $emp): ?>
-        <div class="staff-card" data-search-content="<?= strtolower($emp['name'] . ' ' . $emp['position'] . ' ' . $emp['department'] . ' ' . ($emp['phone_number'] ?? '')) ?>">
-            <div data-theme-card class="p-6 rounded-lg group hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col h-full">
-                <!-- Top Accents -->
-                <div class="absolute top-0 right-0 w-24 h-24 bg-primary/[0.03] rounded-bl-3xl -mr-4 -mt-4 transition-transform group-hover:scale-120 duration-500"></div>
-                
-                <div class="relative flex flex-col items-center text-center mb-6">
-                    <!-- Photo -->
-                    <div class="w-20 h-20 rounded-lg overflow-hidden mb-4 border border-primary/20 p-1 transition-transform duration-500 bg-surface">
-                        <?php if (!empty($emp['photo_profile'])): ?>
-                            <img src="<?= h($emp['photo_profile']) ?>" class="w-full h-full object-cover rounded-lg">
-                        <?php else: ?>
-                            <div class="w-full h-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xl rounded-lg">
-                                <?= avatar_initials($emp['name']) ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <h3 data-theme-text class="text-base font-bold  leading-tight group-hover:text-primary transition-colors"><?= h($emp['name']) ?></h3>
-                    <p data-theme-muted class="text-[9px] font-bold   opacity-30 mt-1"><?= h($emp['position']) ?></p>
+        <div class="staff-card card flex flex-col" style="padding:0; overflow:hidden;" data-search-content="<?= strtolower($emp['name'] . ' ' . $emp['position'] . ' ' . $emp['department'] . ' ' . ($emp['phone_number'] ?? '')) ?>">
+            <div style="padding:20px; display:flex; flex-direction:column; align-items:center; text-center; border-bottom:1px solid var(--border); position:relative;">
+                <div class="w-16 h-16 rounded-full overflow-hidden mb-3 border-2" style="border-color:var(--surface2);">
+                    <?php if (!empty($emp['photo_profile'])): ?>
+                        <img src="<?= h($emp['photo_profile']) ?>" class="w-full h-full object-cover">
+                    <?php else: ?>
+                        <div class="w-full h-full flex items-center justify-center font-bold text-lg" style="background:var(--surface2); color:var(--primary);">
+                            <?= avatar_initials($emp['name']) ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
+                <h3 style="font-size:14px; font-weight:700; color:var(--text-primary); line-height:1.2; margin-bottom:4px;"><?= h($emp['name']) ?></h3>
+                <p style="font-size:11px; color:var(--text-muted); font-weight:500;"><?= h($emp['position']) ?></p>
+            </div>
 
-                <div class="space-y-4 mb-6 grow">
-                    <div class="flex items-center justify-between px-2">
-                        <span data-theme-muted class="text-[8px] font-bold   opacity-30">Department</span>
-                        <span class="px-2 py-0.5 bg-surface2 rounded text-[7px] font-bold   text-on-surface"><?= h($emp['department']) ?></span>
-                    </div>
-                    <div class="flex items-center justify-between px-2">
-                        <span data-theme-muted class="text-[8px] font-bold   opacity-30">No. HP</span>
-                        <span data-theme-text class="text-[9px] font-bold"><?= h($emp['phone_number'] ?: '-') ?></span>
-                    </div>
-                    <div class="flex items-center justify-between px-2">
-                        <span data-theme-muted class="text-[8px] font-bold   opacity-30">Base Salary</span>
-                        <span data-theme-text class="text-[9px] font-bold"><?= format_rupiah($emp['salary'] ?? 0) ?></span>
-                    </div>
+            <div style="padding:16px; background:var(--surface2); flex-grow:1;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-size:11px; color:var(--text-muted); font-weight:500;">Department</span>
+                    <span style="font-size:11px; font-weight:600; color:var(--text-primary);"><?= h($emp['department']) ?></span>
                 </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-size:11px; color:var(--text-muted); font-weight:500;">No. HP</span>
+                    <span style="font-size:11px; font-weight:600; color:var(--text-primary);"><?= h($emp['phone_number'] ?: '-') ?></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:11px; color:var(--text-muted); font-weight:500;">Base Salary</span>
+                    <span style="font-size:11px; font-weight:600; color:var(--text-primary);"><?= format_rupiah($emp['salary'] ?? 0) ?></span>
+                </div>
+            </div>
 
-                <div class="grid grid-cols-2 gap-2 pt-4">
-                    <button onclick='openEditModal(<?= json_encode($emp) ?>)' class="w-full py-2.5 bg-surface2 hover:bg-primary hover:text-white rounded-lg text-[8px] font-bold   transition-all active:scale-95 flex items-center justify-center gap-1.5 border-none shadow-sm">
-                        <span class="material-symbols-outlined text-sm">edit</span>
-                        <span>Update</span>
-                    </button>
-                    <button onclick="confirmDelete('<?= h($emp['id']) ?>', '<?= h($emp['name']) ?>')" class="w-full py-2.5 bg-rose-500/5 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg text-[8px] font-bold   transition-all active:scale-95 flex items-center justify-center gap-1.5 border border-rose-500/10">
-                        <span class="material-symbols-outlined text-sm">delete</span>
-                        <span>Offboard</span>
-                    </button>
-                </div>
-                <div class="pt-2">
-                    <button onclick="confirmResetPassword('<?= h($emp['id']) ?>', '<?= h($emp['name']) ?>')" class="w-full py-2 bg-amber-500/5 text-amber-600 hover:bg-amber-500 hover:text-white rounded-lg text-[8px] font-bold transition-all active:scale-95 flex items-center justify-center gap-1.5 border border-amber-500/10">
-                        <span class="material-symbols-outlined text-sm">lock_reset</span>
-                        <span>Reset Password</span>
-                    </button>
-                </div>
+            <div style="padding:12px 16px; border-top:1px solid var(--border); display:flex; gap:8px;">
+                <button onclick='openEditModal(<?= json_encode($emp) ?>)' class="flex-1 py-1.5 flex items-center justify-center gap-1 text-[11px] font-bold rounded bg-[var(--surface2)] text-blue-500 hover:bg-blue-500 hover:text-white transition-colors border" style="border-color:var(--border);">
+                    <span class="material-symbols-outlined text-[14px]">edit</span> Update
+                </button>
+                <button onclick="confirmResetPassword('<?= h($emp['id']) ?>', '<?= h($emp['name']) ?>')" class="py-1.5 px-2 flex items-center justify-center text-[11px] font-bold rounded bg-[var(--surface2)] text-amber-500 hover:bg-amber-500 hover:text-white transition-colors border" style="border-color:var(--border);" title="Reset Password">
+                    <span class="material-symbols-outlined text-[14px]">lock_reset</span>
+                </button>
+                <button onclick="confirmDelete('<?= h($emp['id']) ?>', '<?= h($emp['name']) ?>')" class="py-1.5 px-2 flex items-center justify-center text-[11px] font-bold rounded bg-[var(--surface2)] text-red-500 hover:bg-red-500 hover:text-white transition-colors border" style="border-color:var(--border);" title="Offboard">
+                    <span class="material-symbols-outlined text-[14px]">person_remove</span>
+                </button>
             </div>
         </div>
         <?php endforeach; ?>

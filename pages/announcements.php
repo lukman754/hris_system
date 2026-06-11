@@ -140,7 +140,7 @@ $critical_count = count(array_filter($announcements, fn($a) => $a['priority'] ==
 </div>
 
 <!-- Detailed Broadcast View -->
-<div id="detailModal" style="display:none;" class="fixed inset-0 z-[210] flex items-center justify-center bg-black/98 backdrop-blur-2xl p-4 lg:p-10" onclick="if(event.target===this)closeModal('detailModal')">
+<div id="detailModal" style="display:none;" class="fixed inset-0 z-[210] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 lg:p-10" onclick="if(event.target===this)closeModal('detailModal')">
     <div data-theme-card class="w-full max-w-2xl bg-surface rounded-lg border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-500">
         <div class="p-10 pb-0 flex justify-between items-start">
             <span id="detailLabel" class="px-4 py-1.5 rounded-full text-[9px] font-bold   mb-4">NOTIFICATION</span>
@@ -172,7 +172,7 @@ $critical_count = count(array_filter($announcements, fn($a) => $a['priority'] ==
 </div>
 
 <!-- Edit Announcement Modal -->
-<div id="editAnnModal" style="display:none;" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-md p-6" onclick="if(event.target===this)closeModal('editAnnModal')">
+<div id="editAnnModal" style="display:none;" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-6" onclick="if(event.target===this)closeModal('editAnnModal')">
     <div data-theme-card class="w-full max-w-md bg-surface rounded-lg border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
         <div class="p-8 pb-1 flex justify-between items-center">
             <h3 data-theme-text class="text-xl font-bold ">Modify Broadcast</h3>
@@ -206,7 +206,7 @@ $critical_count = count(array_filter($announcements, fn($a) => $a['priority'] ==
 </div>
 
 <!-- Modal Konfirmasi Hapus -->
-<div id="deleteAnnModal" style="display:none;" class="fixed inset-0 z-[210] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" onclick="if(event.target===this)closeModal('deleteAnnModal')">
+<div id="deleteAnnModal" style="display:none;" class="fixed inset-0 z-[210] flex items-center justify-center bg-black/80 backdrop-blur-md p-4" onclick="if(event.target===this)closeModal('deleteAnnModal')">
     <div data-theme-card class="w-full max-w-sm bg-surface rounded-lg border border-border shadow-2xl overflow-hidden p-8 text-center">
         <div class="w-16 h-16 bg-rose-500/10 text-rose-500 rounded-lg flex items-center justify-center mx-auto mb-6">
             <span class="material-symbols-outlined text-3xl font-bold">delete_sweep</span>
@@ -218,6 +218,39 @@ $critical_count = count(array_filter($announcements, fn($a) => $a['priority'] ==
             <button onclick="closeModal('deleteAnnModal')" class="py-3.5 bg-surface2 text-on-surface font-bold text-[10px] rounded-lg border border-border">Keep Memo</button>
             <a id="del_ann_btn" href="#" class="py-3.5 bg-rose-500 text-white font-bold text-[10px] rounded-lg shadow-lg shadow-rose-500/20">Retract</a>
         </div>
+    </div>
+</div>
+
+<!-- Add Announcement Modal -->
+<div id="annModal" style="display:none;" class="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-6" onclick="if(event.target===this)closeModal('annModal')">
+    <div data-theme-card class="w-full max-w-md bg-surface rounded-lg border border-border shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div class="p-8 pb-1 flex justify-between items-center">
+            <h3 data-theme-text class="text-xl font-bold ">Publish Memo</h3>
+            <button onclick="closeModal('annModal')" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/40 hover:bg-surface2 transition-colors"><span class="material-symbols-outlined font-bold">close</span></button>
+        </div>
+        <form method="POST" action="?page=announcements&action=add" class="p-8 pt-4 space-y-6">
+            <div class="space-y-2">
+                <label data-theme-muted class="text-[9px] font-bold  opacity-40 ml-1">Headline</label>
+                <input name="title" type="text" required class="w-full px-5 py-4 bg-surface2 rounded-lg text-xs font-bold border-border outline-none focus:ring-4 focus:ring-primary/10 transition-all" placeholder="e.g. Libur Lebaran 2026">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label data-theme-muted class="text-[9px] font-bold  opacity-40 ml-1">Priority</label>
+                    <select name="priority" class="w-full px-5 py-4 bg-surface2 rounded-lg text-[10px] font-bold   border-border outline-none">
+                        <option value="normal">Normal</option><option value="high">High</option><option value="important">Critical</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label data-theme-muted class="text-[9px] font-bold  opacity-40 ml-1">Expiry</label>
+                    <input name="expires_at" type="date" class="w-full px-5 py-4 bg-surface2 rounded-lg text-xs font-bold border-border outline-none">
+                </div>
+            </div>
+            <div class="space-y-2">
+                <label data-theme-muted class="text-[9px] font-bold  opacity-40 ml-1">Message Body</label>
+                <textarea name="content" rows="6" required class="w-full p-5 bg-surface2 rounded-lg text-xs font-medium leading-relaxed border-border outline-none focus:ring-4 focus:ring-primary/10 resize-none" placeholder="Tuliskan isi pengumuman di sini..."></textarea>
+            </div>
+            <button type="submit" class="w-full py-5 bg-primary text-white rounded-full text-xs font-bold   shadow-2xl shadow-primary/20 active:scale-95 transition-all">Publish Memo</button>
+        </form>
     </div>
 </div>
 

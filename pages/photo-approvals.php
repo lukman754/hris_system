@@ -7,19 +7,19 @@ $pending = array_filter($attendance, fn($a) => $a['attendance_type']==='photo' &
 <div class="space-y-8 performance-page-container">
     
     <!-- ══ Header Section ══ -->
-    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div>
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-3xl font-bold">photo_camera_front</span>
                 </div>
-                <h1 data-theme-text class="text-4xl font-bold  leading-none">Visual Identity Control</h1>
+                <h1 data-theme-text class="text-3xl font-bold leading-none">Visual Identity Control</h1>
             </div>
-            <p data-theme-muted class="text-[10px] font-bold   ml-1 opacity-50">Biometric Verification Analytics</p>
+            <p data-theme-muted class="text-[10px] font-bold ml-1 opacity-50">Biometric Verification Analytics</p>
         </div>
         
-        <div class="flex items-center gap-2">
-            <span class="badge badge-rose animate-pulse"><?= count($pending) ?> Action Required</span>
+        <div class="flex items-center gap-3">
+             <span class="badge badge-danger animate-pulse" style="font-size:11px; padding:6px 12px; font-weight:700;"><?= count($pending) ?> Action Required</span>
         </div>
     </header>
 
@@ -68,11 +68,11 @@ $pending = array_filter($attendance, fn($a) => $a['attendance_type']==='photo' &
 
             <!-- Action Cluster -->
             <div class="p-6 pt-2 grid grid-cols-2 gap-3">
-                <a href="?page=photo-approvals&action=approve&id=<?= $rec['id'] ?>" class="w-full py-4 bg-emerald-500 text-white rounded-lg text-[9px] font-bold   shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 active:scale-95 transition-all">
+                <a href="?page=photo-approvals&action=approve&id=<?= $rec['id'] ?>" class="w-full py-4 bg-surface-variant text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white border border-border rounded-lg text-[9px] font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm">
                     <span class="material-symbols-outlined text-sm">how_to_reg</span>
                     <span>Authorize</span>
                 </a>
-                <a href="?page=photo-approvals&action=reject&id=<?= $rec['id'] ?>" class="w-full py-4 bg-rose-500/5 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/10 rounded-lg text-[9px] font-bold   flex items-center justify-center gap-2 active:scale-95 transition-all">
+                <a href="?page=photo-approvals&action=reject&id=<?= $rec['id'] ?>" class="w-full py-4 bg-surface-variant text-rose-500 hover:bg-rose-500 hover:text-white border border-border rounded-lg text-[9px] font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm">
                     <span class="material-symbols-outlined text-sm">block</span>
                     <span>Decline</span>
                 </a>

@@ -7,15 +7,15 @@ $initials = avatar_initials($user['name']);
 <div class="space-y-8 performance-page-container fade-up">
     
     <!-- ══ Header Section ══ -->
-    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div>
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                    <span class="material-symbols-outlined text-2xl font-bold text-primary">account_circle</span>
+                <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-3xl font-bold">account_circle</span>
                 </div>
                 <h1 data-theme-text class="text-3xl font-bold leading-none">Profil Saya</h1>
             </div>
-            <p data-theme-muted class="text-[10px] font-bold ml-1 opacity-50 uppercase tracking-wider">Kelola Akun & Pengaturan Keamanan</p>
+            <p data-theme-muted class="text-[10px] font-bold ml-1 opacity-50">Kelola Akun & Pengaturan Keamanan</p>
         </div>
     </header>
 

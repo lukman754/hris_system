@@ -4,14 +4,27 @@ $programs = get_training();
 $category_labels = ['skill'=>'Skill','leadership'=>'Leadership','technical'=>'Technical','softskill'=>'Soft Skill'];
 $category_badge  = ['skill'=>'badge-info','leadership'=>'badge-warning','technical'=>'badge-success','softskill'=>'badge-gray'];
 ?>
-<div class="space-y-6">
-    <?php if (auth_is_hrd()): ?>
-    <div class="flex justify-end">
-        <button onclick="openModal('trainingModal')" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Tambah Program
+<div class="space-y-8 performance-page-container">
+    
+    <!-- ══ Header Section ══ -->
+    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+        <div>
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-3xl font-bold">school</span>
+                </div>
+                <h1 data-theme-text class="text-3xl font-bold leading-none">Training Program</h1>
+            </div>
+            <p data-theme-muted class="text-[10px] font-bold ml-1 opacity-50">Enhance skills and track professional certifications</p>
+        </div>
+        
+        <?php if (auth_is_hrd()): ?>
+        <button onclick="openModal('trainingModal')" class="px-6 py-3.5 bg-primary text-white rounded-lg font-bold text-xs flex items-center gap-2 shadow-xl shadow-primary/20 active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-lg">add_circle</span>
+            <span>Tambah Program</span>
         </button>
-    </div>
-    <?php endif; ?>
+        <?php endif; ?>
+    </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <?php foreach ($programs as $prog): ?>

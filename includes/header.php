@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     
     <script id="tailwind-config">
@@ -19,39 +19,48 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#003d9b",
-                        "primary-dark": "#002a6b",
-                        "accent": "#653900",
-                        "secondary": "#4c616c",
+                        "primary": "#2563EB",
+                        "primary-dark": "#1D4ED8",
+                        "accent": "#F59E0B",
+                        "secondary": "#6B7280",
                         "surface": "var(--surface)",
                         "surface-variant": "var(--surface2)",
                         "on-surface": "var(--text-primary)",
                         "on-surface-variant": "var(--text-muted)",
-                        "brand-primary": "#003d9b",
+                        "brand-primary": "#2563EB",
                     },
                     fontFamily: { "headline": ["Inter"], "body": ["Inter"] },
-                    borderRadius: { "lg": "8px" },
+                    borderRadius: { "lg": "8px", "md": "6px", "sm": "4px" },
                 },
             },
         }
     </script>
     <style>
-        /* ═══ Theme Variables ═══════════════════════════ */
+        /* Sidebar active styling based on template */
+        .sidebar-active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid var(--primary);
+            color: white !important;
+        }
+        
+        /* Zebra table styling based on template */
+        .table-zebra tr:nth-child(even) { background-color: rgba(0,0,0,0.02); }
+        html.dark .table-zebra tr:nth-child(even) { background-color: rgba(255,255,255,0.02); }
         :root {
-            --primary:      #003d9b;
-            --primary-dark: #002a6b;
-            --orange:       #003d9b;
-            --orange-dark:  #002a6b;
-            --accent:       #653900;
+            --primary:      #2563EB;
+            --primary-dark: #1D4ED8;
+            --orange:       #2563EB;
+            --orange-dark:  #1D4ED8;
+            --accent:       #F59E0B;
 
             /* Light theme */
-            --bg:           #F5F7FA;
+            --bg:           #F8FAFC;
             --surface:      #FFFFFF;
-            --surface2:     #F3F4F6;
-            --border:       rgba(0,0,0,.06);
-            --text-primary: #111111;
+            --surface2:     #F1F5F9;
+            --border:       #E5E7EB;
+            --text-primary: #111827;
             --text-muted:   #6B7280;
-            --shadow:       0 1px 4px rgba(0,0,0,.06);
+            --shadow:       none;
             --sidebar-bg:   #0D0D0D;
             --header-bg:    rgba(255,255,255,.95);
             --header-border:rgba(0,0,0,.06);
@@ -65,7 +74,7 @@
             --border:       rgba(255,255,255,.005);
             --text-primary: #F3F4F6;
             --text-muted:   #9CA3AF;
-            --shadow:       0 1px 4px rgba(0,0,0,.3);
+            --shadow:       0 1px 2px rgba(0,0,0,.15);
             --sidebar-bg:   #050505;
             --header-bg:    rgba(15,15,15,.95);
             --header-border:rgba(255,255,255,.06);
@@ -109,6 +118,8 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
             -webkit-font-smoothing: antialiased;
             background-color: var(--bg);
             color: var(--text-primary);
@@ -134,7 +145,7 @@
             border-radius: 8px;
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
-            padding: 20px;
+            padding: 16px;
             transition: background .3s, border-color .3s;
             color: var(--text-primary);
         }
@@ -156,26 +167,26 @@
         /* Buttons */
         .btn {
             display:inline-flex; align-items:center; justify-content:center;
-            gap:8px; padding:10px 20px; border-radius:8px;
-            font-size:.875rem; font-weight:600; cursor:pointer;
+            gap:6px; padding:8px 16px; border-radius:6px;
+            font-size:14px; font-weight:500; cursor:pointer;
             border:none; text-decoration:none; transition:all .2s ease; white-space:nowrap;
         }
         .btn:active { transform:scale(.97); }
         .btn-primary       { background:var(--primary); color:#fff; }
-        .btn-primary:hover { background:var(--primary-dark); box-shadow:0 6px 20px rgba(0,26,75,.3); }
-        .btn-success       { background:#10B981; color:#fff; }
-        .btn-success:hover { background:#059669; }
-        .btn-danger        { background:#EF4444; color:#fff; }
-        .btn-danger:hover  { background:#DC2626; }
+        .btn-primary:hover { background:var(--primary-dark); }
+        .btn-success       { background:#16A34A; color:#fff; }
+        .btn-success:hover { background:#15803D; }
+        .btn-danger        { background:#DC2626; color:#fff; }
+        .btn-danger:hover  { background:#B91C1C; }
         .btn-outline       { background:var(--surface); color:var(--text-primary); border:1.5px solid var(--border); }
         .btn-outline:hover { filter:brightness(.95); }
 
         /* Forms */
         .form-label { display:block; font-size:.8rem; font-weight:500; color:var(--text-primary); margin-bottom:6px; }
         .form-input {
-            display:block; width:100%; padding:10px 14px;
-            border:1.5px solid var(--border); border-radius:8px;
-            font-size:.875rem; color:var(--text-primary);
+            display:block; width:100%; padding:8px 12px;
+            border:1px solid var(--border); border-radius:6px;
+            font-size:14px; color:var(--text-primary);
             background:var(--surface); outline:none; font-family:inherit;
             transition:border-color .15s, box-shadow .15s;
         }
@@ -185,10 +196,10 @@
         /* Tables */
         .data-table { width:100%; border-collapse:collapse; font-size:.875rem; }
         .data-table th {
-            padding:11px 16px; background:var(--surface2); color:var(--text-muted);
-            font-size:.72rem; font-weight:600; letter-spacing:normal; text-align:left; border-bottom:1px solid var(--border);
+            padding:8px 12px; background:var(--surface2); color:var(--text-muted);
+            font-size:13px; font-weight:600; letter-spacing:normal; text-align:left; border-bottom:1px solid var(--border);
         }
-        .data-table td { padding:13px 16px; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text-primary); }
+        .data-table td { padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text-primary); font-size:13px; }
         .data-table tbody tr:hover { background:var(--surface2); }
         .data-table tbody tr:last-child td { border-bottom:none; }
 
@@ -201,7 +212,7 @@
         .modal-box {
             background:var(--surface); border-radius:8px; width:100%;
             max-width:540px; max-height:90vh; overflow-y:auto;
-            box-shadow:0 24px 64px rgba(0,0,0,.25);
+            box-shadow:0 4px 12px rgba(0,0,0,.15);
         }
         .modal-header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px 16px; border-bottom:1px solid var(--border); }
         .modal-body   { padding:20px 24px; }
@@ -342,44 +353,54 @@
 <!-- Sidebar -->
 <aside id="sidebar" class="fixed left-0 top-0 h-full z-[60] hidden md:flex flex-col sidebar-transition w-64 shadow-2xl">
     <div class="px-5 py-6 flex items-center gap-3 overflow-hidden">
-        <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-white p-1.5 shadow-lg">
+        <div class="w-8 h-8 rounded-md flex items-center justify-center shrink-0 bg-white p-1 border border-slate-200">
             <img src="/hris_system/public/img/logo.jpg" class="w-full h-full object-contain">
         </div>
         <span class="font-bold text-white text-sm  sidebar-text line-clamp-1">Perkasa Abadi Logistik</span>
     </div>
     <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto no-scrollbar">
         <?php
-        $nav_items = [];
         if (auth_is_hrd()) {
-            $nav_items[] = ['page'=>'dashboard',          'icon'=>'dashboard',      'label'=>'Dashboard'];
-            if (($user['can_attendance'] ?? 0) == 1) {
-                $nav_items[] = ['page'=>'attendance',     'icon'=>'fingerprint',    'label'=>'Absen'];
-            }
-            $nav_items = array_merge($nav_items, [
-                ['page'=>'employees',          'icon'=>'group',          'label'=>'Pegawai'],
-                ['page'=>'attendance-reports', 'icon'=>'insights',        'label'=>'Riwayat Absensi'],
-                ['page'=>'locations',          'icon'=>'location_on',    'label'=>'QR Office'],
-                ['page'=>'leaves',             'icon'=>'event_busy',     'label'=>'Izin'],
-                ['page'=>'payroll',            'icon'=>'payments',       'label'=>'Gaji'],
-                ['page'=>'performance',        'icon'=>'insights',       'label'=>'Kinerja'],
-                ['page'=>'announcements',      'icon'=>'campaign',       'label'=>'Info'],
-            ]);
+            $nav_groups = [
+                'Management' => [
+                    ['page'=>'dashboard',          'icon'=>'dashboard',      'label'=>'Dashboard'],
+                    ['page'=>'employees',          'icon'=>'group',          'label'=>'Pegawai'],
+                    ['page'=>'locations',          'icon'=>'location_on',    'label'=>'QR Office'],
+                ],
+                'Operations' => [
+                    ['page'=>'attendance-reports', 'icon'=>'insights',       'label'=>'Riwayat Absensi'],
+                    ['page'=>'photo-approvals',    'icon'=>'photo_camera',   'label'=>'Foto Rec'],
+                    ['page'=>'leaves',             'icon'=>'event_busy',     'label'=>'Izin'],
+                    ['page'=>'payroll',            'icon'=>'payments',       'label'=>'Gaji'],
+                    ['page'=>'performance',        'icon'=>'monitoring',     'label'=>'Kinerja'],
+                ],
+                'System' => [
+                    ['page'=>'calendar',           'icon'=>'calendar_today', 'label'=>'Kalender'],
+                    ['page'=>'announcements',      'icon'=>'campaign',       'label'=>'Info'],
+                ]
+            ];
         } else {
-            $nav_items = [
-                ['page'=>'dashboard',    'icon'=>'dashboard',          'label'=>'Dashboard'],
-                ['page'=>'attendance',   'icon'=>'fingerprint',        'label'=>'Absen'],
-                ['page'=>'people',       'icon'=>'diversity_3',        'label'=>'People'],
-                ['page'=>'leaves',       'icon'=>'calendar_add_on',    'label'=>'Izin'],
-                ['page'=>'payroll',      'icon'=>'account_balance_wallet','label'=>'Gaji'],
-                ['page'=>'calendar',     'icon'=>'calendar_today',     'label'=>'Kalender'],
-                ['page'=>'announcements','icon'=>'campaign',           'label'=>'Info'],
+            $nav_groups = [
+                'Operations' => [
+                    ['page'=>'dashboard',    'icon'=>'dashboard',          'label'=>'Dashboard'],
+                    ['page'=>'attendance',   'icon'=>'fingerprint',        'label'=>'Absen'],
+                    ['page'=>'leaves',       'icon'=>'calendar_add_on',    'label'=>'Izin'],
+                    ['page'=>'performance',  'icon'=>'monitoring',         'label'=>'Kinerja'],
+                ],
+                'Information' => [
+                    ['page'=>'people',       'icon'=>'diversity_3',        'label'=>'People'],
+                    ['page'=>'calendar',     'icon'=>'calendar_today',     'label'=>'Kalender'],
+                ],
+                'System' => [
+                    ['page'=>'payroll',      'icon'=>'account_balance_wallet','label'=>'Gaji'],
+                    ['page'=>'announcements','icon'=>'campaign',           'label'=>'Info'],
+                ]
             ];
         }
 
         $all_active_announcements = get_announcements();
         $latest_ann_id = !empty($all_active_announcements) ? $all_active_announcements[0]['id'] : 0;
         
-        // Update "last seen" ID if we are currently on the announcements page
         if (($_GET['page'] ?? '') === 'announcements') {
             $_SESSION['last_seen_ann_id'] = $latest_ann_id;
         }
@@ -388,23 +409,27 @@
         $has_unread = ($latest_ann_id > 0 && $latest_ann_id > $last_seen_id);
 
         $current = $_GET['page'] ?? 'dashboard';
-        foreach ($nav_items as $nav):
-            $is_active = ($current === $nav['page']);
-            $has_badge = ($nav['page'] === 'announcements' && $has_unread);
+        
+        foreach ($nav_groups as $group_name => $items):
         ?>
-        <a href="?page=<?= $nav['page'] ?>" class="flex items-center gap-3 px-3 py-3 rounded-lg transition-all text-sm font-semibold relative
-            <?= $is_active
-                ? 'text-white font-bold'
-                : 'text-white/45 hover:text-white/80 hover:bg-white/5'
-            ?>" <?= $is_active ? 'style="background:var(--primary); box-shadow:0 4px 16px rgba(0,61,155,.3);"' : '' ?>>
-            <span class="material-symbols-outlined" style="font-size:20px;"><?= $nav['icon'] ?></span>
+            <div class="px-3 py-2 mt-2 text-[10px] font-bold text-white/40 uppercase tracking-wider sidebar-text">
+                <?= $group_name ?>
+            </div>
+        <?php
+            foreach ($items as $nav):
+                $is_active = ($current === $nav['page']);
+                $has_badge = ($nav['page'] === 'announcements' && $has_unread);
+        ?>
+        <a href="?page=<?= $nav['page'] ?>" class="flex items-center gap-3 px-3 py-2 cursor-pointer transition-all rounded-lg text-[13px] font-medium relative 
+            <?= $is_active ? 'sidebar-active' : 'text-white/70 hover:bg-white/5 hover:text-white' ?>">
+            <span class="material-symbols-outlined" style="font-size:18px;"><?= $nav['icon'] ?></span>
             <span class="sidebar-text"><?= h($nav['label']) ?></span>
             
             <?php if ($has_badge): ?>
                 <span class="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 bg-rose-500 rounded-full border-2 border-black animate-pulse shadow-lg shadow-rose-500/50"></span>
             <?php endif; ?>
         </a>
-        <?php endforeach; ?>
+        <?php endforeach; endforeach; ?>
     </nav>
 </aside>
 
@@ -425,8 +450,29 @@
             </div>
         </div>
 
+        <!-- Center: Search -->
+        <div class="hidden md:flex flex-1 max-w-lg mx-6">
+            <div class="relative w-full">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" style="font-size:18px; color:var(--text-muted);">search</span>
+                <input type="text" placeholder="Search employees, reports, or tasks..." 
+                       style="background:var(--surface2); color:var(--text-primary); border-radius:999px; font-size:13px;"
+                       class="w-full pl-10 pr-4 py-1.5 border-none font-medium focus:ring-0 placeholder:text-gray-400 transition-colors">
+            </div>
+        </div>
+
         <!-- Right: theme + profile -->
         <div class="flex items-center gap-2">
+            <!-- Notifications (from reference) -->
+            <button class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors relative">
+                <span class="material-symbols-outlined" style="font-size:20px;">notifications</span>
+                <span class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full"></span>
+            </button>
+            
+            <!-- Help (from reference) -->
+            <button class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
+                <span class="material-symbols-outlined" style="font-size:20px;">help</span>
+            </button>
+
             <!-- Theme Toggle -->
             <button id="theme-toggle-btn" onclick="toggleTheme(event)"
                 class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
@@ -438,11 +484,11 @@
                 <button onclick="toggleUserDropdown()"
                     class="header-btn flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-lg">
                     <!-- Avatar -->
-                    <div class="w-8 h-8 rounded-full overflow-hidden border shrink-0" style="border-color:var(--primary);">
+                    <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 border-none">
                         <?php if (!empty($user['photo_profile'])): ?>
                             <img src="<?= h($user['photo_profile']) ?>" alt="Profile" class="w-full h-full object-cover">
                         <?php else: ?>
-                            <div class="w-full h-full flex items-center justify-center text-white text-[10px] font-bold" style="background:var(--primary);">
+                            <div class="w-full h-full flex items-center justify-center text-slate-800 text-[11px] font-bold bg-[#FDE047]">
                                 <?= avatar_initials($user['name']) ?>
                             </div>
                         <?php endif; ?>
@@ -456,9 +502,9 @@
                 </button>
 
                 <!-- Dropdown Menu -->
-                <div id="user-dropdown" class="absolute right-0 mt-2 w-52 rounded-lg shadow-xl overflow-hidden hidden" style="background: white; border: 1px solid var(--border); z-index: 100;">
-                    <div class="px-4 py-3 border-b" style="border-color: rgba(0,0,0,.04);">
-                        <p data-theme-text class="text-xs font-bold" style="color: #111;"><?= h($user['name']) ?></p>
+                <div id="user-dropdown" class="absolute right-0 mt-2 w-52 rounded-md shadow-sm overflow-hidden hidden" style="background: white; border: 1px solid var(--border); z-index: 100;">
+                    <div class="px-4 py-3 border-b" style="border-color: rgba(0,0,0,.06);">
+                        <p data-theme-text class="text-[13px] font-semibold" style="color: #111;"><?= h($user['name']) ?></p>
                         <p data-theme-muted class="text-[10px] mt-0.5" style="color: #9CA3AF;"><?= h($user['email']) ?></p>
                     </div>
                     <a href="?page=profile" class="dropdown-item flex items-center gap-3 px-4 py-3 text-sm" style="color: inherit;">
@@ -557,17 +603,17 @@ window.addEventListener('click', e => {
 
 // Inline-style element selectors that need color updates on dark mode
 // Enhanced Theme Palette (Clean, Industrial, Non-Flat)
-const DARK_SURFACE  = 'linear-gradient(135deg, #1A1A1A 0%, #151515 100%)';
-const LIGHT_SURFACE = 'linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%)';
+const DARK_SURFACE  = '#1A1A1A';
+const LIGHT_SURFACE = '#FFFFFF';
 const DARK_SURFACE2 = '#222222';
 const LIGHT_SURFACE2 = '#F3F4F6';
 const DARK_TEXT     = '#F3F4F6';
 const LIGHT_TEXT    = '#111111';
 const DARK_MUTED    = '#98A2B3';
 const LIGHT_MUTED   = '#667085';
-const LIGHT_BORDER  = 'rgba(0,0,0,.04)';
-const DARK_SHADOW   = '0 10px 25px -5px rgba(0,0,0,0.4), 0 8px 10px -6px rgba(0,0,0,0.4)';
-const LIGHT_SHADOW  = '0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.05)';
+const LIGHT_BORDER  = 'rgba(0,0,0,.06)';
+const DARK_SHADOW   = '0 1px 2px rgba(0,0,0,0.15)';
+const LIGHT_SHADOW  = 'none';
 
 function applyTheme(theme) {
     const dark = theme === 'dark';
@@ -591,7 +637,7 @@ function applyTheme(theme) {
     // 5. Update all inline-styled white/light cards on the page
     //    (dashboard cards use inline styles so we update them here)
     document.querySelectorAll('[data-theme-card]').forEach(el => {
-        el.style.backgroundImage = dark ? DARK_SURFACE  : LIGHT_SURFACE;
+        el.style.backgroundColor = dark ? DARK_SURFACE  : LIGHT_SURFACE;
         el.style.border          = dark ? '1px solid rgba(255,255,255,0.03)' : '1px solid ' + LIGHT_BORDER;
         el.style.boxShadow       = dark ? DARK_SHADOW : LIGHT_SHADOW;
     });

@@ -27,25 +27,25 @@ function format_wa_link($phone) {
 ?>
 
 <!-- Header Section -->
-<section class="mb-8">
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-            <h1 class="text-4xl font-bold  leading-none mb-2 text-on-surface">People Directory</h1>
-            <div class="flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                <p class="text-[9px] font-bold   opacity-80 text-on-surface-variant">Managing <?= $total_staff ?> Team Members</p>
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+    <div>
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-3xl font-bold">diversity_3</span>
             </div>
+            <h1 data-theme-text class="text-3xl font-bold leading-none">People Directory</h1>
         </div>
-        
-        <!-- Search Bar (Simulated) -->
-        <div data-theme-card class="bg-surface p-1.5 rounded-lg shadow-sm flex items-center gap-2 w-full md:max-w-xs border border-border">
-            <div class="pl-3 text-on-surface-variant opacity-30">
-                <span class="material-symbols-outlined text-[20px]">search</span>
-            </div>
-            <input type="text" id="people-search" placeholder="Search name or position..." class="bg-transparent border-none text-xs font-bold w-full focus:ring-0 placeholder:text-on-surface-variant/30 placeholder: placeholder: text-on-surface">
-        </div>
+        <p data-theme-muted class="text-[10px] font-bold ml-1 opacity-50">Managing <?= $total_staff ?> Team Members</p>
     </div>
-</section>
+    
+    <!-- Search Bar -->
+    <div class="bg-surface p-1.5 rounded-lg shadow-sm flex items-center gap-2 w-full md:max-w-xs border border-border" style="height:38px;">
+        <div class="pl-2 text-on-surface-variant opacity-60">
+            <span class="material-symbols-outlined text-lg">search</span>
+        </div>
+        <input type="text" id="people-search" placeholder="Search name or position..." class="bg-transparent border-none text-xs font-semibold w-full focus:ring-0 placeholder:text-on-surface-variant placeholder:opacity-50 text-on-surface">
+    </div>
+</header>
 
 <!-- Stats Grid -->
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

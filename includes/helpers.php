@@ -135,6 +135,14 @@ function get_calendar_events(): array {
     return $pdo->query("SELECT * FROM calendar_events ORDER BY event_date ASC")->fetchAll();
 }
 
+function is_holiday_date(string $date): ?string {
+    $pdo = db();
+    if (!$pdo) return null;
+    $stmt = $pdo->prepare("SELECT title FROM calendar_events WHERE event_date = ? AND category = 'holiday' LIMIT 1");
+    $stmt->execute([$date]);
+    return $stmt->fetchColumn() ?: null;
+}
+
 function get_performance_reviews(): array {
     $pdo = db();
     if (!$pdo) return [];
@@ -145,3 +153,187 @@ function get_performance_reviews(): array {
     }
     return $reviews;
 }
+
+function get_setting(string $key, string $default): string {
+    $pdo = db();
+    if (!$pdo) return $default;
+    
+    // Ensure table exists
+    $pdo->exec("CREATE TABLE IF NOT EXISTS system_settings (
+        setting_key VARCHAR(50) PRIMARY KEY,
+        setting_value VARCHAR(255) NOT NULL
+    )");
+    
+    $stmt = $pdo->prepare("SELECT setting_value FROM system_settings WHERE setting_key = ?");
+    $stmt->execute([$key]);
+    $val = $stmt->fetchColumn();
+    if ($val === false) {
+        // Pre-seed
+        $stmt = $pdo->prepare("INSERT IGNORE INTO system_settings (setting_key, setting_value) VALUES (?, ?)");
+        $stmt->execute([$key, $default]);
+        return $default;
+    }
+    return $val;
+}
+
+function set_setting(string $key, string $value): bool {
+    $pdo = db();
+    if (!$pdo) return false;
+    
+    $pdo->exec("CREATE TABLE IF NOT EXISTS system_settings (
+        setting_key VARCHAR(50) PRIMARY KEY,
+        setting_value VARCHAR(255) NOT NULL
+    )");
+    
+    $stmt = $pdo->prepare("INSERT INTO system_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
+    return $stmt->execute([$key, $value]);
+}
+
+function calculate_emp_payroll_details(array $emp, int $month, int $year): array {
+    $pdo = db();
+    
+    // 1. Get settings
+    $deduction_type = get_setting('payroll_deduction_type', 'flat');
+    $flat_deduction_rate = (int)get_setting('payroll_deduction_rate', '150000');
+    $overtime_rate = (int)get_setting('payroll_overtime_rate', '50000');
+    
+    $salary = (int)($emp['salary'] ?? 0);
+    $allowance = 500000; // Standard allowance
+    
+    // Total calendar days in month
+    $total_days_in_month = (int)date('t', strtotime("$year-$month-01"));
+    
+    // 2. Generate expected workdays (weekdays Mon-Fri, excluding holidays)
+    $expected_workdays = [];
+    $num_days = (int)date('t', strtotime("$year-$month-01"));
+    $today_str = date('Y-m-d');
+    
+    // Query holidays in this month/year
+    $holidays = [];
+    if ($pdo) {
+        $stmt = $pdo->prepare("SELECT event_date FROM calendar_events WHERE category = 'holiday' AND MONTH(event_date) = ? AND YEAR(event_date) = ?");
+        $stmt->execute([$month, $year]);
+        $holidays = $stmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+    }
+    
+    for ($d = 1; $d <= $num_days; $d++) {
+        $date_str = sprintf('%04d-%02d-%02d', $year, $month, $d);
+        
+        // If it's a future date, we don't expect work
+        if ($date_str > $today_str) {
+            continue;
+        }
+        
+        $day_of_week = date('N', strtotime($date_str)); // 1 (Mon) - 7 (Sun)
+        if ($day_of_week <= 5) { // Weekday
+            if (!in_array($date_str, $holidays)) {
+                $expected_workdays[] = $date_str;
+            }
+        }
+    }
+    
+    // 3. Query actual attendance logs
+    $actual_attendance = [];
+    if ($pdo) {
+        $stmt = $pdo->prepare("SELECT * FROM attendance WHERE user_id = ? AND MONTH(attendance_date) = ? AND YEAR(attendance_date) = ? AND approval_status = 'approved' ORDER BY attendance_date ASC, attendance_time ASC");
+        $stmt->execute([$emp['id'], $month, $year]);
+        $actual_attendance = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+    
+    // Group attendance by date
+    $att_by_date = [];
+    foreach ($actual_attendance as $att) {
+        $date = $att['attendance_date'];
+        $flow = $att['attendance_flow'];
+        if (!isset($att_by_date[$date])) {
+            $att_by_date[$date] = [];
+        }
+        $att_by_date[$date][$flow] = $att['attendance_time'];
+    }
+    
+    // Query approved leaves
+    $approved_leaves = [];
+    if ($pdo) {
+        $stmt = $pdo->prepare("SELECT leave_start, leave_end FROM leaves WHERE user_id = ? AND approval_status = 'approved'");
+        $stmt->execute([$emp['id']]);
+        $approved_leaves = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+    
+    // 4. Calculate attendance metrics
+    $attended_days_count = 0;
+    $leave_days_count = 0;
+    $absent_days_count = 0;
+    $overtime_hours = 0.0;
+    
+    foreach ($expected_workdays as $day) {
+        if (isset($att_by_date[$day]['in'])) {
+            $attended_days_count++;
+            
+            // Overtime hours logic
+            if (isset($att_by_date[$day]['out'])) {
+                $in_time = $att_by_date[$day]['in'];
+                $out_time = $att_by_date[$day]['out'];
+                
+                $in_ts = strtotime("$day $in_time");
+                $out_ts = strtotime("$day $out_time");
+                
+                if ($out_ts > $in_ts) {
+                    $duration_hours = ($out_ts - $in_ts) / 3600.0;
+                    // Standard shift is 8 hours
+                    $ot = max(0.0, $duration_hours - 8.0);
+                    // Round to 1 decimal place per day
+                    $overtime_hours += round($ot, 1);
+                }
+            }
+        } else {
+            // Check if falls in approved leave
+            $is_leave = false;
+            foreach ($approved_leaves as $lv) {
+                if ($day >= $lv['leave_start'] && $day <= $lv['leave_end']) {
+                    $is_leave = true;
+                    break;
+                }
+            }
+            
+            if ($is_leave) {
+                $leave_days_count++;
+            } else {
+                $absent_days_count++;
+            }
+        }
+    }
+    
+    // Calculate dynamic deduction rate per day
+    $expected_workdays_count = count($expected_workdays);
+    if ($deduction_type === 'salary_proportional_calendar') {
+        $deduction_rate = $total_days_in_month > 0 ? ($salary / $total_days_in_month) : 0;
+    } elseif ($deduction_type === 'salary_proportional_workdays') {
+        $deduction_rate = $expected_workdays_count > 0 ? ($salary / $expected_workdays_count) : 0;
+    } else {
+        $deduction_rate = $flat_deduction_rate;
+    }
+    
+    $overtime_pay = (int)round($overtime_hours * $overtime_rate);
+    $deductions = (int)round($absent_days_count * $deduction_rate);
+    $gross = $salary + $allowance + $overtime_pay;
+    $net = $gross - $deductions;
+    
+    return [
+        'emp' => $emp,
+        'salary' => $salary,
+        'allowance' => $allowance,
+        'expected_workdays' => count($expected_workdays),
+        'attended_days' => $attended_days_count,
+        'leave_days' => $leave_days_count,
+        'absent_days' => $absent_days_count,
+        'overtime_hours' => $overtime_hours,
+        'overtime_pay' => $overtime_pay,
+        'deductions' => $deductions,
+        'gross' => $gross,
+        'net' => $net,
+        'deduction_rate' => $deduction_rate,
+        'deduction_type' => $deduction_type,
+        'overtime_rate' => $overtime_rate
+    ];
+}
+
