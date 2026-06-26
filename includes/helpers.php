@@ -337,3 +337,141 @@ function calculate_emp_payroll_details(array $emp, int $month, int $year): array
     ];
 }
 
+/**
+ * Menyiapkan/inisialisasi tabel notifications jika belum ada secara dinamis
+ */
+function init_notifications_table() {
+    $pdo = db();
+    if (!$pdo) return;
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS notifications (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id VARCHAR(20) NOT NULL,
+            title VARCHAR(255) NOT NULL,
+            message TEXT NOT NULL,
+            link VARCHAR(255) DEFAULT NULL,
+            is_read TINYINT(1) DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )");
+    } catch (PDOException $e) {
+        // Abaikan jika gagal
+    }
+}
+
+/**
+ * Menambahkan notifikasi baru
+ */
+function add_notification(string $user_id, string $title, string $message, ?string $link = null): bool {
+    $pdo = db();
+    if (!$pdo) return false;
+    
+    init_notifications_table();
+    
+    try {
+        $stmt = $pdo->prepare("INSERT INTO notifications (user_id, title, message, link, is_read) VALUES (?, ?, ?, ?, 0)");
+        return $stmt->execute([$user_id, $title, $message, $link]);
+    } catch (PDOException $e) {
+        return false;
+    }
+}
+
+/**
+ * Mendapatkan daftar notifikasi untuk user
+ */
+function get_user_notifications(string $user_id, int $limit = 10): array {
+    $pdo = db();
+    if (!$pdo) return [];
+    
+    init_notifications_table();
+    
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM notifications WHERE user_id = :user_id ORDER BY created_at DESC LIMIT :limit");
+        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    } catch (PDOException $e) {
+        return [];
+    }
+}
+
+/**
+ * Menghitung notifikasi belum dibaca
+ */
+function get_unread_notifications_count(string $user_id): int {
+    $pdo = db();
+    if (!$pdo) return 0;
+    
+    init_notifications_table();
+    
+    try {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0");
+        $stmt->execute([$user_id]);
+        return (int)$stmt->fetchColumn();
+    } catch (PDOException $e) {
+        return 0;
+    }
+}
+
+/**
+ * Menandai notifikasi sebagai dibaca
+ */
+function mark_notification_read(int $id, string $user_id): bool {
+    $pdo = db();
+    if (!$pdo) return false;
+    
+    try {
+        $stmt = $pdo->prepare("UPDATE notifications SET is_read = 1 WHERE id = ? AND user_id = ?");
+        return $stmt->execute([$id, $user_id]);
+    } catch (PDOException $e) {
+        return false;
+    }
+}
+
+/**
+ * Menandai semua notifikasi user sebagai dibaca
+ */
+function mark_all_notifications_read(string $user_id): bool {
+    $pdo = db();
+    if (!$pdo) return false;
+    
+    try {
+        $stmt = $pdo->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ?");
+        return $stmt->execute([$user_id]);
+    } catch (PDOException $e) {
+        return false;
+    }
+}
+
+/**
+ * Mengubah format timestamp ke teks waktu relatif
+ */
+function time_ago(string $datetime): string {
+    $time = strtotime($datetime);
+    $now = time();
+    $diff = $now - $time;
+    
+    if ($diff < 60) {
+        return 'Baru saja';
+    }
+    
+    $minutes = round($diff / 60);
+    if ($minutes < 60) {
+        return $minutes . ' menit yang lalu';
+    }
+    
+    $hours = round($diff / 3600);
+    if ($hours < 24) {
+        return $hours . ' jam yang lalu';
+    }
+    
+    $days = round($diff / 86400);
+    if ($days < 30) {
+        return $days . ' hari yang lalu';
+    }
+    
+    return format_date($datetime);
+}
+
+

@@ -136,13 +136,45 @@ if (isset($_SESSION['user']) && (isset($_GET['action']) || isset($_POST['action'
         if ($action === 'submit' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO leaves (user_id, leave_type, leave_start, leave_end, leave_reason, approval_status) VALUES (?, ?, ?, ?, ?, 'pending')");
             $stmt->execute([$uid, $_POST['leave_type'], $_POST['leave_start'], $_POST['leave_end'], $_POST['leave_reason']]);
+            
+            // Send notifications to all HRDs
+            $emp_name = $_SESSION['user']['name'];
+            $leave_type_lbl = leave_type_label($_POST['leave_type']);
+            $hrds = $pdo->query("SELECT id FROM users WHERE role = 'hrd'")->fetchAll();
+            foreach ($hrds as $hrd) {
+                add_notification(
+                    $hrd['id'],
+                    "Pengajuan Izin Baru",
+                    "$emp_name mengajukan izin $leave_type_lbl dari " . format_date($_POST['leave_start']) . " s/d " . format_date($_POST['leave_end']) . ".",
+                    "?page=leaves"
+                );
+            }
+            
             header("Location: /hris_system/?page=leaves&success=Pengajuan izin terkirim");
             exit;
         }
         if (auth_is_hrd() && ($action === 'approve' || $action === 'reject')) {
             $status = ($action === 'approve') ? 'approved' : 'rejected';
+            
+            // Get leave request info first
+            $stmt_info = $pdo->prepare("SELECT user_id, leave_type FROM leaves WHERE id = ?");
+            $stmt_info->execute([$_GET['id']]);
+            $leave_info = $stmt_info->fetch();
+            
             $stmt = $pdo->prepare("UPDATE leaves SET approval_status = ? WHERE id = ?");
             $stmt->execute([$status, $_GET['id']]);
+            
+            if ($leave_info) {
+                $status_lbl = $status === 'approved' ? 'disetujui' : 'ditolak';
+                $leave_type_lbl = leave_type_label($leave_info['leave_type']);
+                add_notification(
+                    $leave_info['user_id'],
+                    "Status Pengajuan Izin",
+                    "Pengajuan izin $leave_type_lbl Anda telah $status_lbl oleh HRD.",
+                    "?page=leaves"
+                );
+            }
+            
             header("Location: /hris_system/?page=leaves&success=Pengajuan izin " . ($status === 'approved' ? 'disetujui' : 'ditolak'));
             exit;
         }
@@ -196,6 +228,19 @@ if (isset($_SESSION['user']) && (isset($_GET['action']) || isset($_POST['action'
             $stmt = $pdo->prepare("INSERT INTO attendance (user_id, attendance_date, attendance_time, attendance_type, location, latitude, longitude, photo_path, attendance_flow, approval_status) VALUES (?, CURRENT_DATE, CURRENT_TIME, 'photo', ?, ?, ?, ?, ?, 'pending')");
             $stmt->execute([$uid, $addr, $lat, $lng, $photo_path, $flow]);
             
+            // Send notifications to all HRDs
+            $emp_name = $_SESSION['user']['name'];
+            $flow_lbl = $flow === 'in' ? 'Masuk' : 'Pulang';
+            $hrds = $pdo->query("SELECT id FROM users WHERE role = 'hrd'")->fetchAll();
+            foreach ($hrds as $hrd) {
+                add_notification(
+                    $hrd['id'],
+                    "Approval Absensi Foto",
+                    "$emp_name mengajukan persetujuan absensi foto ($flow_lbl).",
+                    "?page=photo-approvals"
+                );
+            }
+            
             header("Location: /hris_system/?page=attendance&success=Absensi " . ($flow === 'in' ? 'Masuk' : 'Pulang') . " terverifikasi (Pending)");
             exit;
         }
@@ -205,8 +250,26 @@ if (isset($_SESSION['user']) && (isset($_GET['action']) || isset($_POST['action'
     if ($page === 'photo-approvals' && auth_is_hrd()) {
         if ($action === 'approve' || $action === 'reject') {
             $status = ($action === 'approve') ? 'approved' : 'rejected';
+            
+            // Get attendance request info first
+            $stmt_info = $pdo->prepare("SELECT user_id, attendance_date, attendance_flow FROM attendance WHERE id = ?");
+            $stmt_info->execute([$_GET['id']]);
+            $att_info = $stmt_info->fetch();
+            
             $stmt = $pdo->prepare("UPDATE attendance SET approval_status = ? WHERE id = ?");
             $stmt->execute([$status, $_GET['id']]);
+            
+            if ($att_info) {
+                $status_lbl = $status === 'approved' ? 'disetujui' : 'ditolak';
+                $flow_lbl = $att_info['attendance_flow'] === 'in' ? 'Masuk' : 'Pulang';
+                add_notification(
+                    $att_info['user_id'],
+                    "Status Absensi Foto",
+                    "Absensi foto ($flow_lbl) Anda untuk tanggal " . format_date($att_info['attendance_date']) . " telah $status_lbl oleh HRD.",
+                    "?page=attendance"
+                );
+            }
+            
             header("Location: /hris_system/?page=photo-approvals&success=Absensi foto " . ($status === 'approved' ? 'disetujui' : 'ditolak'));
             exit;
         }
@@ -217,6 +280,19 @@ if (isset($_SESSION['user']) && (isset($_GET['action']) || isset($_POST['action'
         if ($action === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("INSERT INTO announcements (title, content, priority, author_id, expires_at) VALUES (?, ?, ?, ?, ?)");
             $stmt->execute([$_POST['title'], $_POST['content'], $_POST['priority'], $uid, $_POST['expires_at'] ?: null]);
+            
+            // Notify all employees
+            $ann_title = $_POST['title'];
+            $employees = $pdo->query("SELECT id FROM users WHERE role = 'employee'")->fetchAll();
+            foreach ($employees as $emp) {
+                add_notification(
+                    $emp['id'],
+                    "Pengumuman Baru",
+                    "Pengumuman baru telah dirilis: \"$ann_title\". Silakan periksa detailnya.",
+                    "?page=announcements"
+                );
+            }
+            
             header("Location: /hris_system/?page=announcements&success=Pengumuman dipublikasikan");
             exit;
         }
@@ -242,6 +318,15 @@ if (isset($_SESSION['user']) && (isset($_GET['action']) || isset($_POST['action'
             $_POST['employee_id'], $uid, $_POST['work_quality'], $_POST['productivity'], 
             $_POST['communication'], $_POST['teamwork'], $_POST['initiative'], $overall, $_POST['feedback']
         ]);
+        
+        // Notify the employee
+        add_notification(
+            $_POST['employee_id'],
+            "Review Kinerja Baru",
+            "HRD telah menambahkan review kinerja baru untuk Anda pada tanggal " . format_date(date('Y-m-d')) . ".",
+            "?page=performance"
+        );
+        
         header("Location: /hris_system/?page=performance&success=Review kinerja disimpan");
         exit;
     }

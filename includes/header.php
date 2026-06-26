@@ -462,11 +462,27 @@
 
         <!-- Right: theme + profile -->
         <div class="flex items-center gap-2">
-            <!-- Notifications (from reference) -->
-            <button class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors relative">
-                <span class="material-symbols-outlined" style="font-size:20px;">notifications</span>
-                <span class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full"></span>
-            </button>
+            <!-- Notifications Dropdown -->
+            <div class="relative">
+                <button onclick="toggleNotifDropdown(event)" id="notif-btn" class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors relative">
+                    <span class="material-symbols-outlined" style="font-size:20px;">notifications</span>
+                    <span id="notif-badge" class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full hidden animate-pulse"></span>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div id="notif-dropdown" class="absolute right-0 mt-2 w-80 rounded-md shadow-lg overflow-hidden hidden transition-all duration-200" style="background: white; border: 1px solid var(--border); z-index: 100;">
+                    <div class="px-4 py-2.5 border-b flex justify-between items-center bg-gray-50 dark:bg-neutral-900/30" style="border-color: var(--border);">
+                        <span data-theme-text class="text-xs font-bold" style="color: var(--text-primary);">Notifikasi</span>
+                        <button onclick="markAllNotifAsRead(event)" class="text-[10px] text-primary font-bold hover:underline">Tandai semua dibaca</button>
+                    </div>
+                    <div id="notif-list" class="max-h-72 overflow-y-auto divide-y divide-gray-100 dark:divide-neutral-800">
+                        <div class="p-4 text-center text-xs text-gray-400">Loading...</div>
+                    </div>
+                    <div class="px-4 py-2 border-t text-center bg-gray-50 dark:bg-neutral-900/30" style="border-color: var(--border);">
+                        <span class="text-[10px] text-gray-400 font-medium">HRIS Notifications Panel</span>
+                    </div>
+                </div>
+            </div>
             
             <!-- Help (from reference) -->
             <button class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
@@ -673,6 +689,11 @@ function applyTheme(theme) {
         dd.style.background = dark ? DARK_SURFACE : LIGHT_SURFACE;
         dd.style.borderColor = dark ? 'rgba(255,255,255,.07)' : 'rgba(0,0,0,.05)';
     }
+    const nd = document.getElementById('notif-dropdown');
+    if (nd) {
+        nd.style.background = dark ? DARK_SURFACE : LIGHT_SURFACE;
+        nd.style.borderColor = dark ? 'rgba(255,255,255,.07)' : 'rgba(0,0,0,.05)';
+    }
 }
 
 function toggleTheme(event) {
@@ -696,6 +717,142 @@ function toggleTheme(event) {
         );
     });
 }
+
+/* ────────── Notifications System ────────── */
+function toggleNotifDropdown(e) {
+    if (e) e.stopPropagation();
+    const dropdown = document.getElementById('notif-dropdown');
+    dropdown.classList.toggle('hidden');
+    
+    // Hide user dropdown if open
+    const userDD = document.getElementById('user-dropdown');
+    if (userDD) userDD.classList.add('hidden');
+    
+    if (!dropdown.classList.contains('hidden')) {
+        loadNotifications();
+    }
+}
+
+function loadNotifications() {
+    fetch('/hris_system/api/?action=get-notifications')
+        .then(response => response.json())
+        .then(data => {
+            updateNotifBadge(data.unread_count);
+            
+            const list = document.getElementById('notif-list');
+            list.innerHTML = '';
+            
+            if (data.notifications.length === 0) {
+                list.innerHTML = `<div class="p-8 text-center text-xs text-gray-400 dark:text-neutral-500">Tidak ada notifikasi</div>`;
+                return;
+            }
+            
+            data.notifications.forEach(notif => {
+                const isRead = parseInt(notif.is_read) === 1;
+                const bgClass = isRead ? '' : 'bg-blue-50/40 dark:bg-blue-950/10';
+                const indicatorClass = isRead ? 'hidden' : 'w-2 h-2 rounded-full bg-blue-500 shrink-0';
+                
+                // Determine icon based on title or content keywords
+                let icon = 'notifications';
+                let iconColor = 'text-primary';
+                
+                const titleLower = notif.title.toLowerCase();
+                if (titleLower.includes('izin') || titleLower.includes('leave') || titleLower.includes('absence')) {
+                    icon = 'event_note';
+                    iconColor = 'text-amber-500';
+                } else if (titleLower.includes('absen') || titleLower.includes('hadir') || titleLower.includes('attendance')) {
+                    icon = 'photo_camera';
+                    iconColor = 'text-emerald-500';
+                } else if (titleLower.includes('pengumuman') || titleLower.includes('announce')) {
+                    icon = 'campaign';
+                    iconColor = 'text-indigo-500';
+                } else if (titleLower.includes('kinerja') || titleLower.includes('performance')) {
+                    icon = 'assignment';
+                    iconColor = 'text-pink-500';
+                }
+                
+                const item = document.createElement('div');
+                item.className = `p-3 flex items-start gap-3 hover:bg-gray-50/80 dark:hover:bg-neutral-800/40 transition-colors cursor-pointer border-b border-gray-100 dark:border-neutral-800/60 last:border-none ${bgClass}`;
+                item.onclick = () => handleNotifClick(notif.id, notif.link);
+                
+                item.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-neutral-800 ${iconColor} shrink-0">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">${icon}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-baseline mb-0.5">
+                            <p class="text-[11px] font-bold truncate dark:text-neutral-200" style="color: var(--text-primary);">${notif.title}</p>
+                            <span class="text-[8px] text-gray-400 dark:text-neutral-500 shrink-0 ml-2">${notif.time_ago}</span>
+                        </div>
+                        <p class="text-[10px] text-gray-500 dark:text-neutral-400 line-clamp-2 leading-relaxed">${notif.message}</p>
+                    </div>
+                    <div class="${indicatorClass}"></div>
+                `;
+                list.appendChild(item);
+            });
+        })
+        .catch(err => {
+            console.error('Error fetching notifications:', err);
+            const list = document.getElementById('notif-list');
+            list.innerHTML = `<div class="p-4 text-center text-xs text-red-500">Gagal memuat notifikasi</div>`;
+        });
+}
+
+function updateNotifBadge(count) {
+    const badge = document.getElementById('notif-badge');
+    if (count > 0) {
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
+function handleNotifClick(id, link) {
+    fetch(`/hris_system/api/?action=mark-notification-read&id=${id}`)
+        .then(() => {
+            if (link) {
+                window.location.href = `/hris_system/${link}`;
+            } else {
+                loadNotifications();
+            }
+        })
+        .catch(() => {
+            if (link) window.location.href = `/hris_system/${link}`;
+        });
+}
+
+function markAllNotifAsRead(event) {
+    if (event) event.stopPropagation();
+    fetch('/hris_system/api/?action=mark-all-notifications-read')
+        .then(() => {
+            loadNotifications();
+        })
+        .catch(err => console.error(err));
+}
+
+// Auto update badge on page load and poll every 30 seconds
+function checkNotifBadgeCount() {
+    fetch('/hris_system/api/?action=get-notifications')
+        .then(response => response.json())
+        .then(data => {
+            updateNotifBadge(data.unread_count);
+        })
+        .catch(err => console.error(err));
+}
+
+// Add event listener to check count and handle outside click
+document.addEventListener('DOMContentLoaded', () => {
+    checkNotifBadgeCount();
+    setInterval(checkNotifBadgeCount, 30000);
+    
+    // Close notification dropdown when clicking outside
+    window.addEventListener('click', e => {
+        const nd = document.getElementById('notif-dropdown');
+        if (nd && !e.target.closest('#notif-dropdown') && !e.target.closest('#notif-btn')) {
+            nd.classList.add('hidden');
+        }
+    });
+});
 
 /* ────────── Init on load ────────── */
 document.addEventListener('DOMContentLoaded', () => {

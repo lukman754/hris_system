@@ -27,6 +27,40 @@ switch ($action) {
         echo json_encode(get_attendance());
         break;
 
+    case 'get-notifications':
+        $uid = $_SESSION['user']['id'];
+        $notifs = get_user_notifications($uid, 15);
+        $unread_count = get_unread_notifications_count($uid);
+        
+        $formatted_notifs = [];
+        foreach ($notifs as $n) {
+            $n['time_ago'] = time_ago($n['created_at']);
+            $formatted_notifs[] = $n;
+        }
+        
+        echo json_encode([
+            'unread_count' => $unread_count,
+            'notifications' => $formatted_notifs
+        ]);
+        break;
+
+    case 'mark-notification-read':
+        $uid = $_SESSION['user']['id'];
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id > 0) {
+            mark_notification_read($id, $uid);
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['error' => 'Invalid ID']);
+        }
+        break;
+
+    case 'mark-all-notifications-read':
+        $uid = $_SESSION['user']['id'];
+        mark_all_notifications_read($uid);
+        echo json_encode(['success' => true]);
+        break;
+
     default:
         http_response_code(404);
         echo json_encode(['error' => 'Action not found']);
