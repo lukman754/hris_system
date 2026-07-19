@@ -519,6 +519,38 @@ if ($page === 'payroll' && ($_GET['action'] ?? '') === 'slip') {
     require_once __DIR__ . '/pages/payroll_slip.php';
     exit;
 }
+
+// Intercept Printable Payroll Summary Action
+if ($page === 'payroll' && ($_GET['action'] ?? '') === 'summary') {
+    auth_check();
+    $current_user = auth_user();
+    if ($current_user['role'] !== 'hrd') {
+        die("Unauthorized access.");
+    }
+    
+    $sel_month = (int)($_GET['month'] ?? date('n'));
+    $sel_year  = (int)($_GET['year']  ?? date('Y'));
+    
+    $employees = get_employees();
+    $rows = [];
+    $total_payout = 0;
+    $total_deductions = 0;
+    $total_salary = 0;
+    $total_allowance = 0;
+    $total_overtime = 0;
+    foreach ($employees as $emp) {
+        $row = calculate_emp_payroll_details($emp, $sel_month, $sel_year);
+        $total_payout += $row['net'];
+        $total_deductions += $row['deductions'];
+        $total_salary += $row['salary'];
+        $total_allowance += $row['allowance'];
+        $total_overtime += $row['overtime_pay'];
+        $rows[] = $row;
+    }
+    
+    require_once __DIR__ . '/pages/payroll_summary.php';
+    exit;
+}
 $page_files = [
     'dashboard'          => 'pages/dashboard.php',
     'employees'          => 'pages/employees.php',

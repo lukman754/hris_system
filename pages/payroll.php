@@ -88,6 +88,10 @@ endif;
                     <span>Update Ledger</span>
                 </button>
             </form>
+            <a href="?page=payroll&action=summary&month=<?=$sel_month?>&year=<?=$sel_year?>" target="_blank" class="w-full sm:w-auto px-5 py-3.5 bg-emerald-600 text-white rounded-lg font-bold text-xs flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all h-[38px] hover:bg-emerald-700">
+                <span class="material-symbols-outlined text-lg">print</span>
+                <span>Cetak Rekap Gaji</span>
+            </a>
             <button onclick="document.getElementById('payrollSettingsModal').style.display='flex'" class="w-full sm:w-auto px-5 py-3.5 bg-surface text-on-surface border border-border rounded-lg font-bold text-xs flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all h-[38px]">
                 <span class="material-symbols-outlined text-lg">settings</span>
                 <span>Pengaturan</span>
