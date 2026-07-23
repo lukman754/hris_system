@@ -192,7 +192,7 @@ $attendance = array_slice($all_attendance, $offset, $per_page);
 function filterLogs(q) {
     q = q.toLowerCase();
     document.querySelectorAll('.attendance-row').forEach(row => {
-        row.style.display = row.getAttribute('data-content').includes(q) ? 'block' : 'none';
+        row.style.display = row.getAttribute('data-content').includes(q) ? '' : 'none';
     });
 }
 </script>

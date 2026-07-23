@@ -382,10 +382,11 @@
         } else {
             $nav_groups = [
                 'Operations' => [
-                    ['page'=>'dashboard',    'icon'=>'dashboard',          'label'=>'Dashboard'],
-                    ['page'=>'attendance',   'icon'=>'fingerprint',        'label'=>'Absen'],
-                    ['page'=>'leaves',       'icon'=>'calendar_add_on',    'label'=>'Izin'],
-                    ['page'=>'performance',  'icon'=>'monitoring',         'label'=>'Kinerja'],
+                    ['page'=>'dashboard',          'icon'=>'dashboard',          'label'=>'Dashboard'],
+                    ['page'=>'attendance',         'icon'=>'fingerprint',        'label'=>'Absen'],
+                    ['page'=>'attendance-history', 'icon'=>'calendar_month',     'label'=>'Riwayat Absensi'],
+                    ['page'=>'leaves',             'icon'=>'calendar_add_on',    'label'=>'Izin'],
+                    ['page'=>'performance',        'icon'=>'monitoring',         'label'=>'Kinerja'],
                 ],
                 'Information' => [
                     ['page'=>'people',       'icon'=>'diversity_3',        'label'=>'People'],
