@@ -392,6 +392,7 @@ if (isset($_SESSION['user']) && (isset($_GET['action']) || isset($_POST['action'
         if ($action === 'save-settings' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             set_setting('payroll_deduction_type', $_POST['deduction_type'] ?? 'flat');
             set_setting('payroll_deduction_rate', $_POST['deduction_rate'] ?? '150000');
+            set_setting('payroll_daily_allowance_rate', $_POST['daily_allowance_rate'] ?? '100000');
             set_setting('payroll_overtime_rate', $_POST['overtime_rate'] ?? '50000');
             
             $month = $_POST['month'] ?? date('n');

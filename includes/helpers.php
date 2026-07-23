@@ -195,6 +195,7 @@ function calculate_emp_payroll_details(array $emp, int $month, int $year): array
     // 1. Get settings
     $deduction_type = get_setting('payroll_deduction_type', 'flat');
     $flat_deduction_rate = (int)get_setting('payroll_deduction_rate', '150000');
+    $daily_allowance_rate = (int)get_setting('payroll_daily_allowance_rate', '100000');
     $overtime_rate = (int)get_setting('payroll_overtime_rate', '50000');
     
     $salary = (int)($emp['salary'] ?? 0);
@@ -314,8 +315,10 @@ function calculate_emp_payroll_details(array $emp, int $month, int $year): array
     }
     
     $overtime_pay = (int)round($overtime_hours * $overtime_rate);
-    $deductions = (int)round($absent_days_count * $deduction_rate);
-    $gross = $salary + $allowance + $overtime_pay;
+    $daily_allowance_pay = (int)round($attended_days_count * $daily_allowance_rate);
+    $deductions = 0; // No deductions from base salary now
+    
+    $gross = $salary + $allowance + $daily_allowance_pay + $overtime_pay;
     $net = $gross - $deductions;
     
     return [
@@ -328,6 +331,8 @@ function calculate_emp_payroll_details(array $emp, int $month, int $year): array
         'absent_days' => $absent_days_count,
         'overtime_hours' => $overtime_hours,
         'overtime_pay' => $overtime_pay,
+        'daily_allowance_rate' => $daily_allowance_rate,
+        'daily_allowance_pay' => $daily_allowance_pay,
         'deductions' => $deductions,
         'gross' => $gross,
         'net' => $net,

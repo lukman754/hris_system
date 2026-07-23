@@ -7,6 +7,7 @@ $sel_year  = (int)($_GET['year']  ?? date('Y'));
 // Load settings for rates
 $deduction_type = get_setting('payroll_deduction_type', 'flat');
 $deduction_rate = (int)get_setting('payroll_deduction_rate', '150000');
+$daily_allowance_rate = (int)get_setting('payroll_daily_allowance_rate', '100000');
 $overtime_rate  = (int)get_setting('payroll_overtime_rate', '50000');
 
 if ($is_hrd):
@@ -169,16 +170,16 @@ endif;
                         <div data-theme-text class="text-xs font-bold"><?= format_rupiah($row['salary']) ?></div>
                     </div>
                     <div>
-                        <div data-theme-muted class="text-[10px] font-bold opacity-45 mb-1">Allowances</div>
+                        <div data-theme-muted class="text-[10px] font-bold opacity-45 mb-1">Fixed Allowance</div>
                         <div class="text-xs font-bold text-emerald-500">+<?= format_rupiah($row['allowance']) ?></div>
+                    </div>
+                    <div>
+                        <div data-theme-muted class="text-[10px] font-bold opacity-45 mb-1">Uang Harian (<?= $row['attended_days'] ?>d)</div>
+                        <div class="text-xs font-bold text-emerald-500">+<?= format_rupiah($row['daily_allowance_pay']) ?></div>
                     </div>
                     <div>
                         <div data-theme-muted class="text-[10px] font-bold opacity-45 mb-1">Overtime (<?= $row['overtime_hours'] ?>h)</div>
                         <div class="text-xs font-bold text-amber-500">+<?= format_rupiah($row['overtime_pay']) ?></div>
-                    </div>
-                    <div>
-                        <div data-theme-muted class="text-[10px] font-bold opacity-45 mb-1">Deductions (<?= $row['absent_days'] ?>d absent)</div>
-                        <div class="text-xs font-bold text-rose-500">-<?= format_rupiah($row['deductions']) ?></div>
                     </div>
                     <div>
                         <div data-theme-muted class="text-[10px] font-bold opacity-45 mb-1">Net Payable</div>
@@ -228,6 +229,11 @@ endif;
             <div class="space-y-1.5" id="deduction_rate_container" style="<?= $deduction_type === 'flat' ? '' : 'display: none;' ?>">
                 <label class="text-[11px] font-bold text-[var(--text-muted)] block">Potongan per Hari Absen (Rp)</label>
                 <input type="number" name="deduction_rate" value="<?= h($deduction_rate) ?>" class="form-input" required min="0">
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-[11px] font-bold text-[var(--text-muted)] block">Uang Harian per Hari Masuk (Rp)</label>
+                <input type="number" name="daily_allowance_rate" value="<?= h($daily_allowance_rate) ?>" class="form-input" required min="0">
             </div>
 
             <div class="space-y-1.5">
@@ -333,12 +339,16 @@ function toggleDeductionRateInput(val) {
                         <span data-theme-text class="font-bold"><?= format_rupiah($my_payroll['allowance']) ?></span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
+                        <span data-theme-muted class="opacity-50">Uang Harian (<?= $my_payroll['attended_days'] ?> hari masuk)</span>
+                        <span data-theme-text class="font-bold text-emerald-600 dark:text-emerald-400">+<?= format_rupiah($my_payroll['daily_allowance_pay']) ?></span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
                         <span data-theme-muted class="opacity-50">Lembur (<?= $my_payroll['overtime_hours'] ?> jam)</span>
                         <span data-theme-text class="font-bold text-emerald-600 dark:text-emerald-400">+<?= format_rupiah($my_payroll['overtime_pay']) ?></span>
                     </div>
                     <div class="pt-2 border-t border-dashed border-border flex justify-between items-center text-xs font-bold">
                         <span data-theme-text>Total Pendapatan</span>
-                        <span class="text-emerald-600 dark:text-emerald-400"><?= format_rupiah($my_payroll['salary'] + $my_payroll['allowance'] + $my_payroll['overtime_pay']) ?></span>
+                        <span class="text-emerald-600 dark:text-emerald-400"><?= format_rupiah($my_payroll['salary'] + $my_payroll['allowance'] + $my_payroll['daily_allowance_pay'] + $my_payroll['overtime_pay']) ?></span>
                     </div>
                 </div>
             </div>
@@ -351,7 +361,7 @@ function toggleDeductionRateInput(val) {
                 <div class="space-y-3">
                     <div class="flex justify-between items-center text-xs">
                         <span data-theme-muted class="opacity-50">Absensi (<?= $my_payroll['absent_days'] ?> hari absen)</span>
-                        <span class="font-bold text-rose-500">-<?= format_rupiah($my_payroll['deductions']) ?></span>
+                        <span class="font-bold text-rose-500"><?= format_rupiah($my_payroll['deductions']) ?></span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
                         <span data-theme-muted class="opacity-50">Administrasi & Pajak</span>
@@ -359,7 +369,7 @@ function toggleDeductionRateInput(val) {
                     </div>
                     <div class="pt-2 border-t border-dashed border-border flex justify-between items-center text-xs font-bold mt-auto">
                         <span data-theme-text>Total Potongan</span>
-                        <span class="text-rose-500">-<?= format_rupiah($my_payroll['deductions']) ?></span>
+                        <span class="text-rose-500"><?= format_rupiah($my_payroll['deductions']) ?></span>
                     </div>
                 </div>
             </div>

@@ -123,6 +123,13 @@
                     </div>
                     <div class="flex justify-between py-2">
                         <div>
+                            <span class="text-gray-500 block">Uang Harian (Daily Allowance)</span>
+                            <span class="text-[9px] text-gray-400 block"><?= $slip['attended_days'] ?> hari masuk @ <?= format_rupiah($slip['daily_allowance_rate']) ?>/hari</span>
+                        </div>
+                        <span class="font-bold text-emerald-600">+<?= format_rupiah($slip['daily_allowance_pay']) ?></span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <div>
                             <span class="text-gray-500 block">Uang Lembur (Overtime)</span>
                             <span class="text-[9px] text-gray-400 block"><?= $slip['overtime_hours'] ?> jam @ <?= format_rupiah($slip['overtime_rate']) ?>/jam</span>
                         </div>
@@ -144,9 +151,9 @@
                     <div class="flex justify-between py-2">
                         <div>
                             <span class="text-gray-500 block">Potongan Absensi</span>
-                            <span class="text-[9px] text-gray-400 block"><?= $slip['absent_days'] ?> hari tidak masuk @ <?= format_rupiah($slip['deduction_rate']) ?>/hari</span>
+                            <span class="text-[9px] text-gray-400 block"><?= $slip['absent_days'] ?> hari tidak masuk (gaji pokok tidak dipotong)</span>
                         </div>
-                        <span class="font-bold text-red-600">-<?= format_rupiah($slip['deductions']) ?></span>
+                        <span class="font-bold text-red-600"><?= format_rupiah($slip['deductions']) ?></span>
                     </div>
                     <!-- Empty fill for layout balance -->
                     <div class="flex justify-between py-2 opacity-0">
@@ -159,7 +166,7 @@
                     </div>
                     <div class="flex justify-between py-2.5 font-bold text-gray-900 border-t border-gray-200">
                         <span>Total Potongan</span>
-                        <span>-<?= format_rupiah($slip['deductions']) ?></span>
+                        <span><?= format_rupiah($slip['deductions']) ?></span>
                     </div>
                 </div>
             </div>
