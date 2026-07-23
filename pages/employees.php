@@ -98,19 +98,21 @@ $avg_salary = $total_staff > 0 ? array_sum(array_column($employees, 'salary')) /
     <div id="staffGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 pb-20">
         <?php foreach ($employees as $emp): ?>
         <div class="staff-card card flex flex-col" style="padding:0; overflow:hidden;" data-search-content="<?= strtolower($emp['name'] . ' ' . $emp['position'] . ' ' . $emp['department'] . ' ' . ($emp['phone_number'] ?? '')) ?>">
-            <div style="padding:20px; display:flex; flex-direction:column; align-items:center; text-center; border-bottom:1px solid var(--border); position:relative;">
-                <div class="w-16 h-16 rounded-full overflow-hidden mb-3 border-2" style="border-color:var(--surface2);">
-                    <?php if (!empty($emp['photo_profile'])): ?>
-                        <img src="<?= h($emp['photo_profile']) ?>" class="w-full h-full object-cover">
-                    <?php else: ?>
-                        <div class="w-full h-full flex items-center justify-center font-bold text-lg" style="background:var(--surface2); color:var(--primary);">
-                            <?= avatar_initials($emp['name']) ?>
-                        </div>
-                    <?php endif; ?>
+            <a href="?page=attendance-history&user_id=<?= h($emp['id']) ?>" class="block hover:opacity-95 transition-opacity">
+                <div style="padding:20px; display:flex; flex-direction:column; align-items:center; text-center; border-bottom:1px solid var(--border); position:relative;">
+                    <div class="w-16 h-16 rounded-full overflow-hidden mb-3 border-2" style="border-color:var(--surface2);">
+                        <?php if (!empty($emp['photo_profile'])): ?>
+                            <img src="<?= h($emp['photo_profile']) ?>" class="w-full h-full object-cover">
+                        <?php else: ?>
+                            <div class="w-full h-full flex items-center justify-center font-bold text-lg" style="background:var(--surface2); color:var(--primary);">
+                                <?= avatar_initials($emp['name']) ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <h3 style="font-size:14px; font-weight:700; color:var(--text-primary); line-height:1.2; margin-bottom:4px;" class="hover:text-primary transition-colors"><?= h($emp['name']) ?></h3>
+                    <p style="font-size:11px; color:var(--text-muted); font-weight:500;"><?= h($emp['position']) ?></p>
                 </div>
-                <h3 style="font-size:14px; font-weight:700; color:var(--text-primary); line-height:1.2; margin-bottom:4px;"><?= h($emp['name']) ?></h3>
-                <p style="font-size:11px; color:var(--text-muted); font-weight:500;"><?= h($emp['position']) ?></p>
-            </div>
+            </a>
 
             <div style="padding:16px; background:var(--surface2); flex-grow:1;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -128,9 +130,12 @@ $avg_salary = $total_staff > 0 ? array_sum(array_column($employees, 'salary')) /
             </div>
 
             <div style="padding:12px 16px; border-top:1px solid var(--border); display:flex; gap:8px;">
-                <button onclick='openEditModal(<?= json_encode($emp) ?>)' class="flex-1 py-1.5 flex items-center justify-center gap-1 text-[11px] font-bold rounded bg-[var(--surface2)] text-blue-500 hover:bg-blue-500 hover:text-white transition-colors border" style="border-color:var(--border);">
+                <button onclick='openEditModal(<?= json_encode($emp) ?>)' class="flex-grow py-1.5 flex items-center justify-center gap-1 text-[11px] font-bold rounded bg-[var(--surface2)] text-blue-500 hover:bg-blue-500 hover:text-white transition-colors border" style="border-color:var(--border);">
                     <span class="material-symbols-outlined text-[14px]">edit</span> Update
                 </button>
+                <a href="?page=attendance-history&user_id=<?= h($emp['id']) ?>" class="py-1.5 px-2 flex items-center justify-center text-[11px] font-bold rounded bg-[var(--surface2)] text-emerald-500 hover:bg-emerald-500 hover:text-white transition-colors border" style="border-color:var(--border);" title="Riwayat Absensi">
+                    <span class="material-symbols-outlined text-[14px]">calendar_month</span>
+                </a>
                 <button onclick="confirmResetPassword('<?= h($emp['id']) ?>', '<?= h($emp['name']) ?>')" class="py-1.5 px-2 flex items-center justify-center text-[11px] font-bold rounded bg-[var(--surface2)] text-amber-500 hover:bg-amber-500 hover:text-white transition-colors border" style="border-color:var(--border);" title="Reset Password">
                     <span class="material-symbols-outlined text-[14px]">lock_reset</span>
                 </button>
