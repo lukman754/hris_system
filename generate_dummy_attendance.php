@@ -80,17 +80,22 @@ foreach ($users as $user) {
         }
 
         // Tentukan jam Check-In
-        $is_late = (rand(1, 100) <= $late_chance);
-        if ($is_late) {
-            // Terlambat: Check-in antara jam 08:01 s/d 09:30
-            $hour = rand(8, 9);
-            $minute = ($hour == 8) ? rand(1, 59) : rand(0, 30);
+        $roll = rand(1, 100);
+        if ($roll <= 60) {
+            // Tepat waktu: Check-in antara jam 07:30 s/d 08:00
+            $hour = 7;
+            $minute = rand(30, 59);
+            $status_in = 'valid';
+        } elseif ($roll <= 80) {
+            // Terlambat dalam toleransi: Check-in antara jam 08:01 s/d 08:15
+            $hour = 8;
+            $minute = rand(1, 15);
             $status_in = 'late';
         } else {
-            // Tepat waktu: Check-in antara jam 07:00 s/d 08:00
-            $hour = 7;
-            $minute = rand(0, 59);
-            $status_in = 'valid';
+            // Terlambat di luar toleransi: Check-in antara jam 08:16 s/d 09:15
+            $hour = rand(8, 9);
+            $minute = ($hour == 8) ? rand(16, 59) : rand(0, 15);
+            $status_in = 'late';
         }
         $second = rand(0, 59);
         $check_in_time = sprintf('%02d:%02d:%02d', $hour, $minute, $second);

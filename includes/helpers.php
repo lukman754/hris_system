@@ -196,6 +196,9 @@ function calculate_emp_payroll_details(array $emp, int $month, int $year): array
     $deduction_type = get_setting('payroll_deduction_type', 'flat');
     $flat_deduction_rate = (int)get_setting('payroll_deduction_rate', '150000');
     $daily_allowance_rate = (int)get_setting('payroll_daily_allowance_rate', '100000');
+    $work_start_time = get_setting('payroll_work_start_time', '08:00');
+    $late_tolerance_minutes = (int)get_setting('payroll_late_tolerance_minutes', '15');
+    $late_deduction_rate = (int)get_setting('payroll_late_deduction_rate', '20000');
     $overtime_rate = (int)get_setting('payroll_overtime_rate', '50000');
     
     $salary = (int)($emp['salary'] ?? 0);
@@ -264,11 +267,22 @@ function calculate_emp_payroll_details(array $emp, int $month, int $year): array
     $attended_days_count = 0;
     $leave_days_count = 0;
     $absent_days_count = 0;
+    $late_days_count = 0;
     $overtime_hours = 0.0;
     
     foreach ($expected_workdays as $day) {
         if (isset($att_by_date[$day]['in'])) {
             $attended_days_count++;
+            
+            // Check for tardiness
+            $in_time = $att_by_date[$day]['in'];
+            if (strtotime("$day $in_time") > strtotime("$day $work_start_time")) {
+                $diff_seconds = strtotime("$day $in_time") - strtotime("$day $work_start_time");
+                $diff_minutes = (int)($diff_seconds / 60);
+                if ($diff_minutes > $late_tolerance_minutes) {
+                    $late_days_count++;
+                }
+            }
             
             // Overtime hours logic
             if (isset($att_by_date[$day]['out'])) {
@@ -304,7 +318,7 @@ function calculate_emp_payroll_details(array $emp, int $month, int $year): array
         }
     }
     
-    // Calculate dynamic deduction rate per day
+    // Calculate dynamic deduction rate per day (not used for absent anymore, but kept for compatibility)
     $expected_workdays_count = count($expected_workdays);
     if ($deduction_type === 'salary_proportional_calendar') {
         $deduction_rate = $total_days_in_month > 0 ? ($salary / $total_days_in_month) : 0;
@@ -316,7 +330,10 @@ function calculate_emp_payroll_details(array $emp, int $month, int $year): array
     
     $overtime_pay = (int)round($overtime_hours * $overtime_rate);
     $daily_allowance_pay = (int)round($attended_days_count * $daily_allowance_rate);
-    $deductions = 0; // No deductions from base salary now
+    
+    // Calculate late deductions
+    $late_deductions = $late_days_count * $late_deduction_rate;
+    $deductions = $late_deductions; // Late deductions are the only deductions now
     
     $gross = $salary + $allowance + $daily_allowance_pay + $overtime_pay;
     $net = $gross - $deductions;
@@ -329,6 +346,11 @@ function calculate_emp_payroll_details(array $emp, int $month, int $year): array
         'attended_days' => $attended_days_count,
         'leave_days' => $leave_days_count,
         'absent_days' => $absent_days_count,
+        'late_days' => $late_days_count,
+        'late_deduction_rate' => $late_deduction_rate,
+        'late_deductions' => $late_deductions,
+        'late_tolerance_minutes' => $late_tolerance_minutes,
+        'work_start_time' => $work_start_time,
         'overtime_hours' => $overtime_hours,
         'overtime_pay' => $overtime_pay,
         'daily_allowance_rate' => $daily_allowance_rate,

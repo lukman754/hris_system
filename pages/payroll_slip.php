@@ -150,23 +150,26 @@
                 <div class="p-4 divide-y divide-gray-100 text-xs">
                     <div class="flex justify-between py-2">
                         <div>
+                            <span class="text-gray-500 block">Potongan Keterlambatan</span>
+                            <span class="text-[9px] text-gray-400 block"><?= $slip['late_days'] ?> kali terlambat @ <?= format_rupiah($slip['late_deduction_rate']) ?>/kejadian (toleransi <?= $slip['late_tolerance_minutes'] ?> m)</span>
+                        </div>
+                        <span class="font-bold text-red-600"><?= $slip['late_deductions'] > 0 ? '-' : '' ?><?= format_rupiah($slip['late_deductions']) ?></span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <div>
                             <span class="text-gray-500 block">Potongan Absensi</span>
                             <span class="text-[9px] text-gray-400 block"><?= $slip['absent_days'] ?> hari tidak masuk (gaji pokok tidak dipotong)</span>
                         </div>
-                        <span class="font-bold text-red-600"><?= format_rupiah($slip['deductions']) ?></span>
+                        <span class="font-bold text-gray-800">Rp 0</span>
                     </div>
                     <!-- Empty fill for layout balance -->
                     <div class="flex justify-between py-2 opacity-0">
                         <span>Balance</span>
                         <span>0</span>
                     </div>
-                    <div class="flex justify-between py-2 opacity-0">
-                        <span>Balance</span>
-                        <span>0</span>
-                    </div>
                     <div class="flex justify-between py-2.5 font-bold text-gray-900 border-t border-gray-200">
                         <span>Total Potongan</span>
-                        <span><?= format_rupiah($slip['deductions']) ?></span>
+                        <span><?= $slip['deductions'] > 0 ? '-' : '' ?><?= format_rupiah($slip['deductions']) ?></span>
                     </div>
                 </div>
             </div>
