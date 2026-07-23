@@ -93,29 +93,31 @@ function format_wa_link($phone) {
             <span class="text-[8px] font-bold  "><?= $is_online ? 'Present' : 'Away' ?></span>
         </div>
 
-        <div class="flex items-center gap-4 mb-6">
-            <!-- Profile Pic -->
-            <div class="relative">
-                <div class="w-16 h-16 rounded-lg overflow-hidden shadow-md group-hover:rotate-3 transition-transform duration-500 border border-border">
-                    <?php if (!empty($p['photo_profile'])): ?>
-                        <img src="<?= h($p['photo_profile']) ?>" alt="Profile" class="w-full h-full object-cover">
-                    <?php else: ?>
-                        <div class="w-full h-full bg-surface-variant flex items-center justify-center text-primary font-bold text-lg">
-                            <?= avatar_initials($p['name']) ?>
-                        </div>
+        <a href="?page=attendance-history&user_id=<?= h($p['id']) ?>" class="block hover:opacity-95 transition-opacity">
+            <div class="flex items-center gap-4 mb-6">
+                <!-- Profile Pic -->
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-lg overflow-hidden shadow-md group-hover:rotate-3 transition-transform duration-500 border border-border">
+                        <?php if (!empty($p['photo_profile'])): ?>
+                            <img src="<?= h($p['photo_profile']) ?>" alt="Profile" class="w-full h-full object-cover">
+                        <?php else: ?>
+                            <div class="w-full h-full bg-surface-variant flex items-center justify-center text-primary font-bold text-lg">
+                                <?= avatar_initials($p['name']) ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <?php if ($is_online): ?>
+                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 rounded-full border-surface"></div>
                     <?php endif; ?>
                 </div>
-                <?php if ($is_online): ?>
-                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 rounded-full border-surface"></div>
-                <?php endif; ?>
-            </div>
 
-            <!-- Info -->
-            <div class="min-w-0">
-                <h3 class="text-[17px] font-bold  leading-tight truncate text-on-surface"><?= h($p['name']) ?></h3>
-                <p class="text-[9px] font-bold   opacity-40 mt-1 truncate text-on-surface-variant"><?= h($p['position']) ?></p>
+                <!-- Info -->
+                <div class="min-w-0">
+                    <h3 class="text-[17px] font-bold  leading-tight truncate text-on-surface hover:text-primary transition-colors"><?= h($p['name']) ?></h3>
+                    <p class="text-[9px] font-bold   opacity-40 mt-1 truncate text-on-surface-variant"><?= h($p['position']) ?></p>
+                </div>
             </div>
-        </div>
+        </a>
 
         <div class="flex items-center justify-between pt-4">
             <div class="flex items-center gap-1">
@@ -123,11 +125,14 @@ function format_wa_link($phone) {
             </div>
             
             <div class="flex items-center gap-2">
-                <a href="mailto:<?= h($p['email']) ?>" class="w-9 h-9 flex items-center justify-center bg-surface-variant rounded-lg text-on-surface-variant/40 hover:text-blue-500 transition-all active:scale-90">
+                <a href="?page=attendance-history&user_id=<?= h($p['id']) ?>" class="w-9 h-9 flex items-center justify-center bg-surface-variant rounded-lg text-on-surface-variant/40 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all active:scale-90" title="Riwayat Absensi">
+                    <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                </a>
+                <a href="mailto:<?= h($p['email']) ?>" class="w-9 h-9 flex items-center justify-center bg-surface-variant rounded-lg text-on-surface-variant/40 hover:text-blue-500 transition-all active:scale-90" title="Kirim Email">
                     <span class="material-symbols-outlined text-[18px]">alternate_email</span>
                 </a>
                 <?php if ($wa): ?>
-                <a href="<?= $wa ?>" target="_blank" class="w-9 h-9 flex items-center justify-center bg-emerald-500/10 text-emerald-500 rounded-lg hover:bg-emerald-500 hover:text-white transition-all active:scale-90 flex items-center justify-center border border-emerald-500/10">
+                <a href="<?= $wa ?>" target="_blank" class="w-9 h-9 flex items-center justify-center bg-emerald-500/10 text-emerald-500 rounded-lg hover:bg-emerald-500 hover:text-white transition-all active:scale-90 flex items-center justify-center border border-emerald-500/10" title="Kirim WhatsApp">
                     <i class="fab fa-whatsapp text-[16px]"></i>
                 </a>
                 <?php endif; ?>

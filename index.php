@@ -569,6 +569,7 @@ $page_files = [
     'people'             => 'pages/people.php',
     'locations'          => 'pages/locations.php',
     'profile'            => 'pages/profile.php',
+    'attendance-history' => 'pages/attendance-history.php',
 ];
 
 $page_titles = [
@@ -585,6 +586,7 @@ $page_titles = [
     'people'             => 'Pegawai',
     'locations'          => 'QR Office',
     'profile'            => 'Profil Saya',
+    'attendance-history' => 'Riwayat Absensi',
 ];
 
 // Validasi akses HRD-only
