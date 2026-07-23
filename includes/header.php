@@ -452,14 +452,15 @@
         </div>
 
         <!-- Center: Search -->
-        <div class="hidden md:flex flex-1 max-w-lg mx-6">
+        <form action="/hris_system/" method="GET" class="hidden md:flex flex-1 max-w-lg mx-6">
+            <input type="hidden" name="page" value="search">
             <div class="relative w-full">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" style="font-size:18px; color:var(--text-muted);">search</span>
-                <input type="text" placeholder="Search employees, reports, or tasks..." 
+                <input type="text" name="q" value="<?= h($_GET['q'] ?? '') ?>" placeholder="Search employees, reports, or tasks..." 
                        style="background:var(--surface2); color:var(--text-primary); border-radius:999px; font-size:13px;"
                        class="w-full pl-10 pr-4 py-1.5 border-none font-medium focus:ring-0 placeholder:text-gray-400 transition-colors">
             </div>
-        </div>
+        </form>
 
         <!-- Right: theme + profile -->
         <div class="flex items-center gap-2">
